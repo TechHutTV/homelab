@@ -1,6 +1,5 @@
 #WORK IN PROGRESS (NEED A TON OF WORK AND TESTING)
-# copyied from https://github.com/Rick45/quick-arr-Stack/blob/main/docker-compose.yml just to work off of
-version: '3.4'
+version: '3.9'
 services:
   gluetun:
     image: qmcgaw/gluetun
@@ -16,6 +15,7 @@ services:
       - 8388:8388/udp # Shadowsocks
       - 8000:8000/tcp # Build-in HTTP control header
       # other container ports
+      - 6789:6789/tpc # nzbget
       - 5055:5055/tcp # overseer
       - 6767:6767/tcp # bazarr
       - 8989:8989/tcp # sonarr
@@ -52,12 +52,27 @@ services:
     image: 'linuxserver/deluge:latest'
     restart: unless-stopped
     environment:
-      - 'PUID=${PUID}'
-      - 'PGID=${PGID}'
-      - 'TZ=${TZ}'
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
     volumes:
       - '${ROOT}/MediaCenter/config/deluge:/config'
       - '/mnt/user/data:/data'
+    network_mode: 'service:gluetun'
+
+  nzbget:
+    image: lscr.io/linuxserver/nzbget:latest
+    container_name: nzbget
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+      - NZBGET_USER=nzbget #optional
+      - NZBGET_PASS=password #optional
+    volumes:
+      - /path/to/nzbget/data:/config
+      - /path/to/downloads:/downloads #optional
+    restart: unless-stopped
     network_mode: 'service:gluetun'
     
   prowlarr:
@@ -66,7 +81,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - 'TZ=${TZ}'
+      - TZ=America/Los_Angeles
     volumes:
       - '${ROOT}/MediaCenter/config/prowlarr:/config'
     restart: unless-stopped
@@ -78,9 +93,9 @@ services:
     restart: unless-stopped
     network_mode: host
     environment:
-      - 'PUID=${PUID}'
-      - 'PGID=${PGID}'
-      - 'TZ=${TZ}'
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - '${ROOT}/MediaCenter/config/sonarr:/config'
@@ -93,16 +108,15 @@ services:
     restart: unless-stopped
     network_mode: host
     environment:
-      - 'PUID=${PUID}'
-      - 'PGID=${PGID}'
-      - 'TZ=${TZ}'
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - '${ROOT}/MediaCenter/config/radarr:/config'
       - '${HDDSTORAGE}:/MediaCenterBox'
     network_mode: "service:gluetun"
 
- # A library / filter system for music
   lidarr:
     container_name: lidarr
     image: linuxserver/lidarr
@@ -112,9 +126,9 @@ services:
       - ./config/Lidarr:/config
       - /local/path/to/Music:/mnt/Music
     environment:
-     - PUID=${PUID}
-     - PGID=${PGID}
-     - TZ=${TZ}
+     - PUID=1000
+     - PGID=1000
+     - TZ=America/Los_Angeles
     network_mode: "service:gluetun"
   
   bazarr:
@@ -123,9 +137,9 @@ services:
     restart: unless-stopped
     #network_mode: host
     environment:
-      - 'PUID=${PUID}'
-      - 'PGID=${PGID}'
-      - 'TZ=${TZ}'
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
       - UMASK_SET=022
     volumes:
       - '${ROOT}/MediaCenter/config/bazarr:/config'
@@ -147,7 +161,7 @@ services:
     container_name: overseerr
     environment:
       - LOG_LEVEL=debug
-      - 'TZ=${TZ}'
+      - TZ=America/Los_Angeles
     ports:
       - '5055:5055'
     volumes:
@@ -158,7 +172,7 @@ services:
     image: 'plexinc/pms-docker:latest'
     restart: unless-stopped
     environment:
-      - 'TZ=${TZ}'
+      - TZ=America/Los_Angeles
     network_mode: host
     volumes:
       - '${ROOT}/MediaCenter/config/plex/db:/config'
@@ -169,5 +183,5 @@ services:
 
 ### Jellyfin Stack ###
 
-### End of Plex Stack ###
+### End of Jellyfin Stack ###
 
