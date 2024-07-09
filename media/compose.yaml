@@ -1,29 +1,51 @@
+#WORK IN PROGRESS (NEED A TON OF WORK AND TESTING)
 # copyied from https://github.com/Rick45/quick-arr-Stack/blob/main/docker-compose.yml just to work off of
 version: '3.4'
 services:
   gluetun:
     image: qmcgaw/gluetun
     container_name: gluetun
-    # line above must be uncommented to allow external containers to connect.
-    # See https://github.com/qdm12/gluetun-wiki/blob/main/setup/connect-a-container-to-gluetun.md#external-container-to-gluetun
     cap_add:
       - NET_ADMIN
+      - SYS_MODULE
     devices:
       - /dev/net/tun:/dev/net/tun
     ports:
       - 8888:8888/tcp # HTTP proxy
       - 8388:8388/tcp # Shadowsocks
       - 8388:8388/udp # Shadowsocks
+      - 8000:8000/tcp # Build-in HTTP control header
+      # other container ports
+      - 5055:5055/tcp # overseer
+      - 6767:6767/tcp # bazarr
+      - 8989:8989/tcp # sonarr
+      - 7878:7878/tcp # radarr
+      - 8686:8686/tcp # lidarr
+      - 9696:9696/tcp # prowlarr
     volumes:
       - /yourpath:/gluetun
     environment:
-      # See https://github.com/qdm12/gluetun-wiki/tree/main/setup#setup
+      # See https://github.com/qdm12/gluetun-wiki/tree/main/setup#setup for more information or switching to OpenVPN
       - VPN_SERVICE_PROVIDER=airvpn
       - VPN_TYPE=wireguard
       - WIREGUARD_PRIVATE_KEY=key
       - WIREGUARD_PRESHARED_KEY=key
       - WIREGUARD_ADDRESSES=address
       - SERVER_COUNTRIES=Canada
+    sysctls:
+      # wg-quick fails to set this without --privileged, so set it here instead if needed
+      - net.ipv4.conf.all.src_valid_mark=1
+      # May as well disable ipv6. Should be blocked anyway.
+      - net.ipv6.conf.default.disable_ipv6=1
+      - net.ipv6.conf.all.disable_ipv6=1
+      - net.ipv6.conf.lo.disable_ipv6=1
+      # The container has no recovery logic. Use a healthcheck to catch disconnects.
+    healthcheck:
+      test: ping -c 1 www.google.com || exit 1
+      interval: 60s
+      timeout: 20s
+      retries: 5
+    restart: unless-stopped
 
   deluge:
     container_name: deluge
@@ -48,8 +70,7 @@ services:
     volumes:
       - '${ROOT}/MediaCenter/config/prowlarr:/config'
     restart: unless-stopped
-    ports:
-      - '9696:9696' #uncomment if you are not using the VPN
+    network_mode: "service:gluetun"
 
   sonarr:
     container_name: sonarr
@@ -64,6 +85,8 @@ services:
       - '/etc/localtime:/etc/localtime:ro'
       - '${ROOT}/MediaCenter/config/sonarr:/config'
       - '${HDDSTORAGE}:/MediaCenterBox'
+    network_mode: "service:gluetun"
+  
   radarr:
     container_name: radarr
     image: 'linuxserver/radarr:latest'
@@ -77,7 +100,23 @@ services:
       - '/etc/localtime:/etc/localtime:ro'
       - '${ROOT}/MediaCenter/config/radarr:/config'
       - '${HDDSTORAGE}:/MediaCenterBox'
-      
+    network_mode: "service:gluetun"
+
+ # A library / filter system for music
+  lidarr:
+    container_name: lidarr
+    image: linuxserver/lidarr
+    network_mode: "service:vpn"
+    restart: unless-stopped
+    volumes:
+      - ./config/Lidarr:/config
+      - /local/path/to/Music:/mnt/Music
+    environment:
+     - PUID=${PUID}
+     - PGID=${PGID}
+     - TZ=${TZ}
+    network_mode: "service:gluetun"
+  
   bazarr:
     container_name: bazarr
     image: 'linuxserver/bazarr:latest'
@@ -91,9 +130,29 @@ services:
     volumes:
       - '${ROOT}/MediaCenter/config/bazarr:/config'
       - '${HDDSTORAGE}:/MediaCenterBox'
+    network_mode: "service:gluetun"
+  
+
+### Media Streaming Stacks ###
+# You can spin up your media streaming instance directly from
+# this docker compose stack. Feel free to remove these if you
+# already have something running. Also, I recommened picking 
+# one of the stacks and removeing the other. However, I do run
+# both as Plex has disadvantanges when the internet goes offline.
+
+### Plex Stack ###
+
+  overseerr:
+    image: 'sctx/overseerr:latest'
+    container_name: overseerr
+    environment:
+      - LOG_LEVEL=debug
+      - 'TZ=${TZ}'
     ports:
-      - '6767:6767'
-      
+      - '5055:5055'
+    volumes:
+      - '${ROOT}/MediaCenter/config/overseerr/config:/app/config'
+    restart: unless-stopped
   plex-server:
     container_name: plex-server
     image: 'plexinc/pms-docker:latest'
@@ -106,18 +165,9 @@ services:
       - '${ROOT}/MediaCenter/config/plex/transcode:/transcode'
       - '${HDDSTORAGE}/Completed:/MediaCenterBox'
 
+### End of Plex Stack ###
 
-### Optional Containers
+### Jellyfin Stack ###
 
-  
-  overseerr:
-    image: 'sctx/overseerr:latest'
-    container_name: overseerr
-    environment:
-      - LOG_LEVEL=debug
-      - 'TZ=${TZ}'
-    ports:
-      - '5055:5055'
-    volumes:
-      - '${ROOT}/MediaCenter/config/overseerr/config:/app/config'
-    restart: unless-stopped
+### End of Plex Stack ###
+
