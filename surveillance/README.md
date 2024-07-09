@@ -1,0 +1,1 @@
+future frigate setup
