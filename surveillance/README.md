@@ -43,4 +43,5 @@ Add these two lines
 allow_anonymous true
 listener 1883
 ```
+systemctl restart mosquitto
 
