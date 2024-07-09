@@ -43,5 +43,6 @@ Add these two lines
 allow_anonymous true
 listener 1883
 ```
+https://dgpu-docs.intel.com/driver/installation.html
 systemctl restart mosquitto
 
