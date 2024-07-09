@@ -1,25 +1,29 @@
 # copyied from https://github.com/Rick45/quick-arr-Stack/blob/main/docker-compose.yml just to work off of
 version: '3.4'
 services:
-  vpn:
-    container_name: vpn
-    image: 'dperson/openvpn-client:latest'
-    environment:
-      - 'OTHER_ARGS= --mute-replay-warnings'
+  gluetun:
+    image: qmcgaw/gluetun
+    container_name: gluetun
+    # line above must be uncommented to allow external containers to connect.
+    # See https://github.com/qdm12/gluetun-wiki/blob/main/setup/connect-a-container-to-gluetun.md#external-container-to-gluetun
     cap_add:
-      - net_admin
-      - SYS_MODULE
-    restart: unless-stopped
-    volumes:
-      - '${ROOT}/MediaCenter/config/vpn:/vpn'
-      - /lib/modules:/lib/modules
-    security_opt:
-      - 'label:disable'
+      - NET_ADMIN
     devices:
-      - '/dev/net/tun:/dev/net/tun'
+      - /dev/net/tun:/dev/net/tun
     ports:
-      - '8112:8112' #deluge web UI Port
-    command: '-f "" -r 192.168.68.0/24'
+      - 8888:8888/tcp # HTTP proxy
+      - 8388:8388/tcp # Shadowsocks
+      - 8388:8388/udp # Shadowsocks
+    volumes:
+      - /yourpath:/gluetun
+    environment:
+      # See https://github.com/qdm12/gluetun-wiki/tree/main/setup#setup
+      - VPN_SERVICE_PROVIDER=airvpn
+      - VPN_TYPE=wireguard
+      - WIREGUARD_PRIVATE_KEY=key
+      - WIREGUARD_PRESHARED_KEY=key
+      - WIREGUARD_ADDRESSES=address
+      - SERVER_COUNTRIES=Canada
 
   deluge:
     container_name: deluge
@@ -31,13 +35,9 @@ services:
       - 'TZ=${TZ}'
     volumes:
       - '${ROOT}/MediaCenter/config/deluge:/config'
-      - '${HDDSTORAGE}:/MediaCenterBox'
-    #ports:
-    #  - '8112:8112' #uncomment if you are not using the VPN
-    network_mode: 'service:vpn' #comment/remove if you are not using the VPN
-    depends_on:                 #comment/remove if you are not using the VPN
-      - vpn                     #comment/remove if you are not using the VPN
-
+      - '/mnt/user/data:/data'
+    network_mode: 'service:gluetun'
+    
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
     container_name: prowlarr
@@ -109,30 +109,6 @@ services:
 
 ### Optional Containers
 
-  wireguard:
-    image: ghcr.io/linuxserver/wireguard:latest
-    container_name: wireguard
-    cap_add:
-      - NET_ADMIN
-      - SYS_MODULE
-    environment:
-      - PUID=${PUID} # default user id, defined in .env
-      - PGID=${PUID} # default user id, defined in .env
-      - TZ=${TZ} # timezone, defined in .env
-      - SERVERURL=${SERVERURL} # server public ip, auto to auto find, defined in .env
-      - SERVERPORT=51820 #optional
-      - PEERS=${PEERS} # number of clients to be auto configured, defined in .env
-      - PEERDNS=auto #optional
-      - INTERNAL_SUBNET=172.168.69.0 #optional, network for devices ips. CAN NOT be the same as your home network
-      - ALLOWEDIPS=0.0.0.0/0 #optional
-    volumes:
-      - ${ROOT}/MediaCenter/config/wireguard:/config # config folder
-      - /lib/modules:/lib/modules
-    ports:
-      - 51820:51820/udp
-    sysctls:
-      - net.ipv4.conf.all.src_valid_mark=1
-    restart: always
   
   overseerr:
     image: 'sctx/overseerr:latest'
