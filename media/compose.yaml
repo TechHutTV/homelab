@@ -1,0 +1,147 @@
+# copyied from https://github.com/Rick45/quick-arr-Stack/blob/main/docker-compose.yml just to work off of
+version: '3.4'
+services:
+  vpn:
+    container_name: vpn
+    image: 'dperson/openvpn-client:latest'
+    environment:
+      - 'OTHER_ARGS= --mute-replay-warnings'
+    cap_add:
+      - net_admin
+      - SYS_MODULE
+    restart: unless-stopped
+    volumes:
+      - '${ROOT}/MediaCenter/config/vpn:/vpn'
+      - /lib/modules:/lib/modules
+    security_opt:
+      - 'label:disable'
+    devices:
+      - '/dev/net/tun:/dev/net/tun'
+    ports:
+      - '8112:8112' #deluge web UI Port
+    command: '-f "" -r 192.168.68.0/24'
+
+  deluge:
+    container_name: deluge
+    image: 'linuxserver/deluge:latest'
+    restart: unless-stopped
+    environment:
+      - 'PUID=${PUID}'
+      - 'PGID=${PGID}'
+      - 'TZ=${TZ}'
+    volumes:
+      - '${ROOT}/MediaCenter/config/deluge:/config'
+      - '${HDDSTORAGE}:/MediaCenterBox'
+    #ports:
+    #  - '8112:8112' #uncomment if you are not using the VPN
+    network_mode: 'service:vpn' #comment/remove if you are not using the VPN
+    depends_on:                 #comment/remove if you are not using the VPN
+      - vpn                     #comment/remove if you are not using the VPN
+
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - 'TZ=${TZ}'
+    volumes:
+      - '${ROOT}/MediaCenter/config/prowlarr:/config'
+    restart: unless-stopped
+    ports:
+      - '9696:9696' #uncomment if you are not using the VPN
+
+  sonarr:
+    container_name: sonarr
+    image: 'linuxserver/sonarr:latest'
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      - 'PUID=${PUID}'
+      - 'PGID=${PGID}'
+      - 'TZ=${TZ}'
+    volumes:
+      - '/etc/localtime:/etc/localtime:ro'
+      - '${ROOT}/MediaCenter/config/sonarr:/config'
+      - '${HDDSTORAGE}:/MediaCenterBox'
+  radarr:
+    container_name: radarr
+    image: 'linuxserver/radarr:latest'
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      - 'PUID=${PUID}'
+      - 'PGID=${PGID}'
+      - 'TZ=${TZ}'
+    volumes:
+      - '/etc/localtime:/etc/localtime:ro'
+      - '${ROOT}/MediaCenter/config/radarr:/config'
+      - '${HDDSTORAGE}:/MediaCenterBox'
+      
+  bazarr:
+    container_name: bazarr
+    image: 'linuxserver/bazarr:latest'
+    restart: unless-stopped
+    #network_mode: host
+    environment:
+      - 'PUID=${PUID}'
+      - 'PGID=${PGID}'
+      - 'TZ=${TZ}'
+      - UMASK_SET=022
+    volumes:
+      - '${ROOT}/MediaCenter/config/bazarr:/config'
+      - '${HDDSTORAGE}:/MediaCenterBox'
+    ports:
+      - '6767:6767'
+      
+  plex-server:
+    container_name: plex-server
+    image: 'plexinc/pms-docker:latest'
+    restart: unless-stopped
+    environment:
+      - 'TZ=${TZ}'
+    network_mode: host
+    volumes:
+      - '${ROOT}/MediaCenter/config/plex/db:/config'
+      - '${ROOT}/MediaCenter/config/plex/transcode:/transcode'
+      - '${HDDSTORAGE}/Completed:/MediaCenterBox'
+
+
+### Optional Containers
+
+  wireguard:
+    image: ghcr.io/linuxserver/wireguard:latest
+    container_name: wireguard
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    environment:
+      - PUID=${PUID} # default user id, defined in .env
+      - PGID=${PUID} # default user id, defined in .env
+      - TZ=${TZ} # timezone, defined in .env
+      - SERVERURL=${SERVERURL} # server public ip, auto to auto find, defined in .env
+      - SERVERPORT=51820 #optional
+      - PEERS=${PEERS} # number of clients to be auto configured, defined in .env
+      - PEERDNS=auto #optional
+      - INTERNAL_SUBNET=172.168.69.0 #optional, network for devices ips. CAN NOT be the same as your home network
+      - ALLOWEDIPS=0.0.0.0/0 #optional
+    volumes:
+      - ${ROOT}/MediaCenter/config/wireguard:/config # config folder
+      - /lib/modules:/lib/modules
+    ports:
+      - 51820:51820/udp
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    restart: always
+  
+  overseerr:
+    image: 'sctx/overseerr:latest'
+    container_name: overseerr
+    environment:
+      - LOG_LEVEL=debug
+      - 'TZ=${TZ}'
+    ports:
+      - '5055:5055'
+    volumes:
+      - '${ROOT}/MediaCenter/config/overseerr/config:/app/config'
+    restart: unless-stopped
