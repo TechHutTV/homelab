@@ -32,6 +32,11 @@ sudo systemctl is-enabled mosquitto
 sudo systemctl status mosquitto
 ```
 
+
+Edit the MQTT config file.
+
+nano /etc/mosquitto/mosquitto.conf
+
 Add these two lines
 
 ```
