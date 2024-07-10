@@ -9,15 +9,10 @@ services:
     ports:
       - 8888:8112 # deluge web interface
       - 58846:58846 # deluge RPC
-      #- 6789:6789/tpc # nzbget
-      #- 5055:5055/tcp # overseer
-      #- 6767:6767/tcp # bazarr
-      #- 8989:8989/tcp # sonarr
-      #- 7878:7878/tcp # radarr
-      #- 8686:8686/tcp # lidarr
-      #- 9696:9696/tcp # prowlarr
+      - 6789:6789 # nzbget
+      - 9696:9696 # prowlarr
     volumes:
-      - /home/bradon/docker/gluetun:/gluetun
+      - /path/to/config:/gluetun
     environment:
       # See https://github.com/qdm12/gluetun-wiki/tree/main/setup#setup for more information.
       - VPN_SERVICE_PROVIDER=airvpn
@@ -47,7 +42,7 @@ services:
       - /home/brandon/docker/deluge:/config
       - /home/brandon/docker/deluge/dot-torrent:/dot-torrent
       - /home/brandon/docker/deluge/autoadd:/autoadd
-      - /media/data:/data
+      - /path/to/data:/data
     network_mode: service:gluetun
 
   nzbget:
@@ -60,8 +55,8 @@ services:
       - NZBGET_USER=nzbget #optional
       - NZBGET_PASS=password #optional
     volumes:
-      - /path/to/nzbget/data:/config
-      - /path/to/downloads:/downloads #optional
+      - /path/to/config:/config
+      - /path/to/data:/data #optional
     restart: unless-stopped
     network_mode: 'service:gluetun'
     
@@ -73,7 +68,7 @@ services:
       - PGID=1000
       - TZ=America/Los_Angeles
     volumes:
-      - '${ROOT}/MediaCenter/config/prowlarr:/config'
+      - /path/to/config:/config'
     restart: unless-stopped
     network_mode: "service:gluetun"
 
@@ -81,60 +76,57 @@ services:
     container_name: sonarr
     image: 'linuxserver/sonarr:latest'
     restart: unless-stopped
-    network_mode: host
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=America/Los_Angeles
     volumes:
-      - '/etc/localtime:/etc/localtime:ro'
-      - '${ROOT}/MediaCenter/config/sonarr:/config'
-      - '${HDDSTORAGE}:/MediaCenterBox'
-    network_mode: "service:gluetun"
+      - /path/to/config:/config
+      - /path/to/data:/data
+    ports:
+      - 8989:8989
   
   radarr:
     container_name: radarr
-    image: 'linuxserver/radarr:latest'
+    image: linuxserver/radarr:latest
     restart: unless-stopped
-    network_mode: host
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=America/Los_Angeles
     volumes:
-      - '/etc/localtime:/etc/localtime:ro'
-      - '${ROOT}/MediaCenter/config/radarr:/config'
-      - '${HDDSTORAGE}:/MediaCenterBox'
-    network_mode: "service:gluetun"
+      - /path/to/config:/config
+      - /path/to/data:/data
+    ports:
+      - 7878:7878
 
   lidarr:
     container_name: lidarr
     image: linuxserver/lidarr
-    network_mode: "service:vpn"
     restart: unless-stopped
     volumes:
-      - ./config/Lidarr:/config
-      - /local/path/to/Music:/mnt/Music
+      - /path/to/config:/config
+      - /path/to/data:/data
     environment:
      - PUID=1000
      - PGID=1000
      - TZ=America/Los_Angeles
-    network_mode: "service:gluetun"
+    ports:
+      - 8686:8686
   
   bazarr:
     container_name: bazarr
     image: 'linuxserver/bazarr:latest'
     restart: unless-stopped
-    #network_mode: host
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=America/Los_Angeles
-      - UMASK_SET=022
     volumes:
-      - '${ROOT}/MediaCenter/config/bazarr:/config'
-      - '${HDDSTORAGE}:/MediaCenterBox'
-    network_mode: "service:gluetun"
+      - /path/to/config:/config
+      - /path/to/data:/data
+    ports:
+      - 6767:6767
   
 
 ### Media Streaming Stacks ###
