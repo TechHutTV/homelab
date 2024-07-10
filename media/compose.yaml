@@ -1,45 +1,33 @@
 #WORK IN PROGRESS (NEED A TON OF WORK AND TESTING)
 version: '3.9'
 services:
-  gluetun:
+  gluetun: # This config is for wireguard only tested with AirVPN
     image: qmcgaw/gluetun
     container_name: gluetun
     cap_add:
       - NET_ADMIN
-      - SYS_MODULE
-    devices:
-      - /dev/net/tun:/dev/net/tun
     ports:
-      - 8888:8888/tcp # HTTP proxy
-      - 8388:8388/tcp # Shadowsocks
-      - 8388:8388/udp # Shadowsocks
-      - 8000:8000/tcp # Build-in HTTP control header
-      # other container ports
-      - 6789:6789/tpc # nzbget
-      - 5055:5055/tcp # overseer
-      - 6767:6767/tcp # bazarr
-      - 8989:8989/tcp # sonarr
-      - 7878:7878/tcp # radarr
-      - 8686:8686/tcp # lidarr
-      - 9696:9696/tcp # prowlarr
+      - 8888:8112 # deluge web interface
+      - 58846:58846 # deluge RPC
+      #- 6789:6789/tpc # nzbget
+      #- 5055:5055/tcp # overseer
+      #- 6767:6767/tcp # bazarr
+      #- 8989:8989/tcp # sonarr
+      #- 7878:7878/tcp # radarr
+      #- 8686:8686/tcp # lidarr
+      #- 9696:9696/tcp # prowlarr
     volumes:
-      - /yourpath:/gluetun
+      - /home/bradon/docker/gluetun:/gluetun
     environment:
-      # See https://github.com/qdm12/gluetun-wiki/tree/main/setup#setup for more information or switching to OpenVPN
+      # See https://github.com/qdm12/gluetun-wiki/tree/main/setup#setup for more information.
       - VPN_SERVICE_PROVIDER=airvpn
       - VPN_TYPE=wireguard
+      - FIREWALL_VPN_INPUT_PORTS=port
       - WIREGUARD_PRIVATE_KEY=key
       - WIREGUARD_PRESHARED_KEY=key
-      - WIREGUARD_ADDRESSES=address
+      - WIREGUARD_ADDRESSES=ip
       - SERVER_COUNTRIES=Canada
-    sysctls:
-      # wg-quick fails to set this without --privileged, so set it here instead if needed
-      - net.ipv4.conf.all.src_valid_mark=1
-      # May as well disable ipv6. Should be blocked anyway.
-      - net.ipv6.conf.default.disable_ipv6=1
-      - net.ipv6.conf.all.disable_ipv6=1
-      - net.ipv6.conf.lo.disable_ipv6=1
-      # The container has no recovery logic. Use a healthcheck to catch disconnects.
+      - SERVER_CITIES=Vancouver
     healthcheck:
       test: ping -c 1 www.google.com || exit 1
       interval: 60s
@@ -49,16 +37,18 @@ services:
 
   deluge:
     container_name: deluge
-    image: 'linuxserver/deluge:latest'
+    image: linuxserver/deluge:latest
     restart: unless-stopped
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=America/Los_Angeles
     volumes:
-      - '${ROOT}/MediaCenter/config/deluge:/config'
-      - '/mnt/user/data:/data'
-    network_mode: 'service:gluetun'
+      - /home/brandon/docker/deluge:/config
+      - /home/brandon/docker/deluge/dot-torrent:/dot-torrent
+      - /home/brandon/docker/deluge/autoadd:/autoadd
+      - /media/data:/data
+    network_mode: service:gluetun
 
   nzbget:
     image: lscr.io/linuxserver/nzbget:latest
