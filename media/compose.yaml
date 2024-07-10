@@ -68,9 +68,9 @@ services:
       - PGID=1000
       - TZ=America/Los_Angeles
     volumes:
-      - /path/to/config:/config'
+      - /path/to/config:/config
     restart: unless-stopped
-    network_mode: "service:gluetun"
+    network_mode: service:gluetun
 
   sonarr:
     container_name: sonarr
