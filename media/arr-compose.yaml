@@ -1,0 +1,136 @@
+# Compose file for the *arr stack. Configuration files are stored 
+# in volumes. Change to bind mounts if needed.
+# All containers are ran with use and group ids of the main users 
+# to aviod permissions issues of downloaded files, please refer
+# the read me file for more information.
+version: '3.9'
+services:
+  gluetun:
+    image: qmcgaw/gluetun
+    container_name: gluetun
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - 8888:8112 # deluge web interface
+      - 58846:58846 # deluge RPC
+      - 6789:6789 # nzbget
+      - 9696:9696 # prowlarr
+    volumes:
+      - gluetun:/gluetun
+    environment:
+      - VPN_SERVICE_PROVIDER=airvpn
+      - VPN_TYPE=wireguard
+      - FIREWALL_VPN_INPUT_PORTS=port
+      - WIREGUARD_PRIVATE_KEY=key
+      - WIREGUARD_PRESHARED_KEY=key
+      - WIREGUARD_ADDRESSES=ip
+      - SERVER_COUNTRIES=Canada
+      - SERVER_CITIES=Vancouver
+    healthcheck:
+      test: ping -c 1 www.google.com || exit 1
+      interval: 60s
+      timeout: 20s
+      retries: 5
+    restart: unless-stopped
+
+  deluge:
+    container_name: deluge
+    image: linuxserver/deluge:latest
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+    volumes:
+      - deluge:/config
+      - /home/brandon/data:/data
+    network_mode: service:gluetun
+
+  nzbget:
+    image: lscr.io/linuxserver/nzbget:latest
+    container_name: nzbget
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+      - NZBGET_USER=user
+      - NZBGET_PASS=password
+    volumes:
+      - nzbget:/config
+      - /media/data:/data
+    restart: unless-stopped
+    network_mode: service:gluetun
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+    volumes:
+      - prowlarr:/config
+    restart: unless-stopped
+    network_mode: service:gluetun
+  sonarr:
+    container_name: sonarr
+    image: linuxserver/sonarr:latest
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+    volumes:
+      - sonarr:/config
+      - /media/data:/data
+    ports:
+      - 8989:8989
+  radarr:
+    container_name: radarr
+    image: linuxserver/radarr:latest
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+    volumes:
+      - radarr:/config
+      - /media/data:/data
+    ports:
+      - 7878:7878
+  lidarr:
+    container_name: lidarr
+    image: linuxserver/lidarr
+    restart: unless-stopped
+    volumes:
+      - lidarr:/config
+      - /media/data:/data
+    environment:
+     - PUID=1000
+     - PGID=1000
+     - TZ=America/Los_Angeles
+    ports:
+      - 8686:8686
+  
+  bazarr:
+    container_name: bazarr
+    image: linuxserver/bazarr:latest
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+    volumes:
+      - bazarr:/config
+      - /media/data:/data
+    ports:
+      - 6767:6767
+
+  volumes:
+    gluetun:
+    deluge:
+    nzbget:
+    prowlarr:
+    sonarr:
+    radarr:
+    lidarr:
+    bazarr:
