@@ -20,7 +20,7 @@ services:
     environment:
       - VPN_SERVICE_PROVIDER=airvpn
       - VPN_TYPE=wireguard
-      - FIREWALL_VPN_INPUT_PORTS=50682
+      - FIREWALL_VPN_INPUT_PORTS=port
       - WIREGUARD_PRIVATE_KEY=key
       - WIREGUARD_PRESHARED_KEY=key
       - WIREGUARD_ADDRESSES=ip
@@ -34,8 +34,8 @@ services:
     restart: unless-stopped
 
   deluge:
-    container_name: deluge
     image: linuxserver/deluge:latest
+    container_name: deluge
     restart: unless-stopped
     environment:
       - PUID=1000
@@ -47,14 +47,14 @@ services:
     network_mode: service:gluetun
 
   nzbget:
-    image: lscr.io/linuxserver/nzbget:latest
+    image: linuxserver/nzbget:latest
     container_name: nzbget
     environment:
       - PUID=1000
       - PGID=100
       - TZ=America/Los_Angeles
-      - NZBGET_USER=brandon
-      - NZBGET_PASS=hopkins1
+      - NZBGET_USER=user
+      - NZBGET_PASS=password
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /home/brandon/nzbget:/config
@@ -62,7 +62,7 @@ services:
     restart: unless-stopped
     network_mode: service:gluetun
   prowlarr:
-    image: lscr.io/linuxserver/prowlarr:latest
+    image: linuxserver/prowlarr:latest
     container_name: prowlarr
     environment:
       - PUID=1000
@@ -74,8 +74,8 @@ services:
     restart: unless-stopped
     network_mode: service:gluetun
   sonarr:
-    container_name: sonarr
     image: linuxserver/sonarr:latest
+    container_name: sonarr
     restart: unless-stopped
     environment:
       - PUID=1000
@@ -88,8 +88,8 @@ services:
     ports:
       - 8989:8989
   radarr:
-    container_name: radarr
     image: linuxserver/radarr:latest
+    container_name: radarr
     restart: unless-stopped
     environment:
       - PUID=1000
@@ -117,8 +117,8 @@ services:
       - 8686:8686
   
   bazarr:
-    container_name: bazarr
     image: linuxserver/bazarr:latest
+    container_name: bazarr
     restart: unless-stopped
     environment:
       - PUID=1000
@@ -132,7 +132,7 @@ services:
       - 6767:6767
 
   readarr:
-    image: lscr.io/linuxserver/readarr:develop
+    image: linuxserver/readarr:latest
     container_name: readarr
     environment:
       - PUID=1000
