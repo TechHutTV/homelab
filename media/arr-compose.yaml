@@ -24,8 +24,8 @@ services:
       - WIREGUARD_PRIVATE_KEY=key
       - WIREGUARD_PRESHARED_KEY=key
       - WIREGUARD_ADDRESSES=ip
-      - SERVER_COUNTRIES=Canada
-      - SERVER_CITIES=Vancouver
+      - SERVER_COUNTRIES=country
+      - SERVER_CITIES=city
     healthcheck:
       test: ping -c 1 www.google.com || exit 1
       interval: 60s
@@ -34,7 +34,7 @@ services:
     restart: unless-stopped
 
   deluge:
-    image: linuxserver/deluge:latest
+    image: lscr.io/linuxserver/deluge:latest
     container_name: deluge
     restart: unless-stopped
     environment:
@@ -47,7 +47,7 @@ services:
     network_mode: service:gluetun
 
   nzbget:
-    image: linuxserver/nzbget:latest
+    image: lscr.io/linuxserver/nzbget:latest
     container_name: nzbget
     environment:
       - PUID=1000
@@ -62,7 +62,7 @@ services:
     restart: unless-stopped
     network_mode: service:gluetun
   prowlarr:
-    image: linuxserver/prowlarr:latest
+    image: lscr.io/linuxserver/prowlarr:latest
     container_name: prowlarr
     environment:
       - PUID=1000
@@ -74,7 +74,7 @@ services:
     restart: unless-stopped
     network_mode: service:gluetun
   sonarr:
-    image: linuxserver/sonarr:latest
+    image: lscr.io/linuxserver/sonarr:latest
     container_name: sonarr
     restart: unless-stopped
     environment:
@@ -88,7 +88,7 @@ services:
     ports:
       - 8989:8989
   radarr:
-    image: linuxserver/radarr:latest
+    image: lscr.io/linuxserver/radarr:latest
     container_name: radarr
     restart: unless-stopped
     environment:
@@ -103,7 +103,7 @@ services:
       - 7878:7878
   lidarr:
     container_name: lidarr
-    image: linuxserver/lidarr
+    image: lscr.io/linuxserver/lidarr:latest
     restart: unless-stopped
     volumes:
       - /etc/localtime:/etc/localtime:ro
@@ -117,7 +117,7 @@ services:
       - 8686:8686
   
   bazarr:
-    image: linuxserver/bazarr:latest
+    image: lscr.io/linuxserver/bazarr:latest
     container_name: bazarr
     restart: unless-stopped
     environment:
@@ -132,7 +132,7 @@ services:
       - 6767:6767
 
   readarr:
-    image: linuxserver/readarr:latest
+    image: lscr.io/linuxserver/readarr:develop
     container_name: readarr
     environment:
       - PUID=1000
