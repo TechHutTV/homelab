@@ -16,11 +16,11 @@ services:
       - 6789:6789 # nzbget
       - 9696:9696 # prowlarr
     volumes:
-      - gluetun:/gluetun
+      - /home/brandon/gluetun:/gluetun
     environment:
       - VPN_SERVICE_PROVIDER=airvpn
       - VPN_TYPE=wireguard
-      - FIREWALL_VPN_INPUT_PORTS=port
+      - FIREWALL_VPN_INPUT_PORTS=50682
       - WIREGUARD_PRIVATE_KEY=key
       - WIREGUARD_PRESHARED_KEY=key
       - WIREGUARD_ADDRESSES=ip
@@ -39,11 +39,11 @@ services:
     restart: unless-stopped
     environment:
       - PUID=1000
-      - PGID=1000
+      - PGID=100
       - TZ=America/Los_Angeles
     volumes:
-      - deluge:/config
-      - /home/brandon/data:/data
+      - /home/brandon/deluge:/config
+      - /media/data:/data
     network_mode: service:gluetun
 
   nzbget:
@@ -51,12 +51,13 @@ services:
     container_name: nzbget
     environment:
       - PUID=1000
-      - PGID=1000
+      - PGID=100
       - TZ=America/Los_Angeles
-      - NZBGET_USER=user
-      - NZBGET_PASS=password
+      - NZBGET_USER=brandon
+      - NZBGET_PASS=hopkins1
     volumes:
-      - nzbget:/config
+      - /etc/localtime:/etc/localtime:ro
+      - /home/brandon/nzbget:/config
       - /media/data:/data
     restart: unless-stopped
     network_mode: service:gluetun
@@ -65,10 +66,11 @@ services:
     container_name: prowlarr
     environment:
       - PUID=1000
-      - PGID=1000
+      - PGID=100
       - TZ=America/Los_Angeles
     volumes:
-      - prowlarr:/config
+      - /etc/localtime:/etc/localtime:ro
+      - /home/brandon/prowlarr:/config
     restart: unless-stopped
     network_mode: service:gluetun
   sonarr:
@@ -77,10 +79,11 @@ services:
     restart: unless-stopped
     environment:
       - PUID=1000
-      - PGID=1000
+      - PGID=100
       - TZ=America/Los_Angeles
     volumes:
-      - sonarr:/config
+      - /etc/localtime:/etc/localtime:ro
+      - /home/brandon/sonarr:/config
       - /media/data:/data
     ports:
       - 8989:8989
@@ -90,10 +93,11 @@ services:
     restart: unless-stopped
     environment:
       - PUID=1000
-      - PGID=1000
+      - PGID=100
       - TZ=America/Los_Angeles
     volumes:
-      - radarr:/config
+      - /etc/localtime:/etc/localtime:ro
+      - /home/brandon/radarr:/config
       - /media/data:/data
     ports:
       - 7878:7878
@@ -102,11 +106,12 @@ services:
     image: linuxserver/lidarr
     restart: unless-stopped
     volumes:
-      - lidarr:/config
+      - /etc/localtime:/etc/localtime:ro
+      - /home/brandon/lidarr:/config
       - /media/data:/data
     environment:
      - PUID=1000
-     - PGID=1000
+     - PGID=100
      - TZ=America/Los_Angeles
     ports:
       - 8686:8686
@@ -117,20 +122,26 @@ services:
     restart: unless-stopped
     environment:
       - PUID=1000
-      - PGID=1000
+      - PGID=100
       - TZ=America/Los_Angeles
     volumes:
-      - bazarr:/config
+      - /etc/localtime:/etc/localtime:ro
+      - /home/brandon/bazarr:/config
       - /media/data:/data
     ports:
       - 6767:6767
 
-  volumes:
-    gluetun:
-    deluge:
-    nzbget:
-    prowlarr:
-    sonarr:
-    radarr:
-    lidarr:
-    bazarr:
+  readarr:
+    image: lscr.io/linuxserver/readarr:develop
+    container_name: readarr
+    environment:
+      - PUID=1000
+      - PGID=100
+      - TZ=America/Los_Angeles
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /home/brandon/readarr:/config
+      - /media/data:/data
+    ports:
+      - 8787:8787
+    restart: unless-stopped
