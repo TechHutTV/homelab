@@ -1,6 +1,6 @@
-# Work in Progress
+# Self-Hosted Media Server and Aggregation
 
-Please refer to the [Servarr Docker Setup](https://wiki.servarr.com/docker-guide) for more details on installing the stack.
+This is currently a work in progress. Please refer to the [Servarr Docker Setup](https://wiki.servarr.com/docker-guide) for more details on installing the stack.
 
 ## Data Directory
 ### Folder Mapping
@@ -25,9 +25,11 @@ data
 └── youtube
 ```
 ### Network Share
-
-wip
-
+Personally, I use a network share to store downloads and all my media. To do this I created the share with Unraid and added it to the fstab file within my Docker server.
+```
+//10.0.0.90/data /media/data cifs uid=1000,gid=100,username=user,password=password,iocharset=utf8 0 0
+```
+Storing the user creditentials within this file it's the best idea. Check out [this question](https://unix.stackexchange.com/questions/178187/how-to-edit-etc-fstab-properly-for-network-drive) on Stack Exchange to learn more.
 ## User Permissions
 Using bind mounts (path/to/config:/config) may lead to permissions conflicts between the host operating system and the container. To avoid this problem, you we specify the user ID (PUID) and group ID (PGID) to use within the container. This will have your user permission to read and write configuration files, etc.
 
