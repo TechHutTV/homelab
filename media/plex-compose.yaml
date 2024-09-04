@@ -1,0 +1,47 @@
+# Currently untested as written
+services:
+  plex:
+    image: lscr.io/linuxserver/plex:latest
+    container_name: plex
+    network_mode: host
+    environment:
+      - PUID=1000
+      - PGID=100
+      - TZ=America/Los_Angeles
+      - VERSION=docker
+      - PLEX_CLAIM= #optional
+    ports:
+      - 32400:32400
+    devices:
+     - /dev/dri:/dev/dri # QuickSync
+    volumes:
+      - /home/brandon/docker/plex:/config
+      - /data:/data
+    restart: unless-stopped
+
+  overseerr:
+    image: lscr.io/linuxserver/overseerr:latest
+    container_name: overseerr
+    environment:
+      - PUID=1000
+      - PGID=100
+      - TZ=America/Los_Angeles
+    volumes:
+      - /home/brandon/docker/overseer/config:/config
+      - /data:/data
+    ports:
+      - 5055:5055
+    restart: unless-stopped
+
+  tautulli:
+    image: lscr.io/linuxserver/tautulli:latest
+    container_name: tautulli
+    environment:
+      - PUID=1000
+      - PGID=100
+      - TZ=America/Los_Angeles
+    volumes:
+      - /home/brandon/docker/tautulli:/config
+    ports:
+      - 8181:8181
+    restart: unless-stopped
