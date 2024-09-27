@@ -11,6 +11,8 @@ services:
       - /data:/data
     ports:
       - 8096:8096
+    devices:
+     - /dev/dri:/dev/dri # QuickSync
     restart: unless-stopped
 
   jellyseerr:
