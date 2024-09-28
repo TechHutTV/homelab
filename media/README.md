@@ -9,7 +9,7 @@ It's good practise to give all containers the same access to the same root direc
 data
 ├── books
 ├── downloads
-│   ├── deluge
+│   ├── qbittorrent
 │   │   ├── completed
 │   │   ├── incomplete
 │   │   └── torrents
@@ -23,6 +23,10 @@ data
 ├── music
 ├── shows
 └── youtube
+```
+Easy command to create the download directory scheme.
+```
+mkdir -p downloads/qbittorrent/{completed,incomplete,torrents} && mkdir -p downloads/nzbget/{complete,intermediate,nzb,queue,tmp}
 ```
 ### Network Share
 Personally, I use a network share to store downloads and all my media. To do this I created the share with Unraid and added it to the fstab file within my Docker server.
