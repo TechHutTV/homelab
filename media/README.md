@@ -43,7 +43,11 @@ In this compose file I use PUID=1000 and PGID=1000, as that is generally the def
 id your_user
 uid=1000(techhut),gid=1003(techhut),groups=1000(techhut),988(docker)
 ```
-In the example output above, I would need to edit the compose.yaml with gid=1003. If you are using a network share mounted though ```/etc/fstab``` match the permissions there. I use Unraid so my permissions are ```uid=1000(brandon),gid=100(brandon)```.
+In the example output above, If using a network share I would need to edit the compose.yaml with gid=1003. If you are using a network share mounted though ```/etc/fstab``` match the permissions there. I use Unraid so my permissions are ```uid=1000(brandon),gid=100(brandon)```.
+Alternatively, after creating all the folders you can assign the permissions using chmod. For example,
+```
+sudo chown -R 1000:1000 /data
+```
 
 ## VPN Information
 ### Testing Gluetun Connectivity 
