@@ -29,7 +29,7 @@ Easy command to create the download directory scheme.
 mkdir -p downloads/qbittorrent/{completed,incomplete,torrents} && mkdir -p downloads/nzbget/{complete,intermediate,nzb,queue,tmp}
 ```
 ### Network Share
-Personally, I use a network share to store downloads and all my media. To do this I created the share with Unraid and added it to the fstab file within my Docker server.
+I use to use a network share to store downloads and all my media. To do this I created the share with Unraid and added it to the fstab file within my Docker server.
 ```
 //10.0.0.90/data /media/data cifs uid=1000,gid=100,username=user,password=password,iocharset=utf8 0 0
 ```
@@ -73,6 +73,21 @@ Add ```--network=container:gluetun``` when launching the container, provided Glu
 
 ### Container in another docker-compose.yml
 Add network_mode: "container:gluetun" to your docker-compose.yml, provided Gluetun is already running. Ensure you open the ports through the the gluetun container.
+
+### Gluetun Proxmox Fix
+
+"cannot Unix Open TUN device file: operation not permitted and cannot create TUN device file node: operation not permitted" May happen if you're running this on LXC containers.
+
+Find your container number, for example mine is 101
+
+Edit `/etc/pve/lxc/101.conf` and add:
+
+```
+lxc.cgroup2.devices.allow: c 10:200 rwm
+lxc.mount.entry: /dev/net dev/net none bind,create=dir
+lxc.mount.entry: /dev/net/tun dev/net/tun none bind,create=file
+```
+Make sure you pass through the tun device (/dev/net/tun:/dev/net/tun) as shown in my compose file.
 
 ### Testing Other Containers
 Jump into the Exec console and run the wget command below. Tested with nzbget, deluge, and prowlarr. Ensure you open the ports through the the gluetun container.
