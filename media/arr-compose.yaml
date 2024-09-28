@@ -1,7 +1,7 @@
 # Compose file for the *arr stack. Configuration files are stored 
-# in volumes. Change to bind mounts if needed.
-# All containers are ran with use and group ids of the main users 
-# to aviod permissions issues of downloaded files, please refer
+# in a docker folder mounted in root. Change to bind mounts if needed.
+# All containers are ran with user and group ids of the main user and 
+# share to aviod permissions issues of downloaded files, please refer
 # the read me file for more information.
 version: '3.9'
 services:
@@ -11,12 +11,13 @@ services:
     cap_add:
       - NET_ADMIN
     ports:
-      - 8888:8112 # deluge web interface
-      - 58846:58846 # deluge RPC
+      - 8080:8080 # qbittorrent web interface
+      - 6881:6881 # qbittorrent torrent port
+      - 6881:6881/udp # qbittorrent
       - 6789:6789 # nzbget
       - 9696:9696 # prowlarr
     volumes:
-      - /home/brandon/gluetun:/gluetun
+      - /docker/gluetun:/gluetun
     environment:
       - VPN_SERVICE_PROVIDER=airvpn
       - VPN_TYPE=wireguard
@@ -33,17 +34,19 @@ services:
       retries: 5
     restart: unless-stopped
 
-  deluge:
-    image: lscr.io/linuxserver/deluge:latest
-    container_name: deluge
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
     restart: unless-stopped
     environment:
       - PUID=1000
-      - PGID=100
+      - PGID=1000
       - TZ=America/Los_Angeles
+      - WEBUI_PORT=8080
+      - TORRENTING_PORT=6881
     volumes:
-      - /home/brandon/deluge:/config
-      - /media/data:/data
+      - /docker/qbittorrent:/config
+      - /data:/data
     network_mode: service:gluetun
 
   nzbget:
@@ -51,42 +54,45 @@ services:
     container_name: nzbget
     environment:
       - PUID=1000
-      - PGID=100
+      - PGID=1000
       - TZ=America/Los_Angeles
       - NZBGET_USER=user
       - NZBGET_PASS=password
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /home/brandon/nzbget:/config
-      - /media/data:/data
+      - /docker/nzbget:/config
+      - /data:/data
     restart: unless-stopped
     network_mode: service:gluetun
+
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
     container_name: prowlarr
     environment:
       - PUID=1000
-      - PGID=100
+      - PGID=1000
       - TZ=America/Los_Angeles
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /home/brandon/prowlarr:/config
+      - /docker/prowlarr:/config
     restart: unless-stopped
     network_mode: service:gluetun
+
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
     container_name: sonarr
     restart: unless-stopped
     environment:
       - PUID=1000
-      - PGID=100
+      - PGID=1000
       - TZ=America/Los_Angeles
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /home/brandon/sonarr:/config
-      - /media/data:/data
+      - /docker/sonarr:/config
+      - /data:/data
     ports:
       - 8989:8989
+
   radarr:
     image: lscr.io/linuxserver/radarr:latest
     container_name: radarr
@@ -97,21 +103,22 @@ services:
       - TZ=America/Los_Angeles
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /home/brandon/radarr:/config
-      - /media/data:/data
+      - /docker/radarr:/config
+      - /data:/data
     ports:
       - 7878:7878
+
   lidarr:
     container_name: lidarr
     image: lscr.io/linuxserver/lidarr:latest
     restart: unless-stopped
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /home/brandon/lidarr:/config
-      - /media/data:/data
+      - /docker/lidarr:/config
+      - /data:/data
     environment:
      - PUID=1000
-     - PGID=100
+     - PGID=1000
      - TZ=America/Los_Angeles
     ports:
       - 8686:8686
@@ -122,12 +129,12 @@ services:
     restart: unless-stopped
     environment:
       - PUID=1000
-      - PGID=100
+      - PGID=1000
       - TZ=America/Los_Angeles
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /home/brandon/bazarr:/config
-      - /media/data:/data
+      - /docker/bazarr:/config
+      - /data:/data
     ports:
       - 6767:6767
 
@@ -136,12 +143,12 @@ services:
     container_name: readarr
     environment:
       - PUID=1000
-      - PGID=100
+      - PGID=1000
       - TZ=America/Los_Angeles
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /home/brandon/readarr:/config
-      - /media/data:/data
+      - /docker/readarr:/config
+      - /data:/data
     ports:
       - 8787:8787
     restart: unless-stopped
