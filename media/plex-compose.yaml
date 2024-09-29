@@ -6,7 +6,7 @@ services:
     network_mode: host
     environment:
       - PUID=1000
-      - PGID=100
+      - PGID=1000
       - TZ=America/Los_Angeles
       - VERSION=docker
       - PLEX_CLAIM= #optional
@@ -15,7 +15,7 @@ services:
     devices:
      - /dev/dri:/dev/dri # QuickSync
     volumes:
-      - /home/brandon/docker/plex:/config
+      - /docker/plex:/config
       - /data:/data
     restart: unless-stopped
 
@@ -24,10 +24,10 @@ services:
     container_name: overseerr
     environment:
       - PUID=1000
-      - PGID=100
+      - PGID=1000
       - TZ=America/Los_Angeles
     volumes:
-      - /home/brandon/docker/overseer/config:/config
+      - /docker/overseer/config:/config
       - /data:/data
     ports:
       - 5055:5055
@@ -38,10 +38,10 @@ services:
     container_name: tautulli
     environment:
       - PUID=1000
-      - PGID=100
+      - PGID=1000
       - TZ=America/Los_Angeles
     volumes:
-      - /home/brandon/docker/tautulli:/config
+      - /docker/tautulli:/config
     ports:
       - 8181:8181
     restart: unless-stopped
