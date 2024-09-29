@@ -4,10 +4,10 @@ services:
     image: jellyfin/jellyfin
     environment:
       - PUID=1000
-      - PGID=100
+      - PGID=1000
       - TZ=America/Los_Angeles
     volumes:
-      - /home/brandon/docker/jellyfin:/config
+      - /docker/jellyfin:/config
       - /data:/data
     ports:
       - 8096:8096
@@ -20,10 +20,10 @@ services:
     image: fallenbagel/jellyseerr:latest
     environment:
       - PUID=1000
-      - PGID=100
+      - PGID=1000
       - TZ=America/Los_Angeles
     volumes:
-      - /home/brandon/docker/jellyseerr:/app/config
+      - /docker/jellyseerr:/app/config
     ports:
       - 5055:5055
     restart: unless-stopped
@@ -36,7 +36,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: mypassword
     volumes:
-      - /home/brandon/docker/jellyfin/stats/postgres:/var/lib/postgresql/data
+      - /docker/jellyfin/stats/postgres:/var/lib/postgresql/data
 
   jellystat:
     image: cyfershepard/jellystat:latest
@@ -50,7 +50,7 @@ services:
       JWT_SECRET: "my-secret-jwt-key"
       TZ: America/Los_Angeles
     volumes:
-      - /home/brandon/docker/jellyfin/stats/backup-data:/app/backend/backup-data
+      - /docker/jellyfin/stats/backup-data:/app/backend/backup-data
     ports:
       - "3000:3000"
     depends_on:
