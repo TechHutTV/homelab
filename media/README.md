@@ -28,6 +28,9 @@ Easy command to create the download directory scheme.
 ```
 mkdir -p downloads/qbittorrent/{completed,incomplete,torrents} && mkdir -p downloads/nzbget/{completed,intermediate,nzb,queue,tmp}
 ```
+### Fix NZBGet "directory does not appear to exist inside the container" error in Sonarr/Radarr
+Once NZBGet is setup go to settings and under **INCOMING NZBS** change the **AppendCategoryDir** to **No**. This will prevent some potential mapping issues and save on unnessesary directories.
+
 ### Network Share
 Before switching to zfs on Proxmox I used to use a network share from Unraid to store downloads and all my media. This was created by adding the share to the fstab file within my Docker server. Due note, the appliction ```cifs-utils``` is required for this method.
 ```
