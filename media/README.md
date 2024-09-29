@@ -14,7 +14,7 @@ data
 │   │   ├── incomplete
 │   │   └── torrents
 │   └── nzbget
-│       ├── complete
+│       ├── completed
 │       ├── intermediate
 │       ├── nzb
 │       ├── queue
@@ -26,7 +26,7 @@ data
 ```
 Easy command to create the download directory scheme.
 ```
-mkdir -p downloads/qbittorrent/{completed,incomplete,torrents} && mkdir -p downloads/nzbget/{complete,intermediate,nzb,queue,tmp}
+mkdir -p downloads/qbittorrent/{completed,incomplete,torrents} && mkdir -p downloads/nzbget/{completed,intermediate,nzb,queue,tmp}
 ```
 ### Network Share
 Before switching to zfs on Proxmox I used to use a network share from Unraid to store downloads and all my media. This was created by adding the share to the fstab file within my Docker server. Due note, the appliction ```cifs-utils``` is required for this method.
