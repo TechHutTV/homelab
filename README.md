@@ -1,7 +1,10 @@
 # My Homelab Setup
 Homelab stacks, templates, and more fun resources! 
 
-# Hardware
+## Navigation
+* [Media Server](https://github.com/TechHutTV/homelab/tree/main/media) - Plex, Jellyfin, *arr stack, and more!
+
+## Hardware
 
 Servers, affilate links below
 
