@@ -1,12 +1,12 @@
 mqtt:
-  enabled: True
-  host: core-mosquitto
+  enabled: true
+  host: 10.0.0.50
   user: mqtt-user
-  password: password
+  password: hopkins1
   port: 1883
 
 record:
-  enabled: True
+  enabled: true
   retain:
     days: 1
     mode: active_objects
@@ -20,6 +20,9 @@ detectors:
   coral1:
     type: edgetpu
     device: pci:0
+  coral2:
+    type: edgetpu
+    device: pci:1
 snapshots:
   enabled: true
   retain:
@@ -37,51 +40,104 @@ timestamp_style:
 
 go2rtc:
   streams:
+    kitchen:
+      - rtsp://admin:password@10.0.0.104/Preview_01_main
+      - "ffmpeg:living_room#audio=opus"
+    kitchen_sub:
+      - rtsp://admin:password@10.0.0.104/Preview_01_sub
+    studio:
+      - rtsp://admin:password@10.0.0.102/cam/realmonitor?channel=1&subtype=01
+      - "ffmpeg:studio#audio=opus"
+    studio_sub:
+      - rtsp://admin:password@10.0.0.102/cam/realmonitor?channel=1&subtype=0
     kids_room:
-    - rtsp://admin:password@10.0.0.56/Preview_01_main
+      - rtsp://admin:password@10.0.0.103/Preview_01_main
+      - "ffmpeg:kids_room#audio=opus"
     kids_room_sub:
-    - rtsp://admin:password@10.0.0.56/Preview_01_sub
+      - rtsp://admin:password@10.0.0.103/Preview_01_sub
     living_room:
-    - rtsp://admin:password@10.0.0.54/Preview_01_main
+      - rtsp://admin:password@10.0.0.100/cam/realmonitor?channel=1&subtype=01
+      - "ffmpeg:kitchen#audio=opus"
     living_room_sub:
-    - rtsp://admin:password@10.0.0.54/Preview_01_sub
+      - rtsp://admin:password@10.0.0.100/cam/realmonitor?channel=1&subtype=0
     flood_light:
-    - rtsp://admin:password@10.0.0.48/Preview_01_main
+      - rtsp://admin:password@10.0.0.105/Preview_01_main
+      - "ffmpeg:flood_light#audio=opus"
     flood_light_sub:
-    - rtsp://admin:password@10.0.0.48/Preview_01_sub
+      - rtsp://admin:password@10.0.0.105/Preview_01_sub
     front_porch:
-    - rtsp://admin:password@10.0.0.28/Preview_01_main
+      - rtsp://admin:password@10.0.0.99/Preview_01_main
     front_porch_sub:
-    - rtsp://admin:password@10.0.0.28/Preview_01_sub
+      - rtsp://admin:password@10.0.0.99/Preview_01_sub
     nana_porch:
-    - rtsp://admin:password@10.0.0.28/Preview_05_main
+      - rtsp://admin:password@10.0.0.99/Preview_02_main
     nana_porch_sub:
-    - rtsp://admin:password@10.0.0.28/Preview_05_sub
-    backyard:
-    - rtsp://admin:password@10.0.0.28/Preview_04_main
-    backyard_sub:
-    - rtsp://admin:password@10.0.0.28/Preview_04_sub
+      - rtsp://admin:password@10.0.0.99/Preview_02_sub
     east_side:
-    - rtsp://admin:password@10.0.0.28/Preview_03_main
+      - rtsp://admin:password@10.0.0.99/Preview_03_main
     east_side_sub:
-    - rtsp://admin:password@10.0.0.28/Preview_03_sub
+      - rtsp://admin:password@10.0.0.99/Preview_03_sub
     west_side:
-    - rtsp://admin:password@10.0.0.28/Preview_24_main
+      - rtsp://admin:password@10.0.0.99/Preview_04_main
     west_side_sub:
-    - rtsp://admin:password@10.0.0.28/Preview_24_sub
+      - rtsp://admin:password@10.0.0.99/Preview_04_sub
 
 ffmpeg:
   hwaccel_args: preset-vaapi
 
-cameras: # Reolink Camera
+cameras:
+  Studio:
+    ffmpeg:
+      inputs:
+        - path: rtsp://localhost:8554/studio
+          input_args: preset-rtsp-restream
+          roles:
+            - record
+        - path: rtsp://localhost:8554/studio_sub
+          input_args: preset-rtsp-restream
+          roles:
+            - detect
+      output_args:
+        record: preset-record-generic-audio-aac
+    detect:
+      width: 896
+      height: 512
+      fps: 10
+    objects:
+      track:
+        - person
+        - dog
+  Kitchen:
+    ffmpeg:
+      inputs:
+        - path: rtsp://localhost:8554/kitchen
+          input_args: preset-rtsp-restream
+          roles:
+            - record
+        - path: rtsp://localhost:8554/kitchen_sub
+          input_args: preset-rtsp-restream
+          roles:
+            - detect
+      output_args:
+        record: preset-record-generic-audio-aac
+    detect:
+      width: 896
+      height: 512
+      fps: 10
+    objects:
+      track:
+        - person
+        - dog
+    live:
+      stream_name: kitchen
   Kids_Room:
     ffmpeg:
       inputs:
-        - path: rtsp://127.0.0.1:8554/kids_room
+        - path: rtsp://localhost:8554/kids_room
           input_args: preset-rtsp-restream
           roles:
             - record
-        - path: rtsp://127.0.0.1:8554/kids_room_sub
+        - path: rtsp://localhost:8554/kids_room_sub
           input_args: preset-rtsp-restream
           roles:
             - detect
@@ -95,14 +151,16 @@ cameras: # Reolink Camera
       track:
         - person
         - dog
+    live:
+      stream_name: kids_room
   Living_Room:
     ffmpeg:
       inputs:
-        - path: rtsp://127.0.0.1:8554/living_room
+        - path: rtsp://localhost:8554/living_room
           input_args: preset-rtsp-restream
           roles:
             - record
-        - path: rtsp://127.0.0.1:8554/living_room_sub
+        - path: rtsp://localhost:8554/living_room_sub
           input_args: preset-rtsp-restream
           roles:
             - detect
@@ -116,14 +174,16 @@ cameras: # Reolink Camera
       track:
         - person
         - dog
+    live:
+      stream_name: living_room
   Flood_Light:
     ffmpeg:
       inputs:
-        - path: rtsp://127.0.0.1:8554/flood_light
+        - path: rtsp://localhost:8554/flood_light
           input_args: preset-rtsp-restream
           roles:
             - record
-        - path: rtsp://127.0.0.1:8554/flood_light_sub
+        - path: rtsp://localhost:8554/flood_light_sub
           input_args: preset-rtsp-restream
           roles:
             - detect
@@ -137,14 +197,16 @@ cameras: # Reolink Camera
       track:
         - person
         - dog
+    live:
+      stream_name: flood_light
   Front_Porch:
     ffmpeg:
       inputs:
-        - path: rtsp://127.0.0.1:8554/front_porch
+        - path: rtsp://localhost:8554/front_porch
           input_args: preset-rtsp-restream
           roles:
             - record
-        - path: rtsp://127.0.0.1:8554/front_porch_sub
+        - path: rtsp://localhost:8554/front_porch_sub
           input_args: preset-rtsp-restream
           roles:
             - detect
@@ -158,14 +220,16 @@ cameras: # Reolink Camera
       track:
         - person
         - dog
+    live:
+      stream_name: front_porch
   Nanas_Porch:
     ffmpeg:
       inputs:
-        - path: rtsp://127.0.0.1:8554/nana_porch
+        - path: rtsp://localhost:8554/nana_porch
           input_args: preset-rtsp-restream
           roles:
             - record
-        - path: rtsp://127.0.0.1:8554/nana_porch_sub
+        - path: rtsp://localhost:8554/nana_porch_sub
           input_args: preset-rtsp-restream
           roles:
             - detect
@@ -175,27 +239,6 @@ cameras: # Reolink Camera
       width: 640
       height: 360
       fps: 7
-    objects:
-      track:
-        - person
-        - dog
-  Backyard:
-    ffmpeg:
-      inputs:
-        - path: rtsp://127.0.0.1:8554/backyard
-          input_args: preset-rtsp-restream
-          roles:
-            - record
-        - path: rtsp://127.0.0.1:8554/backyard_sub
-          input_args: preset-rtsp-restream
-          roles:
-            - detect
-      output_args:
-        record: preset-record-generic-audio-aac
-    detect:
-      width: 1536
-      height: 432
-      fps: 15
     objects:
       track:
         - person
@@ -203,11 +246,11 @@ cameras: # Reolink Camera
   West_Side:
     ffmpeg:
       inputs:
-        - path: rtsp://127.0.0.1:8554/west_side
+        - path: rtsp://localhost:8554/west_side
           input_args: preset-rtsp-restream
           roles:
             - record
-        - path: rtsp://127.0.0.1:8554/west_side_sub
+        - path: rtsp://localhost:8554/west_side_sub
           input_args: preset-rtsp-restream
           roles:
             - detect
@@ -224,11 +267,11 @@ cameras: # Reolink Camera
   East_Side:
     ffmpeg:
       inputs:
-        - path: rtsp://127.0.0.1:8554/east_side
+        - path: rtsp://localhost:8554/east_side
           input_args: preset-rtsp-restream
           roles:
             - record
-        - path: rtsp://127.0.0.1:8554/east_side_sub
+        - path: rtsp://localhost:8554/east_side_sub
           input_args: preset-rtsp-restream
           roles:
             - detect
@@ -249,3 +292,23 @@ logger:
   # Optional: Component specific logger overrides
   logs:
     frigate.event: debug
+version: 0.14
+camera_groups:
+  Inside:
+    order: 1
+    icon: LuWarehouse
+    cameras:
+      - Garage
+      - Kids_Room
+      - Kitchen
+      - Living_Room
+      - Studio
+  Outside:
+    order: 2
+    icon: LuTreePine
+    cameras:
+      - East_Side
+      - Flood_Light
+      - Front_Porch
+      - West_Side
+      - Nanas_Porch
