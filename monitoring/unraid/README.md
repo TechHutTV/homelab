@@ -3,7 +3,7 @@
 ## Add your configuration
 Before we add our Telegraf container, we need to add our configuration. In this example, we are placing it in the default directory for Docker configurations on Unraid. Change anything here to better fit your setup. When working with my appdata directory in Unraid, I generally use the [Dynamix File Manager](https://forums.unraid.net/topic/120982-dynamix-file-manager/), It's an awesome tool that makes navigating shares in the Unraid UI easy.
 
-First, download the [telegraf.conf](https://github.com/TechHutTV/server-monitoring/blob/main/unraid/telegraf.conf) file located in this repository and make any changes you'd like. Most everything in my configuration should work as-is with Unraid, but you will need to edit the output plugin information to properly send data to your InfluxDB 2 bucket. _Note: Use a new bucket specifically for this Unraid instance._
+First, download the [telegraf.conf](https://github.com/TechHutTV/homelab/blob/main/monitoring/unraid/telegraf.conf) file located in this repository and make any changes you'd like. Most everything in my configuration should work as-is with Unraid, but you will need to edit the output plugin information to properly send data to your InfluxDB 2 bucket. _Note: Use a new bucket specifically for this Unraid instance._
 
 ```
 [[outputs.influxdb_v2]]
@@ -39,7 +39,7 @@ Other than these adjustments, everything can be left as is included in the templ
 
 If there are no issues, we check to see if the data is being properly exported to InfluxDB 2. Head over to your dashboard and open the bucket you created for Unraid. It should look like the picture below. Go through the data and make sure nothing is missing. In my installation, I have 7 tags for Docker data under the _messurements ID and another tag for every plugin I have enabled.
 
-![Unraid data preview in InfluxDB 2](https://github.com/TechHutTV/server-monitoring/blob/main/unraid/unraid-data-preview.png?raw=true)
+![Unraid data preview in InfluxDB 2](https://github.com/TechHutTV/homelab/blob/main/monitoring/unraid/unraid-data-preview.png?raw=true)
 
 ## Nivida Support
 
