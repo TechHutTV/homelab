@@ -3,7 +3,7 @@ Docker compose featuring Grafana, Prometheus, Influxdb2, and Telegraf. Tested an
 
 **Note:** This is not a secure way to do this. ONLY use this in closed off, private testing enviorments. Eventually, we will add steps for SSL and other security features.
 
-**System Specific Guides and Files:** [Unraid](https://github.com/TechHutTV/server-monitoring/tree/main/unraid) | Proxmox (wip) | Synology (wip)
+**System Specific Guides and Files:** [Unraid](https://github.com/TechHutTV/homelab/tree/main/monitoring/unraid) | Proxmox (wip) | Synology (wip)
 
 ## Installation
 This assumes you have the last version of Docker. For my installation I used the [convenience script](https://docs.docker.com/engine/install/ubuntu/#install-using-the-convenience-script) on Ubuntu 22.04.
