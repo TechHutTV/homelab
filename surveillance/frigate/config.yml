@@ -2,7 +2,7 @@ mqtt:
   enabled: true
   host: 10.0.0.50
   user: mqtt-user
-  password: hopkins1
+  password: password
   port: 1883
 
 record:
