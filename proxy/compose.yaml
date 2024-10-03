@@ -1,0 +1,23 @@
+# not tested
+services:
+  app:
+    image: 'jc21/nginx-proxy-manager:latest'
+    restart: unless-stopped
+    ports:
+      - 80:80
+      - 443:443
+      - 81:81
+    environment:
+      PUID: 1000
+      PGID: 1000
+    volumes:
+      - /home/brandon/docker/nginx-proxy/data:/data
+      - /home/brandon/docker/nginx-proxy/letsencrypt:/etc/letsencrypt
+    networks:
+      default:
+        external: true
+        name: nginx-proxy
+    healthcheck:
+      test: ["CMD", "/usr/bin/check-health"]
+      interval: 10s
+      timeout: 3s
