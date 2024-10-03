@@ -5,9 +5,9 @@ services:
     container_name: nginx-proxy-manager
     restart: unless-stopped
     ports:
-      - 80:80
-      - 443:443
-      - 81:81
+      - 9080:80
+      - 9443:443
+      - 9081:81
     environment:
       PUID: 1000
       PGID: 1000
