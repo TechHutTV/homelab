@@ -1,6 +1,6 @@
 # Work in progress
 
-# Proxy with Interal and External Access
+# Internal and External DNS
 
 Goal: Use a proxy and ddns to manage two sperate domains. One for local only access to give all local ports a subdoamin and another to give external access via a domain for select services.
 
