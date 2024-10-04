@@ -56,7 +56,7 @@ services:
 ```
 
 
-Due note, as seen in my docker compose you'll need to either net the network mode to [host](https://stackoverflow.com/questions/42438381/docker-nginx-proxy-to-host#:~:text=Use%20network_mode%3A%20host%2C%20this%20will%20bind%20your%20nginx,every%20exposed%20port%20is%20binded%20to%20host%27s%20interface.) or [expose the specific ports](https://www.reddit.com/r/homelab/comments/1c38ize/nginx_proxy_manager_cant_route_to_different_port/#:~:text=Nginx%20Proxy%20Manager%20is%20in%20a%20docker%20container.) for servers that are running on your home network from a different machine. Also, be sure to checkout their[ Advanced Configuration](https://nginxproxymanager.com/advanced-config/) documents.
+Due note, as seen in my docker compose you'll need to either net the network mode to [host](https://stackoverflow.com/questions/42438381/docker-nginx-proxy-to-host#:~:text=Use%20network_mode%3A%20host%2C%20this%20will%20bind%20your%20nginx,every%20exposed%20port%20is%20binded%20to%20host%27s%20interface.) or [expose the specific ports](https://www.reddit.com/r/homelab/comments/1c38ize/nginx_proxy_manager_cant_route_to_different_port/#:~:text=Nginx%20Proxy%20Manager%20is%20in%20a%20docker%20container.) for servers that are running on your home network from a different machine. Also, be sure to checkout their [Advanced Configuration](https://nginxproxymanager.com/advanced-config/) documents.
 
 
 ## Setup DDNS for and Cloudflare for Public Access
@@ -76,7 +76,7 @@ This is the port on the device that is initiating the communication. For example
 #### Destination Port:
 This is the port on the device that will receive the communication. For example, when you're connecting to a web server. The destination port is fixed for the service you're trying to reach and tells the receiving device what service or application should handle the incoming data.
 
-![Omada Port Forwarding](https://github.com/TechHutTV/homelab/blob/main/proxy/odama-port-forwarding-443.jpeg)
+![Omada Port Forwarding](https://github.com/TechHutTV/homelab/blob/main/proxy/images/odama-port-forwarding-443.jpeg)
 
 ### Dynamic DNS
 1. Within Cloudflare use an A record create the root domain and/or sub-domains you wish to point to speficic services within your home network. For the IPv4 address we will have our DDNS container handle that. I recommened adding a random IP now (ie. 8.8.8.8) so in the next step we can varify that it will update automatically to our public IP. Be sure to keep the 'Proxy status' option enabled.
@@ -118,7 +118,8 @@ services:
 #### Known Issues and Tips
 * **Too Many Redirects:** Force SSL may not work with CloudFlare proxying. [issue](https://github.com/NginxProxyManager/nginx-proxy-manager/issues/852)
 * **Disable Cloudflare Proxy on Streaming:** Jellyfin, Plex and other streaming services are not allowed to use Proxy on the free plan. Doing this technically [breaks their TOS](https://www.cloudflare.com/service-specific-terms-application-services/#content-delivery-network-terms) and may result in your account getting banned. Just to be safe I used a subdomain for my jellyfin instance as a seperate A-Record and disabled the Cloudflair Proxy.
-![Disable Cloudflare Proxy for Media Streaming](https://github.com/TechHutTV/homelab/blob/main/proxy/disable-proxy-media-streaming.png)
+* 
+![Disable Cloudflare Proxy for Media Streaming](https://github.com/TechHutTV/homelab/blob/main/proxy/images/disable-proxy-media-streaming.png)
 
 ---
 
@@ -131,7 +132,9 @@ disc
 
 ### Local IP on Registar
 Assign a local IP scheme in the domain registration website. The local IP you will use is the same of the machine running NGINX Proxy Manager. (ie. 10.0.0.60). You'll want to assign this to the A-Record for the main domain and create a CNAME Record as a wildcard (*) pointing to the main domain name. Due note, this may take some time, it took about 15 minutes for the record to update for me.
-![Record for Local Top-Level Domain](https://github.com/TechHutTV/homelab/blob/main/proxy/local-ip-wildcard.png)
+
+![Record for Local Top-Level Domain](https://github.com/TechHutTV/homelab/blob/main/proxy/images/local-ip-wildcard.png)
+
 While youre on the registar find your API key. You'll need this for generating SSL certificates in the DNS challenges option. Many providers are supported and you can see a [full list here](https://community.letsencrypt.org/t/dns-providers-who-easily-integrate-with-lets-encrypt-dns-validation/86438). I am using Namecheap so I'll need my username and the [API key](https://www.namecheap.com/support/api/intro).
 
 ### Adding Proxy Hosts
@@ -147,12 +150,20 @@ Add a subdomain (hello.example.com) in proxy hosts with the IP running this hell
 2. Navigate to hello.example.com to test if the reverse proxy is working.
 
 ### Generate Let's Encrypt Certificates
-You navigate to _SSL Certificates > Add SSL Certifcate_. Type in your root domain name (example.com) and then enable 'Use a DNS Challenge'. Select your registar and paste in the API we saved from eariler. Click save and add another SLL Certifcate for your wildcard. (*.example.com)
+Navigate to _SSL Certificates > Add SSL Certifcate_. Type in your root domain name (example.com) click add then input the wildcare domain (*.example.com) and then enable 'Use a DNS Challenge'. Select your registar and paste in the API we saved from eariler. If you run into error make sure that your API key is correct, whitelist your public IP with you registar if needed, or try increaing the _Propagation Seconds_ to 120 seconds.
 
 #### Testing
-With the helloworld container will running, head over to Proxy Hosts and edit the hello.example.com host. In the SSL tab add _hello.example.com_ under the SSL Certificate and enable _Force SSL_. Navigate to hello.example.com to ensure that the connection is automatically redirected to https.
+With the helloworld container still running, head over to _Proxy Hosts_ and edit the hello.example.com host. In the SSL tab add _*.example.com_ under the SSL Certificate and enable _Force SSL_. Navigate to hello.example.com to ensure that the connection is automatically redirected to https.
+
+#### Known Issues and Tips
+* **Namecheap API Whitelist:** Namecheap isn't really the best for this if you have a Dynamic IP. Whenever I want to update my certificates I need to whitelist my public IP so it can use their API. Very annoying and I'll probally move my domains to Cloudflare when they're doing to expire.
 
 ## Setup Twingate for remote connections
 Goal: have local top-level domain working when connected remote with Twingate 
+
+# Additional Resources
+
+[![IMAGE ALT TEXT](https://github.com/TechHutTV/homelab/blob/main/proxy/images/technotim-security-guide.jpg)](https://www.youtube.com/watch?v=Cs8yOmTJNYQ "Self-Hosting Security Guide for your HomeLab @TechnoTim")
+
 
 
