@@ -80,8 +80,9 @@ This is the port on the device that will receive the communication. For example,
 
 ### Dynamic DNS
 1. Within Cloudflare use an A record create the root domain and/or sub-domains you wish to point to speficic services within your home network. For the IPv4 address we will have our DDNS container handle that. I recommened adding a random IP now (ie. 8.8.8.8) so in the next step we can varify that it will update automatically to our public IP. Be sure to keep the 'Proxy status' option enabled.
-2. If needing to use DDNS edit your Docker Compose file add your API, Zone, and domain names including sub-domains or a wildcard (*.exmaple.com) you want to setup for external access. When the container runs ensure there are no errors and the public IP in Cloudflare is updated to your actual IP.
-Below is the compose tempplate for the cloudflare-dynamic-dns container. You can use it as I have it within my compose file or set it up seperatly.
+2. If needing to use DDNS edit your Docker Compose file add your API, and domain names including sub-domains you want to setup for external access. When the container runs ensure there are no errors and the public IP in Cloudflare is updated to your actual IP.
+
+Below is the compose template for the cloudflare-dynamic-dns container. You can use it as I have it within my compose file or set it up seperatly.
 ```
 services:
   ddns:
@@ -119,18 +120,39 @@ services:
 * **Disable Cloudflare Proxy on Streaming:** Jellyfin, Plex and other streaming services are not allowed to use Proxy on the free plan. Doing this technically [breaks their TOS](https://www.cloudflare.com/service-specific-terms-application-services/#content-delivery-network-terms) and may result in your account getting banned. Just to be safe I used a subdomain for my jellyfin instance as a seperate A-Record and disabled the Cloudflair Proxy.
 ![Disable Cloudflare Proxy for Media Streaming](https://github.com/TechHutTV/homelab/blob/main/proxy/disable-proxy-media-streaming.png)
 
-
 ---
-# Work in Progress
 
-## Setup a top-level domain for local use
-General Steps
-1. Assign a local IP scheme in the domain registration webaite. (ie. 10.0.0.60, container IP with proxy)
-2. Add the domain in Nginx Proxy using the steps from a registar
-3. Generate Let's Encrypt Certificate useing a DNS challenge and with API of your registar
-4. Assign sub-domains to carious services with SSL certificates.
-5. 
+# Local Top-Level Domains and Twingate
+
+Within this section we will use our NGINX Proxy Manager setup and our domain registar directly to create a proxy host scheme for local access only. This will also allow us to use letsencrypt to generate SSL certificates for our local network. This will elimate that horrible _this site is not secure_ message on our services! Also, we will be setting up Twingate (a channel sponsor) to enable a zero trust network for remote access to those services we don't want to expose publically.
+
+## Setup a Top-Level Domain for Local Use
+disc
+
+### Local IP on Registar
+Assign a local IP scheme in the domain registration website. The local IP you will use is the same of the machine running NGINX Proxy Manager. (ie. 10.0.0.60). You'll want to assign this to the A-Record for the main domain and create a CNAME Record as a wildcard (*) pointing to the main domain name. Due note, this may take some time, it took about 15 minutes for the record to update for me.
+![Record for Local Top-Level Domain](https://github.com/TechHutTV/homelab/blob/main/proxy/local-ip-wildcard.png)
+While youre on the registar find your API key. You'll need this for generating SSL certificates in the DNS challenges option. Many providers are supported and you can see a [full list here](https://community.letsencrypt.org/t/dns-providers-who-easily-integrate-with-lets-encrypt-dns-validation/86438). I am using Namecheap so I'll need my username and the [API key](https://www.namecheap.com/support/api/intro).
+
+### Adding Proxy Hosts
+This will mirror the steps above, with some slight differeces. In NGINX Proxy Manager navigate to _Hosts > Add Proxy Host_. Add the domain name for the service (ie. example.com) and select http (this may vary on if the service is running on https locally) then add the local IP and port for the service you want forwarded to that domain. If you want to test everything check below.
+
+#### Testing
+There is a simple container we can use to test our domain with the local IP. In the terminal run the docker command below on the same machine that is running your Proxy Manager.
+```
+docker run -p 8888:80/tcp "karthequian/helloworld:latest"
+```
+Add a subdomain (hello.example.com) in proxy hosts with the IP running this helloworld container and the port _8888_. Set it to http only with no SSL since we have not set that up yet.
+1. Navigate to example.com:8888 to test if the A-Record and CNAME is working properly.
+2. Navigate to hello.example.com to test if the reverse proxy is working.
+
+### Generate Let's Encrypt Certificates
+You navigate to _SSL Certificates > Add SSL Certifcate_. Type in your root domain name (example.com) and then enable 'Use a DNS Challenge'. Select your registar and paste in the API we saved from eariler. Click save and add another SLL Certifcate for your wildcard. (*.example.com)
+
+#### Testing
+With the helloworld container will running, head over to Proxy Hosts and edit the hello.example.com host. In the SSL tab add _hello.example.com_ under the SSL Certificate and enable _Force SSL_. Navigate to hello.example.com to ensure that the connection is automatically redirected to https.
+
 ## Setup Twingate for remote connections
-Goal: have local top-level domain working when connected remote with Twingate
+Goal: have local top-level domain working when connected remote with Twingate 
 
 
