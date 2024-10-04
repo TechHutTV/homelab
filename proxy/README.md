@@ -35,6 +35,8 @@ volumes:
   proxy-letsencrypt:
 ```
 
+This is setup as a host network to allow localhost and local networking connections without needing to add ports for all the services to the container.
+
 _Below is a basic compose template from NGINX if you don't want to use [mine](https://github.com/TechHutTV/homelab/blob/main/proxy/compose.yaml)._
 
 #### Offical Compose from NginxProxyManager/nginx-proxy-manager
@@ -55,8 +57,20 @@ services:
       - ./letsencrypt:/etc/letsencrypt
 ```
 
+Due note, as seen in my docker compose you'll need to either need to set the network mode to [host](https://stackoverflow.com/questions/42438381/docker-nginx-proxy-to-host#:~:text=Use%20network_mode%3A%20host%2C%20this%20will%20bind%20your%20nginx,every%20exposed%20port%20is%20binded%20to%20host%27s%20interface.) or [expose the specific ports](https://www.reddit.com/r/homelab/comments/1c38ize/nginx_proxy_manager_cant_route_to_different_port/#:~:text=Nginx%20Proxy%20Manager%20is%20in%20a%20docker%20container.) if running on bridge mode for servers that are running on your home network from a different machine. Also, be sure to checkout their [Advanced Configuration](https://nginxproxymanager.com/advanced-config/) documents.
 
-Due note, as seen in my docker compose you'll need to either net the network mode to [host](https://stackoverflow.com/questions/42438381/docker-nginx-proxy-to-host#:~:text=Use%20network_mode%3A%20host%2C%20this%20will%20bind%20your%20nginx,every%20exposed%20port%20is%20binded%20to%20host%27s%20interface.) or [expose the specific ports](https://www.reddit.com/r/homelab/comments/1c38ize/nginx_proxy_manager_cant_route_to_different_port/#:~:text=Nginx%20Proxy%20Manager%20is%20in%20a%20docker%20container.) for servers that are running on your home network from a different machine. Also, be sure to checkout their [Advanced Configuration](https://nginxproxymanager.com/advanced-config/) documents.
+If using bridge mode see the example below.
+```
+  proxy:
+    ...
+    network_mode: bridge
+    ports:
+      - 5080:80
+      - 5443:443
+      - 5000:81
+      - 8096:8096 # add ports you want to expose that are not on your local server
+    ...
+```
 
 
 ## Setup DDNS for and Cloudflare for Public Access
@@ -68,7 +82,7 @@ Due note, as seen in my docker compose you'll need to either net the network mod
 ### Portforwarding
 This is different for every router so you may need to do additional research to do this on your specific hardware. I currently use the Omada stack for networking needs. Basically, it's like Ubiquiti but cheaper (you get what you pay for).
 
-Open the ports on your router for the 80 and 443 ports we setup in NGINX Proxy Manager. In my docker compose file I used 9080 and 9443 so these are the ports I would open with the local IP of the machine that NGINX Proxy Manager is installed on. In my setup I needed to set the source port and destination port. See my example below.
+Open the ports on your router for the 80 and 443 ports we setup in NGINX Proxy Manager. In my docker compose file I'm using the host networking mode so I'd open the ports 80 and 443 with the local IP of the machine that NGINX Proxy Manager is installed on. In my setup I needed to set the source port and destination port. See my example below.
   
 #### Source Port:
 This is the port on the device that is initiating the communication. For example, when your computer sends a request to a server, it uses a source port to identify itself.
@@ -77,6 +91,8 @@ This is the port on the device that is initiating the communication. For example
 This is the port on the device that will receive the communication. For example, when you're connecting to a web server. The destination port is fixed for the service you're trying to reach and tells the receiving device what service or application should handle the incoming data.
 
 ![Omada Port Forwarding](https://github.com/TechHutTV/homelab/blob/main/proxy/images/odama-port-forwarding-443.jpeg)
+
+If using bridge mode with custom ports, for example 5080 and 5443 as shown in the example. I'd set the destination port to 5443 and the source port to 443 for https.
 
 ### Dynamic DNS
 1. Within Cloudflare use an A record create the root domain and/or sub-domains you wish to point to speficic services within your home network. For the IPv4 address we will have our DDNS container handle that. I recommened adding a random IP now (ie. 8.8.8.8) so in the next step we can varify that it will update automatically to our public IP. Be sure to keep the 'Proxy status' option enabled.
