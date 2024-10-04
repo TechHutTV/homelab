@@ -1,13 +1,19 @@
-# Work in progress
+# External Proxy and Internal Top-Level Domains
 
-# NGINX Proxy Manager for Local and External Domains (and DDNS)
+This is going to be an overview of my setup for connecting to specific services through a proxy and DDNS combo, local top-level domain names, and how I connect to the internal home network remotley with Twingate.
 
 This is done on Proxmox with an LXC running Ubuntu 22.04 and Docker. However, these steps will work with any Docker installation. If you want details on installing Docker and a breif overview of all the basics you need to know to get started checkout our [7 Docker Basics for Beginners](https://techhut.tv/7-docker-basics-for-beginner).
 
 ## Installing NGINX Proxy Manager
-This is done with the [Docker Compose file](https://github.com/TechHutTV/homelab/blob/main/proxy/compose.yaml) within this reposity. Do note I made some customizations for how I specifically like to set it up. I've changed some of the external ports to access 80, 443, and the GUI for NGINX Proxy Manager as well as placing the storage within a folder in my home directory. Please change these as needed or use the [offical compose file](https://github.com/NginxProxyManager/nginx-proxy-manager) from NGINX Proxy Manager. Additionally, I've added the container 'cloudflare-dynamic-dns' as my IP address changes randomly. If you don't have a dynamic IP address or don't have intention on exposing a service to the internet you can remove this container from the compose file.
+This is done with the [Docker Compose file](https://github.com/TechHutTV/homelab/blob/main/proxy/compose.yaml) within this reposity. Do note I made some customizations for how I specifically like to set it up. I've changed some of the external ports to access 80, 443, and the GUI for NGINX Proxy Manager as well as placing the storage within [volumes](https://docs.docker.com/engine/storage/volumes/). Please change these as needed or use the [offical compose file](https://github.com/NginxProxyManager/nginx-proxy-manager) as seen below. Additionally, I've added the container [cloudflare-dynamic-dns](https://github.com/favonia/cloudflare-ddns) as my IP address changes randomly. If you don't have a dynamic IP address or don't have intention on exposing a service to the internet you can remove this container from the compose file.
 
-Below is a basic compose template from NGINX if you don't want to use mine.
+Below is a basic compose template from NGINX if you don't want to use [mine](https://github.com/TechHutTV/homelab/blob/main/proxy/compose.yaml).
+
+### Offical Compose from NginxProxyManager/nginx-proxy-manager
+
+Checkout the [quick setup](https://github.com/NginxProxyManager/nginx-proxy-manager?tab=readme-ov-file#quick-setup) section in their offical repo.
+
+You can add an image or a code block, too.
 
 ```
 services:
@@ -22,16 +28,8 @@ services:
       - ./data:/data
       - ./letsencrypt:/etc/letsencrypt
 ```
+Due note, as seen in my docker compose you'll need to either net the network mode to [host](https://stackoverflow.com/questions/42438381/docker-nginx-proxy-to-host#:~:text=Use%20network_mode%3A%20host%2C%20this%20will%20bind%20your%20nginx,every%20exposed%20port%20is%20binded%20to%20host%27s%20interface.) or [expose the specific ports](https://www.reddit.com/r/homelab/comments/1c38ize/nginx_proxy_manager_cant_route_to_different_port/#:~:text=Nginx%20Proxy%20Manager%20is%20in%20a%20docker%20container.) for servers that are running on your home network from a different machine. Also, be sure to checkout their[ Advanced Configuration](https://nginxproxymanager.com/advanced-config/) documents.
 
-## Setup a top-level domain for local use
-General Steps
-1. Assign a local IP scheme in the domain registration webaite. (ie. 10.0.0.60, container IP with proxy)
-2. Add the domain in Nginx Proxy using the steps from a registar
-3. Generate Let's Encrypt Certificate useing a DNS challenge and with API of your registar
-4. Assign sub-domains to carious services with SSL certificates.
-5. 
-## Setup Twingate for remote connections
-Goal: have local top-level domain working when connected remote with Twingate
 
 ## Setup DDNS for public access domain
 1. Sign up for a Cloudflare account and use it to manage your domain using [this guide](https://developers.cloudflare.com/fundamentals/setup/manage-domains/add-site/).
@@ -43,15 +41,40 @@ Below is the compose tempplate for the cloudflare-dynamic-dns container. You can
 ```
 services:
   ddns:
-    image: mxmlndml/cloudflare-dynamic-dns:latest
-    container_name: cloudflare-dynamic-dns
-    restart: unless-stopped
+    image: favonia/cloudflare-ddns:latest
+    container_name: cloudflare-ddns
+    # network_mode: host
+    # This bypasses network isolation and makes IPv6 easier
+    restart: always
+    user: "1000:1000"
+    read_only: true
+    # Make the container filesystem read-only (optional but recommended)
+    cap_drop: [all]
+    # Drop all Linux capabilities (optional but recommended)
+    security_opt: [no-new-privileges:true]
+    # Another protection to restrict superuser privileges (optional but recommended)
     environment:
-      - "API_KEY=${API_KEY}"
-      - "ZONE_ID=${ZONE_ID}"
-      - "DOMAIN_NAMES=example.com,dyndns.example.com"
-      - "RECORD_TYPES=A"
-      - "INTERVAL=5"
+      - CLOUDFLARE_API_TOKEN=token
+      - DOMAINS=example.com,jellyfin.example.com
+      - PROXIED=true
+        # Tell Cloudflare to cache webpages and hide your IP (optional)
+      - IP6_PROVIDER=none
 ```
 6. Now head over to NGINX Proxy Manager and create your SSL certificates. You navigate to SSL Certificates > Add SSL Certifcate. Type in your domain name, in my instance I used a wildcard (*.example.com) and then enable 'Use a DNS Challenge'. Select Cloudflare and paste in the API we saved from eariler.
 7. Now in NGINX Proxy Manager navigate to Hosts > Add Proxy Host. Add the domain name for the service (ie. nextcloud.example.com) and select http (this may vary on if the service is running on https locally) then add the local IP and port for the service you want forwarded to the domain. Depending on the service you may need to enable 'Websockets Support', but I always select 'Block Common Exploits'. Nagivate the the SSL tab and select your SSL Certificate and enable 'Force SSL'
+
+
+---
+# Work in Progress
+
+## Setup a top-level domain for local use
+General Steps
+1. Assign a local IP scheme in the domain registration webaite. (ie. 10.0.0.60, container IP with proxy)
+2. Add the domain in Nginx Proxy using the steps from a registar
+3. Generate Let's Encrypt Certificate useing a DNS challenge and with API of your registar
+4. Assign sub-domains to carious services with SSL certificates.
+5. 
+## Setup Twingate for remote connections
+Goal: have local top-level domain working when connected remote with Twingate
+
+
