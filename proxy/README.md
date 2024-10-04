@@ -7,13 +7,39 @@ This is done on Proxmox with an LXC running Ubuntu 22.04 and Docker. However, th
 ## Installing NGINX Proxy Manager
 This is done with the [Docker Compose file](https://github.com/TechHutTV/homelab/blob/main/proxy/compose.yaml) within this reposity. Do note I made some customizations for how I specifically like to set it up. I've changed some of the external ports to access 80, 443, and the GUI for NGINX Proxy Manager as well as placing the storage within [volumes](https://docs.docker.com/engine/storage/volumes/). Please change these as needed or use the [offical compose file](https://github.com/NginxProxyManager/nginx-proxy-manager) as seen below. Additionally, I've added the container [cloudflare-dynamic-dns](https://github.com/favonia/cloudflare-ddns) as my IP address changes randomly. If you don't have a dynamic IP address or don't have intention on exposing a service to the internet you can remove this container from the compose file.
 
+### NGINX Proxy Manager Compose (customized)
+
+```
+services:
+  proxy:
+    image: 'jc21/nginx-proxy-manager:latest'
+    container_name: nginx-proxy-manager
+    restart: unless-stopped
+    ports:
+      - 5080:80
+      - 5443:443
+      - 5000:81
+      - 8096:8096 # add ports you want to expose that are not on your local server
+    environment:
+      PUID: 1000
+      PGID: 1000
+    volumes:
+      - proxy-data:/data
+      - proxy-letsencrypt:/etc/letsencrypt
+    healthcheck:
+      test: ["CMD", "/usr/bin/check-health"]
+      interval: 10s
+      timeout: 3s
+volumes:
+  proxy-data:
+  proxy-letsencrypt:
+```
+
 _Below is a basic compose template from NGINX if you don't want to use [mine](https://github.com/TechHutTV/homelab/blob/main/proxy/compose.yaml)._
 
-### Offical Compose from NginxProxyManager/nginx-proxy-manager
+#### Offical Compose from NginxProxyManager/nginx-proxy-manager
 
 Checkout the [quick setup](https://github.com/NginxProxyManager/nginx-proxy-manager?tab=readme-ov-file#quick-setup) section in their offical repo.
-
-You can add an image or a code block, too.
 
 ```
 services:
@@ -28,6 +54,8 @@ services:
       - ./data:/data
       - ./letsencrypt:/etc/letsencrypt
 ```
+
+
 Due note, as seen in my docker compose you'll need to either net the network mode to [host](https://stackoverflow.com/questions/42438381/docker-nginx-proxy-to-host#:~:text=Use%20network_mode%3A%20host%2C%20this%20will%20bind%20your%20nginx,every%20exposed%20port%20is%20binded%20to%20host%27s%20interface.) or [expose the specific ports](https://www.reddit.com/r/homelab/comments/1c38ize/nginx_proxy_manager_cant_route_to_different_port/#:~:text=Nginx%20Proxy%20Manager%20is%20in%20a%20docker%20container.) for servers that are running on your home network from a different machine. Also, be sure to checkout their[ Advanced Configuration](https://nginxproxymanager.com/advanced-config/) documents.
 
 
