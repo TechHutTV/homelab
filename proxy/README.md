@@ -1,6 +1,6 @@
 # Work in progress
 
-# Setting up NGINX Proxy Manager for local and external domains
+# NGINX Proxy Manager for Local and External Domains (and DDNS)
 
 This is done on Proxmox with an LXC running Ubuntu 22.04 and Docker. However, these steps will work with any Docker installation. If you want details on installing Docker and a breif overview of all the basics you need to know to get started checkout our [7 Docker Basics for Beginners](https://techhut.tv/7-docker-basics-for-beginner).
 
