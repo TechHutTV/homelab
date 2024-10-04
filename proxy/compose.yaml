@@ -3,14 +3,7 @@ services:
     image: 'jc21/nginx-proxy-manager:latest'
     container_name: nginx-proxy-manager
     restart: unless-stopped
-    ports:
-      - 5080:80
-      - 5443:443
-      - 5000:81
-      - 8096:8096 # add ports you want to expose that are not on your local server
-    environment:
-      PUID: 1000
-      PGID: 1000
+    network_mode: host
     volumes:
       - proxy-data:/data
       - proxy-letsencrypt:/etc/letsencrypt
@@ -22,17 +15,26 @@ services:
   ddns:
     image: favonia/cloudflare-ddns:latest
     container_name: cloudflare-ddns
-    # network_mode: host # This bypasses network isolation and makes IPv6 easier
+    # network_mode: host # This bypasses network isolation and makes IPv6 easier (optional; see below)
     restart: always
-    user: "1000:1000"
+    user: "1000:1000" # Run the updater with specific user and group IDs (in that order).
     read_only: true # Make the container filesystem read-only (optional but recommended)
     cap_drop: [all] # Drop all Linux capabilities (optional but recommended)
     security_opt: [no-new-privileges:true] # Another protection to restrict superuser privileges (optional but recommended)
     environment:
-      - CLOUDFLARE_API_TOKEN=token
+      - CLOUDFLARE_API_TOKEN=KEY
       - DOMAINS=example.com,jellyfin.example.com
-      - PROXIED=true # Tell Cloudflare to cache webpages and hide your IP (optional)
+      - PROXIED=true
       - IP6_PROVIDER=none
+
+# For testing the proxy
+  helloworld:
+    image: 'karthequian/helloworld:latest'
+    container_name: helloworld
+    restart: unless-stopped
+    ports:
+      - 8888:80/tcp
+      
 volumes:
   proxy-data:
   proxy-letsencrypt:
