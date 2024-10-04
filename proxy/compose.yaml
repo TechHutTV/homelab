@@ -1,34 +1,43 @@
-# not tested
 services:
-  app:
+  proxy:
     image: 'jc21/nginx-proxy-manager:latest'
     container_name: nginx-proxy-manager
     restart: unless-stopped
     ports:
-      - 9080:80
-      - 9443:443
-      - 9081:81
+      - 5080:80
+      - 5443:443
+      - 5000:81
+      - 8096:8096 # add ports you want to expose that are not on your local server
     environment:
       PUID: 1000
       PGID: 1000
     volumes:
-      - /home/brandon/docker/nginx-proxy/data:/data
-      - /home/brandon/docker/nginx-proxy/letsencrypt:/etc/letsencrypt
+      - proxy-data:/data
+      - proxy-letsencrypt:/etc/letsencrypt
     healthcheck:
       test: ["CMD", "/usr/bin/check-health"]
       interval: 10s
       timeout: 3s
+
   ddns:
-    image: mxmlndml/cloudflare-dynamic-dns:latest
-    container_name: cloudflare-dynamic-dns
-    restart: unless-stopped
+    image: favonia/cloudflare-ddns:latest
+    container_name: cloudflare-ddns
+    # network_mode: host
+    # This bypasses network isolation and makes IPv6 easier
+    restart: always
+    user: "1000:1000"
+    read_only: true
+    # Make the container filesystem read-only (optional but recommended)
+    cap_drop: [all]
+    # Drop all Linux capabilities (optional but recommended)
+    security_opt: [no-new-privileges:true]
+    # Another protection to restrict superuser privileges (optional but recommended)
     environment:
-      - "API_KEY=${API_KEY}"
-      - "ZONE_ID=${ZONE_ID}"
-      - "DOMAIN_NAMES=example.com,dyndns.example.com"
-      - "RECORD_TYPES=A"
-      - "INTERVAL=5"
-networks:
-  default:
-    external: true
-    name: nginx-proxy
+      - CLOUDFLARE_API_TOKEN=token
+      - DOMAINS=example.com,jellyfin.example.com
+      - PROXIED=true
+        # Tell Cloudflare to cache webpages and hide your IP (optional)
+      - IP6_PROVIDER=none
+volumes:
+  proxy-data:
+  proxy-letsencrypt:
