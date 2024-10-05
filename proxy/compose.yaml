@@ -16,7 +16,7 @@ services:
     image: favonia/cloudflare-ddns:latest
     container_name: cloudflare-ddns
     # network_mode: host # This bypasses network isolation and makes IPv6 easier (optional; see below)
-    restart: always
+    restart: unless-stopped
     user: "1000:1000" # Run the updater with specific user and group IDs (in that order).
     read_only: true # Make the container filesystem read-only (optional but recommended)
     cap_drop: [all] # Drop all Linux capabilities (optional but recommended)
@@ -26,6 +26,15 @@ services:
       - DOMAINS=example.com,jellyfin.example.com
       - PROXIED=true
       - IP6_PROVIDER=none
+
+  twingate_connector:
+    container_name: twingate_connector
+    restart: always
+    image: "twingate/connector:latest"
+    environment:
+      - TWINGATE_NETWORK=<TENANT NAME>
+      - TWINGATE_ACCESS_TOKEN=<ACCESS TOKEN>
+      - TWINGATE_REFRESH_TOKEN=<REFRESH TOKEN>
 
 # For testing the proxy
   helloworld:
