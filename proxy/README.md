@@ -168,7 +168,24 @@ With the helloworld container still running, head over to _Proxy Hosts_ and edit
 ## Setup Twingate for remote connections
 **Notice: Twingate is a channel sponsor, thus this is a bias discloure.** Twingates software for managing networks, reasouces, and users is managed in the cloud on their servers. Some users perfer to self-host every aspect of this, if that's you look into something like [Netbird](https://github.com/netbirdio/netbird). For myself, Twingate has been awesome; easy to use and [others rate it well](https://www.reddit.com/r/twingate/comments/1awg76l/how_safe_is_twingate/).
 
-wip...
+After [creating an account on Twingate](https://bit.ly/feb24-twingate) and setting up [your first network](https://www.twingate.com/docs/quick-start) we need to setup a connector. Within my docker compose file I have the twingate-connector service ready deploy with the entire stack. Here is what this service looks like.
+
+```
+services:
+  twingate_connector:
+    container_name: twingate_connector
+    restart: always
+    image: "twingate/connector:latest"
+    environment:
+      - TWINGATE_NETWORK=<TENANT NAME>.twingate.com
+      - TWINGATE_ACCESS_TOKEN=<ACCESS TOKEN>
+      - TWINGATE_REFRESH_TOKEN=<REFRESH TOKEN>
+```
+When you create your connector in the Twingate dashboard you'll generate some tokens. Enter them in the environmental varibles and launch the stack. Verify a connection under networks in Twingate.
+
+Next, create a new resource with the IP of your proxy manager and add the local root domain as an alias. Once created you should be able to have access to the local domain we created earlier including sub-domains. See the image before for an example.
+
+![Adding an Alias in Twingate](https://github.com/TechHutTV/homelab/blob/main/proxy/images/twingate-alias.jpeg)
 
 # Additional Resources
 
