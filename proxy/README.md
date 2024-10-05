@@ -136,7 +136,6 @@ services:
 Within this section we will use our NGINX Proxy Manager setup and our domain registar directly to create a proxy host scheme for local access only. This will also allow us to use letsencrypt to generate SSL certificates for our local network. This will elimate that horrible _this site is not secure_ message on our services! Also, we will be setting up Twingate (a channel sponsor) to enable a zero trust network for remote access to those services we don't want to expose publically.
 
 ## Setup a Top-Level Domain for Local Use
-disc
 
 ### Local IP on Registar
 Assign a local IP scheme in the domain registration website. The local IP you will use is the same of the machine running NGINX Proxy Manager. (ie. 10.0.0.60). You'll want to assign this to the A-Record for the main domain and create a CNAME Record as a wildcard (*) pointing to the main domain name. Due note, this may take some time, it took about 15 minutes for the record to update for me.
@@ -167,7 +166,9 @@ With the helloworld container still running, head over to _Proxy Hosts_ and edit
 * **Namecheap API Whitelist:** Namecheap isn't really the best for this if you have a Dynamic IP. Whenever I want to update my certificates I need to whitelist my public IP so it can use their API. Very annoying and I'll probally move my domains to Cloudflare when they're doing to expire.
 
 ## Setup Twingate for remote connections
-Goal: have local top-level domain working when connected remote with Twingate 
+**Notice: Twingate is a channel sponsor, thus this is a bias discloure.** Twingates software for managing networks, reasouces, and users is managed in the cloud on their servers. Some users perfer to self-host every aspect of this, if that's you look into something like [Netbird](https://github.com/netbirdio/netbird). For myself, Twingate has been awesome; easy to use and [others rate it well](https://www.reddit.com/r/twingate/comments/1awg76l/how_safe_is_twingate/).
+
+wip...
 
 # Additional Resources
 
