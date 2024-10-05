@@ -1,4 +1,4 @@
-future frigate setup
+# Work in Progress
 
 Fresh Ubuntu Install
 
