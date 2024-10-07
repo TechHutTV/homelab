@@ -139,11 +139,11 @@ Within this section we will use our NGINX Proxy Manager setup and our domain reg
 ## Setup a Top-Level Domain for Local Use
 
 ### Local IP on Registar
-Assign a local IP scheme in the domain registration website. The local IP you will use is the same as the machine running NGINX Proxy Manager. (ie. 10.0.0.60). You'll want to assign this to the A-Record for the main domain and create a CNAME Record as a wildcard (*) pointing to the main domain name. Due note, this may take some time, it took about 15 minutes for the record to update for me.
+Assign a local IP scheme in the domain registration website. The local IP you will use is the same as the machine running NGINX Proxy Manager. (ie. 10.0.0.60). You'll want to assign this to the A-Record for the main domain and create a CNAME Record as a wildcard (*) pointing to the main domain name. Due note, this may take some time, it took about 15 minutes for the record to update for me. If you're using Cloudflare make sure you disable their proxy service.
 
 ![Record for Local Top-Level Domain](https://github.com/TechHutTV/homelab/blob/main/proxy/images/local-ip-wildcard.png)
 
-While you're on the registar find your API key. You'll need this for generating SSL certificates in the DNS challenges option. Many providers are supported and you can see a [full list here](https://community.letsencrypt.org/t/dns-providers-who-easily-integrate-with-lets-encrypt-dns-validation/86438). I am using Namecheap so I'll need my username and the [API key](https://www.namecheap.com/support/api/intro).
+While you're on Cloudflare or the registar find your API key. You'll need this for generating SSL certificates in the DNS challenges option. Many providers are supported and you can see a [full list here](https://community.letsencrypt.org/t/dns-providers-who-easily-integrate-with-lets-encrypt-dns-validation/86438).
 
 ### Adding Proxy Hosts
 This will mirror the steps above, with some slight differences. In NGINX Proxy Manager navigate to _Hosts > Add Proxy Host_. Add the domain name for the service (ie. example.com) and select http (this may vary depending on if the service is running on https locally) then add the local IP and port for the service you want forwarded to that domain. If you want to test everything check below.
@@ -166,7 +166,7 @@ Navigate to _SSL Certificates > Add SSL Certifcate_. Type in your root domain na
 With the helloworld container still running, head over to _Proxy Hosts_ and edit the hello.example.com host. In the SSL tab add _*.example.com_ under the SSL Certificate and enable _Force SSL_. Navigate to hello.example.com to ensure that the connection is automatically redirected to https.
 
 #### Known Issues and Tips
-* **Namecheap API Whitelist:** Namecheap isn't really the best for this if you have a Dynamic IP. Whenever I want to update my certificates I need to whitelist my public IP so it can use their API. Very annoying and I'll probably move my domains to Cloudflare when they're about to expire.
+* **Namecheap API Whitelist:** Namecheap isn't really the best for this if you have a Dynamic IP. Whenever I want to update my certificates I need to whitelist my public IP so it can use their API. I will be switching to using Cloudflare for this going forward.
 
 ## Setup Twingate for remote connections
 **Notice: Twingate is a channel sponsor, thus this is a bias disclosure.** Twingate uses cloud based software for managing networks, resources, and users. Some users prefer to self-host every aspect of this, if that's you look into something like [Netbird](https://github.com/netbirdio/netbird). For myself, Twingate has been awesome; easy to use and [others rate it well](https://www.reddit.com/r/twingate/comments/1awg76l/how_safe_is_twingate/).
@@ -192,7 +192,8 @@ Next, create a new resource with the IP of your proxy manager and add the local 
 
 # Additional Resources
 
-[![IMAGE ALT TEXT](https://github.com/TechHutTV/homelab/blob/main/proxy/images/technotim-security-guide.jpg)](https://www.youtube.com/watch?v=Cs8yOmTJNYQ "Self-Hosting Security Guide for your HomeLab @TechnoTim")
+[![Twingate Guide](https://github.com/TechHutTV/homelab/blob/main/proxy/images/technotim-security-guide.jpg)](https://www.youtube.com/watch?v=Cs8yOmTJNYQ "DITCH your VPN! - How I Access my Home Server from ANYWHERE @TechHut")
+[![Additional Security Steps](https://github.com/TechHutTV/homelab/blob/main/proxy/images/techhut-twingate.jpg)](https://youtu.be/yaw2A3DG664 "Self-Hosting Security Guide for your HomeLab @TechnoTim")
 
 
 
