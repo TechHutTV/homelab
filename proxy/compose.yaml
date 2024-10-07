@@ -5,8 +5,8 @@ services:
     restart: unless-stopped
     network_mode: host
     volumes:
-      - proxy-data:/data
-      - proxy-letsencrypt:/etc/letsencrypt
+      - data:/data
+      - letsencrypt:/etc/letsencrypt
     healthcheck:
       test: ["CMD", "/usr/bin/check-health"]
       interval: 10s
@@ -45,5 +45,5 @@ services:
       - 8888:80/tcp
       
 volumes:
-  proxy-data:
-  proxy-letsencrypt:
+  data:
+  letsencrypt:
