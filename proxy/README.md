@@ -193,7 +193,7 @@ Next, create a new resource with the IP of your proxy manager and add the local 
 # Additional Resources
 
 [![Twingate Guide](https://github.com/TechHutTV/homelab/blob/main/proxy/images/technotim-security-guide.jpg)](https://www.youtube.com/watch?v=Cs8yOmTJNYQ "DITCH your VPN! - How I Access my Home Server from ANYWHERE @TechHut")
-[![Additional Security Steps](https://github.com/TechHutTV/homelab/blob/main/proxy/images/techhut-twingate.jpg)](https://youtu.be/yaw2A3DG664 "Self-Hosting Security Guide for your HomeLab @TechnoTim")
+[![Additional Security Steps](https://github.com/TechHutTV/homelab/blob/main/proxy/images/twingate-techhut.jpg)](https://youtu.be/yaw2A3DG664 "Self-Hosting Security Guide for your HomeLab @TechnoTim")
 
 
 
