@@ -1,0 +1,58 @@
+services:
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - 9090:9090
+    restart: unless-stopped
+    extra_hosts:
+      - "dockerlab:host-gateway"
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prom_data:/prometheus
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+    volumes:
+      - ./grafana:/etc/grafana/provisioning/datasources
+      - grafana_data:/var/lib/grafana
+  influxdb:
+    image: influxdb:2.7.6-alpine
+    container_name: influxdb2
+    ports:
+      - 8086:8086
+    extra_hosts:
+      - "dockerlab:host-gateway"
+    volumes:
+      - influxdb2_data:/var/lib/influxdb2
+      - ./influxdb2/config:/etc/influxdb2
+      - ./influxdb2/scripts:/docker-entrypoint-initdb.d
+  telegraf:
+    image: telegraf:latest
+    pid: "host"
+    container_name: telegraf
+    user: telegraf:XXX # make sure to run 'getent group docker' on the host for appropriate group number for docker.
+    restart: always
+    entrypoint: /bin/bash -c "/entrypoint.sh telegraf"
+    extra_hosts:
+      - "dockerlab:host-gateway"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+      - /:/hostfs:ro
+    environment:
+      - HOST_ETC=/hostfs/etc
+      - HOST_PROC=/hostfs/proc
+      - HOST_SYS=/hostfs/sys
+      - HOST_VAR=/hostfs/var
+      - HOST_RUN=/hostfs/run
+      - HOST_MOUNT_PREFIX=/hostfs
+volumes:
+  prom_data:
+  grafana_data:
+  influxdb2_data:
