@@ -2,7 +2,7 @@
 
 This is currently a work in progress. Please refer to the [Servarr Docker Setup](https://wiki.servarr.com/docker-guide) for more details on installing the stack.
 
-__NOTE__: Please see the bottom of this readme for an active issue I'm working on.
+__NOTE__: Please see the [bottom of this readme](https://github.com/TechHutTV/homelab/tree/main/media#qbittorrent-stalls-and-vpn-timeoutunder-investigation) for an active issue I'm working on.
 
 ## Companion Video
 [![my NEW Proxmox Media Server - Full Walkthrough Guide Pt.2 (Jellyfin, Sonarr, Gluetun, and MORE)](https://i3.ytimg.com/vi/Uzqf0qlcQlo/mqdefault.jpg)](https://www.youtube.com/watch?v=Uzqf0qlcQlo)
@@ -109,4 +109,18 @@ wget -qO- https://ipinfo.io
 ```
 ### Qbittorrent Stalls and VPN Timeout(under investigation)
 Current investigating an issue where qBittorrent stalls out if there is a timeout on the VPN. Container currently needs to be restarted. Looking for solution.
-As of 10/15/2024 set the only network interface to ```tun``` in the qBittorrent settings and added ```HEALTH_VPN_DURATION_INITIAL=120s``` to my glutun enviormental varibles as [per this issue](https://github.com/qdm12/gluetun/issues/1832). Also, activly following [this issue](https://github.com/qdm12/gluetun/issues/2442).
+As of 10/15/2024 I've set the only network interface to ```tun``` 
+
+Within qBittorrent env settings and added ```HEALTH_VPN_DURATION_INITIAL=120s``` to my glutun enviormental varibles as [per this issue](https://github.com/qdm12/gluetun/issues/1832). Also, activly following [this issue](https://github.com/qdm12/gluetun/issues/2442).
+If this doesn't work, next I will try [adding this](https://github.com/qdm12/gluetun/issues/1277#issuecomment-1352009151) to qBittorrent.
+```
+healthcheck:
+    test: ping 1.1.1.1 -nqc 1 > /dev/null 2>&1 || exit 1
+    interval: 60s
+    retries: 5
+    start_period: 20s
+    timeout: 10s
+depends_on:
+    gluetun:
+        condition: service_healthy
+```
