@@ -2,6 +2,8 @@
 
 This is currently a work in progress. Please refer to the [Servarr Docker Setup](https://wiki.servarr.com/docker-guide) for more details on installing the stack.
 
+__NOTE__: Please see the bottom of this readme for an active issue I'm working on.
+
 ## Companion Video
 [![my NEW Proxmox Media Server - Full Walkthrough Guide Pt.2 (Jellyfin, Sonarr, Gluetun, and MORE)](https://i3.ytimg.com/vi/Uzqf0qlcQlo/mqdefault.jpg)](https://www.youtube.com/watch?v=Uzqf0qlcQlo)
 
@@ -105,4 +107,6 @@ Jump into the Exec console and run the wget command below. Tested with nzbget, d
 docker exec -it conatiner_name bash
 wget -qO- https://ipinfo.io
 ```
-
+### Qbittorrent Stalls and VPN Timeout(under investigation)
+Current investigating an issue where qBittorrent stalls out if there is a timeout on the VPN. Container currently needs to be restarted. Looking for solution.
+As of 10/15/2024 set the only network interface to ```tun``` in the qBittorrent settings and added ```HEALTH_VPN_DURATION_INITIAL=120s``` to my glutun enviormental varibles as [per this issue](https://github.com/qdm12/gluetun/issues/1832). Also, activly following [this issue](https://github.com/qdm12/gluetun/issues/2442).
