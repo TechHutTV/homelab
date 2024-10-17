@@ -1,6 +1,26 @@
 # Self-Hosted Media Server and Aggregation
 
-This is currently a work in progress. Please refer to the [Servarr Docker Setup](https://wiki.servarr.com/docker-guide) for more details on installing the stack.
+This is currently a work in progress. Make sure to review everything here and if you have any issues please submit it or suggest any edits. Also, checkout the [Servarr Docker Setup](https://wiki.servarr.com/docker-guide) for more details on installing the stack.
+
+- [Companion Video](#companion-video)
+  * [Updates Since Video Publish](#updates-since-video-publish)
+- [Data Directory](#data-directory)
+  * [Folder Mapping](#folder-mapping)
+  * [Network Share](#network-share)
+- [User Permissions](#user-permissions)
+- [Gluetun VPN](#gluetun-vpn)
+  * [Testing Gluetun Connectivity](#testing-gluetun-connectivity)
+  * [Passing Through Containers](#passing-through-containers)
+  * [External Container to Gluetun](#external-container-to-gluetun)
+  * [Container in another docker-compose.yml](#container-in-another-docker-composeyml)
+  * [Gluetun Proxmox Fix](#gluetun-proxmox-fix)
+  * [Testing Other Containers](#testing-other-containers)
+- [Download Clients](#download-clients)
+  * [NZBGet](#nzbget)
+    + [Fix "directory does not appear" error in Sonarr/Radarr](#fix-directory-does-not-appear-to-exist-inside-the-container-error)
+  * [qBittorrent](#qbittorrent)
+    + [qBittorrent Stalls with VPN Timeout](#qbittorrent-stalls-with-vpn-timeout)
+- [arr Apps](#arr-apps)
 
 ## Companion Video
 [![my NEW Proxmox Media Server - Full Walkthrough Guide Pt.2 (Jellyfin, Sonarr, Gluetun, and MORE)](https://i3.ytimg.com/vi/Uzqf0qlcQlo/mqdefault.jpg)](https://www.youtube.com/watch?v=Uzqf0qlcQlo)
@@ -110,8 +130,8 @@ wget -qO- https://ipinfo.io
 
 ### NZBGet
 
-#### Fix NZBGet "directory does not appear to exist inside the container" error in Sonarr/Radarr
-Once NZBGet is setup go to settings and under **INCOMING NZBS** change the **AppendCategoryDir** to **No**. This will prevent some potential mapping issues and save on unnessesary directories.
+#### Fix directory does not appear to exist inside the container error
+This error may appear within Sonarr and Radarr. Once NZBGet is setup go to settings and under **INCOMING NZBS** change the **AppendCategoryDir** to **No**. This will prevent some potential mapping issues and save on unnessesary directories.
 
 ### qBittorrent
 
@@ -169,6 +189,6 @@ Next we need to add a health check and label to our qbittorrent container. We ad
 ```
 Relevent Resources: [DBTech video on deunhealth](https://www.youtube.com/watch?v=Oeo-mrtwRgE), [gluetun/issues/2442](https://github.com/qdm12/gluetun/issues/2442) and [gluetun/issues/1277](https://github.com/qdm12/gluetun/issues/1277#issuecomment-1352009151)
 
-## *arr Apps
+## arr Apps
 
 (wip)
