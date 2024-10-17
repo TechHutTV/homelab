@@ -107,11 +107,21 @@ Jump into the Exec console and run the wget command below. Tested with nzbget, d
 docker exec -it conatiner_name bash
 wget -qO- https://ipinfo.io
 ```
-### Qbittorrent Stalls and VPN Timeout(under investigation)
-Current investigating an issue where qBittorrent stalls out if there is a timeout on the VPN. Container currently needs to be restarted. Looking for solution.
-As of 10/15/2024 I've set the only network interface to ```tun``` 
+### Qbittorrent Stalls and VPN Timeout (under investigation)
+I experianced where qBittorrent stalls out if there is a timeout or any type of interuption on the VPN. This is good becuase it drops connection, but I need it to fire back up when the connection is restored without manually restarting the container.
 
-Within qBittorrent env settings and added ```HEALTH_VPN_DURATION_INITIAL=120s``` to my glutun enviormental varibles as [per this issue](https://github.com/qdm12/gluetun/issues/1832). Also, activly following [this issue](https://github.com/qdm12/gluetun/issues/2442).
+#### Solution #1 (working for me)
+Within the WebUI of qbittorrent head over to advanced options and select ```tun0``` as the networking interface. See image below for example.
+
+![Set Network Interface to tun0](https://github.com/TechHutTV/homelab/blob/main/media/images/qbittorrent_tun0.jpeg)
+
+Next, I added ```HEALTH_VPN_DURATION_INITIAL=120s``` to my glutun enviormental varibles as [per this issue](https://github.com/qdm12/gluetun/issues/1832). I updated my arr-compose.yaml about with this varible so you may already have this enabled. You can learn more about this on their [wiki](https://github.com/qdm12/gluetun-wiki/blob/main/faq/healthcheck.md).
+
+#### Solution #2
+Working on adding another solution. Below are notes.
+
+Also, activly following [this issue](https://github.com/qdm12/gluetun/issues/2442).
+
 If this doesn't work, next I will try [adding this](https://github.com/qdm12/gluetun/issues/1277#issuecomment-1352009151) to qBittorrent.
 ```
 healthcheck:
