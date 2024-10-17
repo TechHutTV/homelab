@@ -2,8 +2,6 @@
 
 This is currently a work in progress. Please refer to the [Servarr Docker Setup](https://wiki.servarr.com/docker-guide) for more details on installing the stack.
 
-__NOTE__: Please see the [bottom of this readme](https://github.com/TechHutTV/homelab/tree/main/media#qbittorrent-stalls-and-vpn-timeoutunder-investigation) for an active issue I'm working on.
-
 ## Companion Video
 [![my NEW Proxmox Media Server - Full Walkthrough Guide Pt.2 (Jellyfin, Sonarr, Gluetun, and MORE)](https://i3.ytimg.com/vi/Uzqf0qlcQlo/mqdefault.jpg)](https://www.youtube.com/watch?v=Uzqf0qlcQlo)
 
