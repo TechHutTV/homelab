@@ -141,7 +141,7 @@ Next we need to add a health check and label to our qbittorrent container. We ad
     container_name: qbittorrent
     restart: unless-stopped
     labels:
-      - deunhealth.restart.on.unhealthy=true # Label added for deunhealth monitoring
+      deunhealth.restart.on.unhealthy: true # Label added for deunhealth monitoring
     environment:
       - PUID=1000
       - PGID=1000
@@ -152,8 +152,8 @@ Next we need to add a health check and label to our qbittorrent container. We ad
       - /docker/qbittorrent:/config
       - /data:/data
     network_mode: service:gluetun
-    healthcheck: # Healthcheck added
-        test: ping 1.1.1.1 -nqc 1 > /dev/null 2>&1 || exit 1
+    healthcheck:
+        test: ping -c 1 www.google.com || exit 1
         interval: 60s
         retries: 3
         start_period: 20s
