@@ -127,7 +127,7 @@ First, add the deunhealth service to your stack.
     environment:
       - LOG_LEVEL=info
       - HEALTH_SERVER_ADDRESS=127.0.0.1:9999
-      - TZ=America/Montreal
+      - TZ=America/Los_Angeles
     restart: always
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -141,7 +141,7 @@ Next we need to add a health check and label to our qbittorrent container. We ad
     container_name: qbittorrent
     restart: unless-stopped
     labels:
-      deunhealth.restart.on.unhealthy=true` # Label added for deunhealth monitoring
+      deunhealth.restart.on.unhealthy=true # Label added for deunhealth monitoring
     environment:
       - PUID=1000
       - PGID=1000
