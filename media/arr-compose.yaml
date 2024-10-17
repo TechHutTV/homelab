@@ -28,6 +28,7 @@ services:
       - WIREGUARD_ADDRESSES=ip
       - SERVER_COUNTRIES=country
       - SERVER_CITIES=city
+      - HEALTH_VPN_DURATION_INITIAL=120s # Added to help with qbittorrent stalling out. (see bottom of the readme.md)
     healthcheck:
       test: ping -c 1 www.google.com || exit 1
       interval: 60s
