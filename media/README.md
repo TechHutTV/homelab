@@ -4,6 +4,9 @@ This is currently a work in progress. Please refer to the [Servarr Docker Setup]
 
 ## Companion Video
 [![my NEW Proxmox Media Server - Full Walkthrough Guide Pt.2 (Jellyfin, Sonarr, Gluetun, and MORE)](https://i3.ytimg.com/vi/Uzqf0qlcQlo/mqdefault.jpg)](https://www.youtube.com/watch?v=Uzqf0qlcQlo)
+### Updates Since Video Publish
+* Set my networking interface to ```tun0``` and added the ```HEALTH_VPN_DURATION_INITIAL=120s``` enviormental variable to gluetun. 
+* Added the [deunhealth](https://github.com/qdm12/deunhealth/tree/main) container to restart qbittorrent if it becomes unhealth due to a VPN timeout. See details here.
 
 ## Data Directory
 ### Folder Mapping
@@ -105,7 +108,9 @@ Jump into the Exec console and run the wget command below. Tested with nzbget, d
 docker exec -it conatiner_name bash
 wget -qO- https://ipinfo.io
 ```
-### Qbittorrent Stalls and VPN Timeout (under investigation)
+## Tips, Tricks, and Fixes
+
+### qBittorrent Stalls with VPN Timeout
 I experianced where qBittorrent stalls out if there is a timeout or any type of interuption on the VPN. This is good becuase it drops connection, but I need it to fire back up when the connection is restored without manually restarting the container.
 
 #### Solution #1
