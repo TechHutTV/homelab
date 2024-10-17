@@ -117,20 +117,48 @@ Within the WebUI of qbittorrent head over to advanced options and select ```tun0
 
 Next, I added ```HEALTH_VPN_DURATION_INITIAL=120s``` to my glutun enviormental varibles as [per this issue](https://github.com/qdm12/gluetun/issues/1832). I updated my arr-compose.yaml about with this varible so you may already have this enabled. You can learn more about this on their [wiki](https://github.com/qdm12/gluetun-wiki/blob/main/faq/healthcheck.md).
 
-#### Solution #2
-Working on adding another solution. Below are notes.
+#### Solution #2 (untested)
+Another solution, that can be used in conjection with __Solution #1__ is using the [deunhealth](https://github.com/qdm12/deunhealth/tree/main) container to automatically restart qbittorrent when it give an unheathly status. 
 
-Also, activly following [this issue](https://github.com/qdm12/gluetun/issues/2442).
+First, add the deunhealth service to your stack.
+```
+  deunhealth:
+    image: qmcgaw/deunhealth
+    container_name: deunhealth
+    network_mode: "none"
+    environment:
+      - LOG_LEVEL=info
+      - HEALTH_SERVER_ADDRESS=127.0.0.1:9999
+      - TZ=America/Montreal
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+```
 
-If this doesn't work, next I will try [adding this](https://github.com/qdm12/gluetun/issues/1277#issuecomment-1352009151) to qBittorrent.
+Next we need to add a health check and label to our qbittorrent container. We add ```deunhealth.restart.on.unhealthy=true``` as a label and a simple ping health check as shown below.
+
 ```
-healthcheck:
-    test: ping 1.1.1.1 -nqc 1 > /dev/null 2>&1 || exit 1
-    interval: 60s
-    retries: 5
-    start_period: 20s
-    timeout: 10s
-depends_on:
-    gluetun:
-        condition: service_healthy
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    restart: unless-stopped
+    labels:
+      deunhealth.restart.on.unhealthy=true` # Label added for deunhealth monitoring
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+      - WEBUI_PORT=8080
+      - TORRENTING_PORT=6881
+    volumes:
+      - /docker/qbittorrent:/config
+      - /data:/data
+    network_mode: service:gluetun
+    healthcheck: # Healthcheck added
+        test: ping 1.1.1.1 -nqc 1 > /dev/null 2>&1 || exit 1
+        interval: 60s
+        retries: 3
+        start_period: 20s
+        timeout: 10s
 ```
+Relevent Resources: [DBTech video on deunhealth](https://www.youtube.com/watch?v=Oeo-mrtwRgE), [gluetun/issues/2442](https://github.com/qdm12/gluetun/issues/2442) and [gluetun/issues/1277](https://github.com/qdm12/gluetun/issues/1277#issuecomment-1352009151)
