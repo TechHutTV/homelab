@@ -6,7 +6,7 @@ This is currently a work in progress. Please refer to the [Servarr Docker Setup]
 [![my NEW Proxmox Media Server - Full Walkthrough Guide Pt.2 (Jellyfin, Sonarr, Gluetun, and MORE)](https://i3.ytimg.com/vi/Uzqf0qlcQlo/mqdefault.jpg)](https://www.youtube.com/watch?v=Uzqf0qlcQlo)
 ### Updates Since Video Publish
 * Set my networking interface to ```tun0``` and added the ```HEALTH_VPN_DURATION_INITIAL=120s``` enviormental variable to gluetun. 
-* Added the [deunhealth](https://github.com/qdm12/deunhealth/tree/main) container to restart qbittorrent if it becomes unhealth due to a VPN timeout. See details [here](https://github.com/TechHutTV/homelab/blob/main/media/README.md#qbittorrent-stalls-with-vpn-timeout).
+* Added the [deunhealth](https://github.com/qdm12/deunhealth/tree/main) container to restart qbittorrent if it becomes unhealth due to a VPN timeout. See details [here](https://github.com/TechHutTV/homelab/blob/main/media/README.md#qBittorrent).
 
 ## Data Directory
 ### Folder Mapping
@@ -34,8 +34,6 @@ Easy command to create the download directory scheme.
 ```
 mkdir -p downloads/qbittorrent/{completed,incomplete,torrents} && mkdir -p downloads/nzbget/{completed,intermediate,nzb,queue,tmp}
 ```
-### Fix NZBGet "directory does not appear to exist inside the container" error in Sonarr/Radarr
-Once NZBGet is setup go to settings and under **INCOMING NZBS** change the **AppendCategoryDir** to **No**. This will prevent some potential mapping issues and save on unnessesary directories.
 
 ### Network Share
 Before switching to zfs on Proxmox I used to use a network share from Unraid to store downloads and all my media. This was created by adding the share to the fstab file within my Docker server. Due note, the appliction ```cifs-utils``` is required for this method.
@@ -58,7 +56,7 @@ If you run into errors, after creating all the folders you can assign the permis
 sudo chown -R 1000:1000 /data
 ```
 
-## VPN Information
+## Gluetun VPN
 ### Testing Gluetun Connectivity 
 Once your containers are up and running, you can test your connection is correct and secured. This assumes you keeo the gluetun container name. Learn more at the [gluetun wiki](https://github.com/qdm12/gluetun-wiki/blob/main/setup/test-your-setup.md).
 ```
@@ -108,20 +106,25 @@ Jump into the Exec console and run the wget command below. Tested with nzbget, d
 docker exec -it conatiner_name bash
 wget -qO- https://ipinfo.io
 ```
-## Tips, Tricks, and Fixes
+## Download Clients
 
-### qBittorrent Stalls with VPN Timeout
+### NZBGet
+
+#### Fix NZBGet "directory does not appear to exist inside the container" error in Sonarr/Radarr
+Once NZBGet is setup go to settings and under **INCOMING NZBS** change the **AppendCategoryDir** to **No**. This will prevent some potential mapping issues and save on unnessesary directories.
+
+### qBittorrent
+
+#### qBittorrent Stalls with VPN Timeout
 I experianced where qBittorrent stalls out if there is a timeout or any type of interuption on the VPN. This is good becuase it drops connection, but I need it to fire back up when the connection is restored without manually restarting the container.
 
-#### Solution #1
-Within the WebUI of qbittorrent head over to advanced options and select ```tun0``` as the networking interface. See image below for example.
+__Solution #1:__ Within the WebUI of qbittorrent head over to advanced options and select ```tun0``` as the networking interface. See image below for example.
 
 ![Set Network Interface to tun0](https://github.com/TechHutTV/homelab/blob/main/media/images/qbittorrent_tun0.jpeg)
 
 Next, I added ```HEALTH_VPN_DURATION_INITIAL=120s``` to my glutun enviormental varibles as [per this issue](https://github.com/qdm12/gluetun/issues/1832). I updated my arr-compose.yaml above with this varible so you may already have this enabled. You can learn more about this on their [wiki](https://github.com/qdm12/gluetun-wiki/blob/main/faq/healthcheck.md). If you continue to have issues continue to next solution.
 
-#### Solution #2
-Another solution, that can be used in conjection with __Solution #1__ is using the [deunhealth](https://github.com/qdm12/deunhealth/tree/main) container to automatically restart qbittorrent when it give an unheathly status. 
+__Solution #2:__ Another solution, that can be used in conjection with __Solution #1__ is using the [deunhealth](https://github.com/qdm12/deunhealth/tree/main) container to automatically restart qbittorrent when it give an unheathly status. 
 
 First, add the deunhealth service to your stack.
 ```
@@ -165,3 +168,7 @@ Next we need to add a health check and label to our qbittorrent container. We ad
         timeout: 10s
 ```
 Relevent Resources: [DBTech video on deunhealth](https://www.youtube.com/watch?v=Oeo-mrtwRgE), [gluetun/issues/2442](https://github.com/qdm12/gluetun/issues/2442) and [gluetun/issues/1277](https://github.com/qdm12/gluetun/issues/1277#issuecomment-1352009151)
+
+## *arr Apps
+
+(wip)
