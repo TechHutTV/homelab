@@ -8,5 +8,5 @@ This page in the homelab repoistory is a way to feature all of the apps that I h
 
 Dashboards give a graphic user interface to organize, monitorm and view your services or dash.
 
-* [Homearr](https://www.youtube.com/watch?v=A6vcTIzp_Ww) - Sleek, modern dashboard with many integrations and web-based config. Using this as my browser homepage giving a nice overview of everything I need. Currently, I have this setup using on my Servarr Proxmox container using their [compose configuration](https://homarr.dev/docs/getting-started/installation#-docker-compose) in it's own stack, setting the directory to ```/docker/homearr/data:/data```, etc. [[official website]](https://homarr.dev/)
+* [Homearr](https://www.youtube.com/watch?v=A6vcTIzp_Ww) - Sleek, modern dashboard with many integrations and web-based config. Using this as my browser homepage giving a nice overview of everything I need. Currently, I have this setup using on my Servarr Proxmox container using their [compose configuration](https://homarr.dev/docs/getting-started/installation#-docker-compose) in it's own stack, setting the directory to ```/docker/homearr/data:/data```, etc. [[official website]](https://homarr.dev/) [[nzbget fix]](https://github.com/ajnart/homarr/issues/559#issuecomment-1377959472)
 
