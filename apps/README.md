@@ -4,6 +4,9 @@ This page in the homelab repoistory is a way to feature all of the apps that I h
 
 **This is a work in progress.**
 
+## Automation
+* MeTube - Web GUI for youtube-dl, with playlist support, quaility options, and direct downloads. Using this on my Unriad machine, with my projects folder exposed, as the main use case is gathering clips for content creation. [[official repo]](https://github.com/alexta69/metube)
+
 ## Dashboards
 
 Dashboards give a graphic user interface to organize, monitorm and view your services or dash.
