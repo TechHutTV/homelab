@@ -7,6 +7,12 @@ This page in the homelab repoistory is a way to feature all of the apps that I h
 ## Automation
 * MeTube - Web GUI for youtube-dl, with playlist support, quaility options, and direct downloads. Using this on my Unriad machine, with my projects folder exposed, as the main use case is gathering clips for content creation. [[official repo]](https://github.com/alexta69/metube)
 
+## Business and CRM
+Tools I use to run my small media and content product business. 
+
+* Odoo - Odoo is a suite of business apps that covers accounting, CRM, eCommerce, manufacturing, and more. I'm just begining the impletmentation process of this tool as were switching away from Quickbooks. This is mostly open source while some apps require a license even if hosted locally. [[official repo]](https://github.com/odoo/odoo) [[proxy manager config]
+](https://www.odoo.com/forum/help-1/how-to-configure-nginx-proxy-manager-for-odoo-16-245339)
+
 ## Dashboards
 
 Dashboards give a graphic user interface to organize, monitorm and view your services or dash.
