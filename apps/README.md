@@ -10,7 +10,7 @@ This page in the homelab repoistory is a way to feature all of the apps that I h
 ## Business and CRM
 Tools I use to run my small media and content product business. 
 
-* Odoo - Odoo is a suite of business apps that covers accounting, CRM, eCommerce, manufacturing, and more. I'm just begining the impletmentation process of this tool as were switching away from Quickbooks. This is mostly open source while some apps require a license even if hosted locally. [[official repo]](https://github.com/odoo/odoo) [[proxy manager config]
+* Odoo - Odoo is a suite of business apps that covers accounting, CRM, eCommerce, manufacturing, and more. I'm just begining the impletmentation process of this tool as were switching away from Quickbooks. This is mostly open source while some apps require a license even if hosted locally. [[official repo]](https://github.com/odoo/odoo) [[proxy manager config] [[proxy help]](https://github.com/odoo/odoo/issues/104597)
 ](https://www.odoo.com/forum/help-1/how-to-configure-nginx-proxy-manager-for-odoo-16-245339)
 
 ## Dashboards
