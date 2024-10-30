@@ -19,3 +19,9 @@ Dashboards give a graphic user interface to organize, monitorm and view your ser
 
 * [Homearr](https://www.youtube.com/watch?v=A6vcTIzp_Ww) - Sleek, modern dashboard with many integrations and web-based config. Using this as my browser homepage giving a nice overview of everything I need. Currently, I have this setup using on my Servarr Proxmox container using their [compose configuration](https://homarr.dev/docs/getting-started/installation#-docker-compose) in it's own stack, setting the directory to ```/docker/homearr/data:/data```, etc. [[official website]](https://homarr.dev/) [[nzbget fix]](https://github.com/ajnart/homarr/issues/559#issuecomment-1377959472)
 
+## DNS and Ad Blocking
+
+*Pi-hole - The Pi-hole® is a DNS sinkhole that protects your devices from unwanted content without installing any client-side software. My current solution as I am testing out some of the advanced features. [[video]](https://youtu.be/YqaDnnREqI8)
+
+*AdGuard Home - AdGuard Home is a network-wide software for blocking ads & tracking. This is generally my favorite solution  as it has a super clean, easy to use web ui with just enough features for the single use case. [[video]](https://youtu.be/xtMFcVx3cHU)
+
