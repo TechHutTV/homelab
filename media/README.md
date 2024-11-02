@@ -191,4 +191,4 @@ Relevent Resources: [DBTech video on deunhealth](https://www.youtube.com/watch?v
 
 ## arr Apps
 
-(wip)
+Please refer to the [video tutorial](https://www.youtube.com/watch?v=Uzqf0qlcQlo) for this. We will soon update this section with text documentation.
