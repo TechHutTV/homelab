@@ -1,8 +1,8 @@
+**This is a work in progress.**
+
 # Awesome Homelab
 
 This page in the homelab repoistory is a way to feature all of the apps that I have running! While the purpose of the directory is to give a home of all the apps that don't need their own guides and resources, it will still feature everything I run on my machines. Formatting of the readme inspired by [awesome-selfhosted](https://github.com/awesome-selfhosted/awesome-selfhosted).
-
-**This is a work in progress.**
 
 ## Automation
 * MeTube - Web GUI for youtube-dl, with playlist support, quaility options, and direct downloads. Using this on my Unriad machine, with my projects folder exposed, as the main use case is gathering clips for content creation. [[official repo]](https://github.com/alexta69/metube)
@@ -21,7 +21,12 @@ Dashboards give a graphic user interface to organize, monitorm and view your ser
 
 ## DNS and Ad Blocking
 
-*Pi-hole - The Pi-hole® is a DNS sinkhole that protects your devices from unwanted content without installing any client-side software. My current solution as I am testing out some of the advanced features. [[video]](https://youtu.be/YqaDnnREqI8)
+* Pi-hole - The Pi-hole® is a DNS sinkhole that protects your devices from unwanted content without installing any client-side software. My current solution as I am testing out some of the advanced features. [[video]](https://youtu.be/YqaDnnREqI8)
 
-*AdGuard Home - AdGuard Home is a network-wide software for blocking ads & tracking. This is generally my favorite solution  as it has a super clean, easy to use web ui with just enough features for the single use case. [[video]](https://youtu.be/xtMFcVx3cHU)
+* AdGuard Home - AdGuard Home is a network-wide software for blocking ads & tracking. This is generally my favorite solution  as it has a super clean, easy to use web ui with just enough features for the single use case. [[video]](https://youtu.be/xtMFcVx3cHU)
+
+## Files and Images
+
+* Immich - Easily back up, organize, and manage your photos on your own server. Immich helps you
+browse, search and organize your photos and videos with ease, without sacrificing your privacy. [[video]](https://youtu.be/s1ufPvO0BVE)
 
