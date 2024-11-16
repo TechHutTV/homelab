@@ -11,6 +11,9 @@ Homelab stacks, templates, and more fun resources! This is a *work in progress*.
 * [Proxy Managment](https://github.com/TechHutTV/homelab/tree/main/proxy) - NGINX Proxy Manager, DDNS with Cloudflare, Local Domains, and more.
 
 ## Hardware
+
+![counter top lab](https://github.com/TechHutTV/homelab/blob/main/storage/homelab.png)
+
 ### Servers and NAS
 #### ZimaCube Pro (Proxmox)
 This machine is running our Proxmox Server. Handling our media storage, arr services, proxy, home assistnat, monitoring, and many others.
