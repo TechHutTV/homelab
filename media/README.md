@@ -25,7 +25,7 @@ This is currently a work in progress. Make sure to review everything here and if
 ## Companion Video
 [![my NEW Proxmox Media Server - Full Walkthrough Guide Pt.2 (Jellyfin, Sonarr, Gluetun, and MORE)](https://i3.ytimg.com/vi/Uzqf0qlcQlo/mqdefault.jpg)](https://www.youtube.com/watch?v=Uzqf0qlcQlo)
 ### Updates Since Video Publish
-* Set my networking interface to ```tun0``` and added the ```HEALTH_VPN_DURATION_INITIAL=120s``` enviormental variable to gluetun. 
+* Set my networking interface to ```tun0``` and added the ```HEALTH_VPN_DURATION_INITIAL=120s``` enviroment variable to gluetun. 
 * Added the [deunhealth](https://github.com/qdm12/deunhealth/tree/main) container to restart qbittorrent if it becomes unhealth due to a VPN timeout. See details [here](https://github.com/TechHutTV/homelab/blob/main/media/README.md#qBittorrent).
 
 ## Data Directory
@@ -142,7 +142,7 @@ __Solution #1:__ Within the WebUI of qbittorrent head over to advanced options a
 
 ![Set Network Interface to tun0](https://github.com/TechHutTV/homelab/blob/main/media/images/qbittorrent_tun0.jpeg)
 
-Next, I added ```HEALTH_VPN_DURATION_INITIAL=120s``` to my glutun enviormental varibles as [per this issue](https://github.com/qdm12/gluetun/issues/1832). I updated my arr-compose.yaml above with this varible so you may already have this enabled. You can learn more about this on their [wiki](https://github.com/qdm12/gluetun-wiki/blob/main/faq/healthcheck.md). If you continue to have issues continue to next solution.
+Next, I added ```HEALTH_VPN_DURATION_INITIAL=120s``` to my glutun enviroment varibles as [per this issue](https://github.com/qdm12/gluetun/issues/1832). I updated my arr-compose.yaml above with this varible so you may already have this enabled. You can learn more about this on their [wiki](https://github.com/qdm12/gluetun-wiki/blob/main/faq/healthcheck.md). If you continue to have issues continue to next solution.
 
 __Solution #2:__ Another solution, that can be used in conjection with __Solution #1__ is using the [deunhealth](https://github.com/qdm12/deunhealth/tree/main) container to automatically restart qbittorrent when it give an unheathly status. 
 
