@@ -43,7 +43,7 @@ ASgKMgcAAABkAU49AAAAAGQBF1UAAAAAZAEMOwAAAAA: Mothers Day
 ASYUMjIAAABkADxVAAAAAGQBD2QAAAAAZADNQwAAAABkABZgAAAAAA: Thanksgiving
 ASQMMjIAAABkARJkAAAAAGQA71cAAAAAZAFBUwAAAABkAVJkAAAAAA: Valentines
 ```
-__Wish List - Looking into these features__
+__Wish List__: I feel like these could be possible with python scripts if I figure out how to decode that raw scene string to something a little more human friendly. I've reached out to XMCOSY, but I'm waiting on them to get back to me.
 - [ ] Per-bulb control with a custom card
 - [ ] Ability to save current configuration as a scene directly in HA
 - [ ] Mode option in HA (pulse, fade, etc.)
