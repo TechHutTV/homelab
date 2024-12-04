@@ -27,18 +27,19 @@ If you need to manually connect to a device an it's important to know where to f
 
 ### XMCOSY String Lights with LocalTuya
 
-Working on creating templates based on [this](https://www.reddit.com/r/homeassistant/comments/1dt1ngp/tuya_scenes_in_home_assistant_for_rgbcw_light/).
+#### Finding Raw Data Values for Scenes
+You can use the Tuya app to create custom or access pre-exisiting scenes. Open the developer portal, go to devices and click on "debug device". Open then device logs page and select the 'scene' logs from the dropdown menu on the top and click search. This should provide a overview of all scenes that were activated.
 
 ```
 # XMcosy RGBCW String Lights, 24 bulbs, 64ft Acrylic Holiday Lights
-Christmas: ASMJMgkAAABkAABkAAAAAGQAPGQAAAAAZAC7VAAAAABkAOpXAAAAAGQBCGMAAAAA
-Christmas eve: AVATMhkAAABkALxkAAAAAGQALU4AAAAAZAAAZAAAAABkAGQ8AAAAAA==
-Fathers Day: ASkJMk8AAABkAN1LAAAAAGQAvVMAAAAAZADYXQAAAAA
-Flower harbor: AQEDMjIAAABkAUVkAAAAAGQBIjkAAAAAZAEeZAAAAABkATpfAAAAAGQAAWQAAAAAZAAnWgAAAAA=
-Football Day: ASoJMgoAAABkAAFkAAAAAGQAiGQAAAAAZAC7ZAAAAAA
-Forest Day: AScJMiQAAABkAJVbAAAAAGQAtGQAAAAAZACRYQAAAAA
-Halloween: ASUKMjIAAABkAApfAAAAAGQBBmQAAAAAZADvXAAAAABkALAsAAAAAGQAfFQAAAAA
-Mothers Day: ASgKMgcAAABkAU49AAAAAGQBF1UAAAAAZAEMOwAAAAA
-Thanksgiving: ASYUMjIAAABkADxVAAAAAGQBD2QAAAAAZADNQwAAAABkABZgAAAAAA
-Valentines: ASQMMjIAAABkARJkAAAAAGQA71cAAAAAZAFBUwAAAABkAVJkAAAAAA
+ASMJMgkAAABkAABkAAAAAGQAPGQAAAAAZAC7VAAAAABkAOpXAAAAAGQBCGMAAAAA: Christmas
+AVATMhkAAABkALxkAAAAAGQALU4AAAAAZAAAZAAAAABkAGQ8AAAAAA==: Christmas eve
+ASkJMk8AAABkAN1LAAAAAGQAvVMAAAAAZADYXQAAAAA: Fathers Day
+AQEDMjIAAABkAUVkAAAAAGQBIjkAAAAAZAEeZAAAAABkATpfAAAAAGQAAWQAAAAAZAAnWgAAAAA=: Flower harbor
+ASoJMgoAAABkAAFkAAAAAGQAiGQAAAAAZAC7ZAAAAAA: Football Day
+AScJMiQAAABkAJVbAAAAAGQAtGQAAAAAZACRYQAAAAA: Forest Day
+ASUKMjIAAABkAApfAAAAAGQBBmQAAAAAZADvXAAAAABkALAsAAAAAGQAfFQAAAAA: Halloween
+ASgKMgcAAABkAU49AAAAAGQBF1UAAAAAZAEMOwAAAAA: Mothers Day
+ASYUMjIAAABkADxVAAAAAGQBD2QAAAAAZADNQwAAAABkABZgAAAAAA: Thanksgiving
+ASQMMjIAAABkARJkAAAAAGQA71cAAAAAZAFBUwAAAABkAVJkAAAAAA: Valentines
 ```
