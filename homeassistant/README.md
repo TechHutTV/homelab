@@ -20,9 +20,10 @@ When I first tired integrating XMCOSY String Lights with LocalTuya I followed a 
 1. Click on 'Configure' again, but this time select 'Add new device' and select the device you'd like to add. Manual configuration is a pain, but if you have your devices on a different Vlan this may be required.
 2. Next, you'll get a 'Configure device connectivity' option. In most cases the pre-filled options will be perfect and there will not be anything you need to change here.
 #### Manual condfigureation tips
-If you need to manually connect to a device an it's important to know where to find you local ids and values. These can be found within your project on the Tuya IoT Platform.
-* Find entity ids: API Explorer > Query Properties > Input Device ID found under All Devices > Submit Request > See number after "dp_id"
-* Finding min/max values: Devices > All Devices > Debug Device > Device Debugging > Standard Instuction Set
+If you need to manually connect to a device an it's important to know where to find you local ids and values. These can be found within your project on the Tuya IoT Platform. For steps within the API Explorer copy the Device ID found under All Devices.
+* local_key: API Explorer > Query Device Details in Bulk > Input Device > See string after "local_key"
+* entity ids: API Explorer > Query Properties > Input Device > See number after "dp_id"
+* min/max values: Devices > All Devices > Debug Device > Device Debugging > Standard Instuction Set
 
 ## XMCOSY String Lights with LocalTuya
    ...wip
