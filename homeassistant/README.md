@@ -43,3 +43,7 @@ ASgKMgcAAABkAU49AAAAAGQBF1UAAAAAZAEMOwAAAAA: Mothers Day
 ASYUMjIAAABkADxVAAAAAGQBD2QAAAAAZADNQwAAAABkABZgAAAAAA: Thanksgiving
 ASQMMjIAAABkARJkAAAAAGQA71cAAAAAZAFBUwAAAABkAVJkAAAAAA: Valentines
 ```
+__Wish List - Looking into these features__
+- [ ] Per-bulb control with a custom card
+- [ ] Ability to save current configuration as a scene directly in HA
+- [ ] Mode option in HA (pulse, fade, etc.)
