@@ -28,3 +28,22 @@ If you need to manually connect to a device an it's important to know where to f
 ### XMCOSY String Lights with LocalTuya
 
 Working on creating templates based on [this](https://www.reddit.com/r/homeassistant/comments/1dt1ngp/tuya_scenes_in_home_assistant_for_rgbcw_light/).
+
+```
+# XMcosy RGBCW String Lights, 24 bulbs, 64ft Acrylic Holiday Lights
+    scene: '56'
+    scene_values: {
+# Scenery        
+    "Flower harbor": "AQEDMjIAAABkAUVkAAAAAGQBIjkAAAAAZAEeZAAAAABkATpfAAAAAGQAAWQAAAAAZAAnWgAAAAA=",
+    "Christmas eve": "AVATMhkAAABkALxkAAAAAGQALU4AAAAAZAAAZAAAAABkAGQ8AAAAAA==",
+# Festive
+    "Christmas": "ASMJMgkAAABkAABkAAAAAGQAPGQAAAAAZAC7VAAAAABkAOpXAAAAAGQBCGMAAAAA"
+    "Valentines": "ASQMMjIAAABkARJkAAAAAGQA71cAAAAAZAFBUwAAAABkAVJkAAAAAA"
+    "Halloween": "ASUKMjIAAABkAApfAAAAAGQBBmQAAAAAZADvXAAAAABkALAsAAAAAGQAfFQAAAAA"
+    "Thanksgiving": "ASYUMjIAAABkADxVAAAAAGQBD2QAAAAAZADNQwAAAABkABZgAAAAAA"
+    "Forest Day": "AScJMiQAAABkAJVbAAAAAGQAtGQAAAAAZACRYQAAAAA"
+    "Mothers Day": "ASgKMgcAAABkAU49AAAAAGQBF1UAAAAAZAEMOwAAAAA"
+    "Fathers Day": "ASkJMk8AAABkAN1LAAAAAGQAvVMAAAAAZADYXQAAAAA"
+    "Football Day": "ASoJMgoAAABkAAFkAAAAAGQAiGQAAAAAZAC7ZAAAAAA"
+    }
+```
