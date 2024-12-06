@@ -3,6 +3,7 @@ This is a work in progress, check back for more!
 
 To do
 * [https://github.com/custom-cards/upcoming-media-card](https://github.com/custom-cards/upcoming-media-card)
+* [https://community.home-assistant.io/t/tautulli-rest-end-point-and-custom-button-card/559371](https://community.home-assistant.io/t/tautulli-rest-end-point-and-custom-button-card/559371)
 
 ## Bubble Cards 
 I'm starting to utilze Bubble Cards for my dashboard. I'll add more information soon, but first my custom card for shades with set_postition varibles on the sub-buttons.
