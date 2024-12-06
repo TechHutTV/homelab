@@ -130,3 +130,6 @@ __Wish List__: I feel like these could be possible with python scripts if I figu
 - [ ] Per-bulb control with a custom card
 - [ ] Ability to save current configuration as a scene directly in HA
 - [ ] Mode option in HA (pulse, fade, etc.)
+
+## Other Devices
+One of my switches wasn't pulling the actions or entities, [this blueprint](https://community.home-assistant.io/t/zha-aqara-wireless-mini-switch/255540) seems to fix it.
