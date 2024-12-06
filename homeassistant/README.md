@@ -1,6 +1,9 @@
 # Home Assistant Guides, Templates, Tips and Tricks!
 This is a work in progress, check back for more!
 
+To do
+* [https://github.com/custom-cards/upcoming-media-card](https://github.com/custom-cards/upcoming-media-card)
+
 ## Bubble Cards 
 I'm starting to utilze Bubble Cards for my dashboard. I'll add more information soon, but first my custom card for shades with set_postition varibles on the sub-buttons.
 
