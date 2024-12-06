@@ -5,7 +5,7 @@ Custom card compents used; [bubble card](https://github.com/Clooos/Bubble-Card),
 If you need to setup your Pi-Hole Integration check out [the docs](https://www.home-assistant.io/integrations/pi_hole/).
 
 ### Bubble Card with Disable Ads Timer
-
+This is my config using the [bubble card](https://github.com/Clooos/Bubble-Card).
 ```
 type: custom:bubble-card
 card_type: button
@@ -86,6 +86,7 @@ button_action:
 
 ```
 ### Mini Graph Card for Metrics
+This uses the [mini graph card](https://github.com/kalkih/mini-graph-card).
 ```
 type: horizontal-stack
 cards:
