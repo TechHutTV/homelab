@@ -192,3 +192,55 @@ Relevent Resources: [DBTech video on deunhealth](https://www.youtube.com/watch?v
 ## arr Apps
 
 Please refer to the [video tutorial](https://www.youtube.com/watch?v=Uzqf0qlcQlo) for this. We will soon update this section with text documentation.
+
+## No VPN arr-compose (NOT RECOMMEDED)
+
+```
+services:
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    restart: unless-stopped
+    ports:
+      - 8080:8080 # web interface
+      - 6881:6881 # torrent port
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+      - WEBUI_PORT=8080
+      - TORRENTING_PORT=6881
+    volumes:
+      - /docker/qbittorrent:/config
+      - /data:/data
+  nzbget:
+    image: lscr.io/linuxserver/nzbget:latest
+    container_name: nzbget
+    ports:
+      - 6789:6789
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+      - NZBGET_USER=user
+      - NZBGET_PASS=password
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /docker/nzbget:/config
+      - /data:/data
+    restart: unless-stopped
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    ports:
+      - 9696:9696
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /docker/prowlarr:/config
+    restart: unless-stopped
+
+```
