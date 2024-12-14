@@ -23,8 +23,8 @@ This machine is running our Proxmox Server. Handling our media storage, arr serv
 * x3 [T-Create 1TB 2280 NVMe](https://amzn.to/4dGvwMx) (Flash Pool raidz1)
 * x6 [Western Digital 4TB WD Red Plus](https://amzn.to/4gCpv6d) (Vault Pool raidz1)
 
-#### UGREEN DXP6800 Pro (Unraid)
-This machine is running Unraid. Due to a free PCIe slot this has an addition Coral TPU and is in charge of running our Frigate survalance system. Running Immich for personal photo backups and MeTube to pull YouTube videos for use in media projects. This machines handles the network shares that connect to our Nextcloud instance.
+#### UGREEN DXP6800 Pro (Proxmox)
+This machine is running Proxomx. Due to a free PCIe slot this has an additional Coral TPU and I'm currently testing it with Blue Iris. Running Immich for personal photo backups and MeTube to pull YouTube videos for use in media projects. This machines handles the network shares that connect to our Nextcloud instance.
 * 12th Gen Intel Core i5 1235U
 * [16GB SODIMM DDR5](https://amzn.to/3YqeZ9A)
 * [DataTraveler 3.0 32GB USB](https://amzn.to/4fovZUR) (Boot Drive)
