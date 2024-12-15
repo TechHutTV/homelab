@@ -1,3 +1,9 @@
+## Navigation
+* [Home Assistant](https://github.com/TechHutTV/homelab/tree/main/homeassistant)
+  - [Dashboard](https://github.com/TechHutTV/homelab/tree/main/homeassistant/dashboard)
+  - [__LocalTuya__](https://github.com/TechHutTV/homelab/tree/main/homeassistant/localtuya)
+  - [Zigbee](https://github.com/TechHutTV/homelab/tree/main/homeassistant/zigbee)
+
 ## LocalTuya in Home Assistant
 When I first tired integrating XMCOSY String Lights with LocalTuya I followed a few different [guides](https://thehelpfulidiot.com/integrating-xmcosy-outdoor-string-lights-with-home-assistant-locally), but had no luck. The main issue ended up being LocalTuya itself. I found that using [this fork](https://github.com/xZetsubou/localtuya) works great and it's more up to date. This quick guide assumes you have the Tuya app setup with your devices added. Also, you'll need a [Tuya developer account](https://platform.tuya.com/) to get this setup.
 
