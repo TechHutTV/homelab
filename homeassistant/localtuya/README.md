@@ -2,7 +2,7 @@
 * [Home Assistant](https://github.com/TechHutTV/homelab/tree/main/homeassistant)
   - [Dashboard](https://github.com/TechHutTV/homelab/tree/main/homeassistant/dashboard)
   - [__LocalTuya__](https://github.com/TechHutTV/homelab/tree/main/homeassistant/localtuya)
-    - LocalTuya in Home Assistant
+    - [LocalTuya in Home Assistant](https://github.com/TechHutTV/homelab/tree/main/homeassistant/localtuya#localtuya-in-home-assistant)
       - Install and Setup LocalTuya Fork
       - Credentials from Tuya IoT Platform
       - Adding Tuya devices in Home Assistant
