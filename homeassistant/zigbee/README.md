@@ -1,3 +1,9 @@
+## Navigation
+* [Home Assistant](https://github.com/TechHutTV/homelab/tree/main/homeassistant) - Smart home services and automation.
+  - [Dashboard](https://github.com/TechHutTV/homelab/tree/main/homeassistant/dashboard)
+  - [LocalTuya](https://github.com/TechHutTV/homelab/tree/main/homeassistant/localtuya)
+  - [__Zigbee__](https://github.com/TechHutTV/homelab/tree/main/homeassistant/zigbee)
+
 # Seperate ZigbeeMQTT from Home Assistant in Proxmox
 Within Proxmox VE I have my ZigbeeMQTT and MQTT broker servers seperated from my Home Assistant virtual machine. I found I get slightly better preformance out of my Zigbee devices doing it this way, plus it's easier to backup and feed all my Zigbee devices to a new Home Assistant server if needed.
 
