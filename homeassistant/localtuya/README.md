@@ -2,6 +2,13 @@
 * [Home Assistant](https://github.com/TechHutTV/homelab/tree/main/homeassistant)
   - [Dashboard](https://github.com/TechHutTV/homelab/tree/main/homeassistant/dashboard)
   - [__LocalTuya__](https://github.com/TechHutTV/homelab/tree/main/homeassistant/localtuya)
+    - LocalTuya in Home Assistant
+      - Install and Setup LocalTuya Fork
+      - Credentials from Tuya IoT Platform
+      - Adding Tuya devices in Home Assistant
+      - Manual configuration tips
+    - XMCOSY String Lights with LocalTuya
+      - Finding Raw Data Values for Scenes
   - [Zigbee](https://github.com/TechHutTV/homelab/tree/main/homeassistant/zigbee)
 
 ## LocalTuya in Home Assistant
@@ -22,7 +29,7 @@ When I first tired integrating XMCOSY String Lights with LocalTuya I followed a 
 #### Adding Tuya devices in Home Assistant
 1. Click on 'Configure' again, but this time select 'Add new device' and select the device you'd like to add. Manual configuration is a pain, but if you have your devices on a different Vlan this may be required.
 2. Next, you'll get a 'Configure device connectivity' option. In most cases the pre-filled options will be perfect and there will not be anything you need to change here.
-#### Manual condfigureation tips
+#### Manual configuration tips
 If you need to manually connect to a device an it's important to know where to find you local ids and values. These can be found within your project on the Tuya IoT Platform. For steps within the API Explorer copy the Device ID found under All Devices.
 * local_key: API Explorer > Query Device Details in Bulk > Input Device > See string after "local_key"
 * entity ids: API Explorer > Query Properties > Input Device > See number after "dp_id"
