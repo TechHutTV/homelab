@@ -1,3 +1,15 @@
+## Navigation
+* [Apps](https://github.com/TechHutTV/homelab/tree/main/apps) - List of all the apps and services.
+* [Home Assistant](https://github.com/TechHutTV/homelab/tree/main/homeassistant) - Smart home services and automation.
+  - [__Dashboard__(https://github.com/TechHutTV/homelab/tree/main/homeassistant/dashboard)
+  - [LocalTuya](https://github.com/TechHutTV/homelab/tree/main/homeassistant/localtuya)
+  - [Zigbee](https://github.com/TechHutTV/homelab/tree/main/homeassistant/zigbee)
+* [Media Server](https://github.com/TechHutTV/homelab/tree/main/media) - Plex, Jellyfin, *arr stack, and more.
+* [Server Monitoring](https://github.com/TechHutTV/homelab/tree/main/monitoring) - Graphs and Visualizations for Unriad, Proxmox, and more.
+* [Surveillance System](https://github.com/TechHutTV/homelab/tree/main/surveillance) - Frigate NVR Solution with Coral TPU.
+* [Storage](https://github.com/TechHutTV/homelab/tree/main/storage) - Current Storage and Backup Solution.
+* [Proxy Managment](https://github.com/TechHutTV/homelab/tree/main/proxy) - NGINX Proxy Manager, DDNS with Cloudflare, Local Domains, and more.
+
 Custom card compents used; [bubble card](https://github.com/Clooos/Bubble-Card), [mini graph card](https://github.com/kalkih/mini-graph-card).
 
 ## Pi-Hole
