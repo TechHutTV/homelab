@@ -1,5 +1,5 @@
 ## Navigation
-* [Home Assistant](https://github.com/TechHutTV/homelab/tree/main/homeassistant) - Smart home services and automation.
+* [Home Assistant](https://github.com/TechHutTV/homelab/tree/main/homeassistant)
   - [Dashboard](https://github.com/TechHutTV/homelab/tree/main/homeassistant/dashboard)
   - [LocalTuya](https://github.com/TechHutTV/homelab/tree/main/homeassistant/localtuya)
   - [__Zigbee__](https://github.com/TechHutTV/homelab/tree/main/homeassistant/zigbee)
