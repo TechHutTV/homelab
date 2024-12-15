@@ -1,7 +1,7 @@
 ## Navigation
 * [Apps](https://github.com/TechHutTV/homelab/tree/main/apps) - List of all the apps and services.
 * [Home Assistant](https://github.com/TechHutTV/homelab/tree/main/homeassistant) - Smart home services and automation.
-  - [__Dashboard__(https://github.com/TechHutTV/homelab/tree/main/homeassistant/dashboard)
+  - [__Dashboard__](https://github.com/TechHutTV/homelab/tree/main/homeassistant/dashboard)
   - [LocalTuya](https://github.com/TechHutTV/homelab/tree/main/homeassistant/localtuya)
   - [Zigbee](https://github.com/TechHutTV/homelab/tree/main/homeassistant/zigbee)
 * [Media Server](https://github.com/TechHutTV/homelab/tree/main/media) - Plex, Jellyfin, *arr stack, and more.
