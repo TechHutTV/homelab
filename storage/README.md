@@ -10,7 +10,7 @@ __This is a work in progress__
 
 1. Create ZFS Pools
 2. Assigning Pools to Primary Vault Container
-3. Adding Virutal Drives in Pool to Other Containers
+3. Adding Virutal Drives (zfs mount points) in Pool to Other Containers
 4. Setup Cockpit for Shares
 
 * Proxmox: [https://www.proxmox.com/en/downloads](https://www.proxmox.com/en/downloads)
@@ -20,3 +20,6 @@ __This is a work in progress__
 * Cockpit Navigator: [https://github.com/45Drives/cockpit-navigator](https://github.com/45Drives/cockpit-navigator)
 * ZFS on Linux: [https://pve.proxmox.com/wiki/ZFS_on_Linux](https://pve.proxmox.com/wiki/ZFS_on_Linux)
 * ZFS in Proxmox: [https://www.reddit.com/r/Proxmox/comments/jppohv/a_very_short_guide_into_how_proxmox_uses_zfs/](https://www.reddit.com/r/Proxmox/comments/jppohv/a_very_short_guide_into_how_proxmox_uses_zfs/)
+
+5. Adding network shares to unprivalized containers
+6. [https://www.youtube.com/watch?v=DMPetY4mX-c](https://www.youtube.com/watch?v=DMPetY4mX-c)
