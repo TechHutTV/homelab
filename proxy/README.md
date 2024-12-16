@@ -190,7 +190,7 @@ services:
     restart: always
     image: "twingate/connector:latest"
     environment:
-      - TWINGATE_NETWORK=<TENANT NAME>.twingate.com
+      - TWINGATE_NETWORK=<TENANT NAME>
       - TWINGATE_ACCESS_TOKEN=<ACCESS TOKEN>
       - TWINGATE_REFRESH_TOKEN=<REFRESH TOKEN>
 ```
