@@ -13,6 +13,8 @@ __This is a work in progress__
 3. Adding Virutal Drives (zfs mount points) in Pool to Other Containers
 4. Setup Cockpit for Shares
 
+Steps above are based on [this video](https://www.youtube.com/watch?v=zLFB6ulC0Fg), when creating the data directory in that video I [changed how it's setup](https://www.youtube.com/watch?v=ObgzcKlozWQ).
+
 * Proxmox: [https://www.proxmox.com/en/downloads](https://www.proxmox.com/en/downloads)
 * Cockpit: [https://github.com/cockpit-project/cockpit](https://github.com/cockpit-project/cockpit)
 * Cockpit Sharing: [https://github.com/45Drives/cockpit-file-sharing](https://github.com/45Drives/cockpit-file-sharing)
