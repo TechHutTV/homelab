@@ -54,9 +54,8 @@ ASYUMjIAAABkADxVAAAAAGQBD2QAAAAAZADNQwAAAABkABZgAAAAAA: Thanksgiving
 ASQMMjIAAABkARJkAAAAAGQA71cAAAAAZAFBUwAAAABkAVJkAAAAAA: Valentines
 ```
 
-Want to know more about these codes and how they work?  Read the documentation here: (https://developer.tuya.com/en/docs/iot/dj?id=K9i5ql3v98hn3#title-16-scene_select)[Tuya Cloud Development Instruction Set]
-To decode and Encode these strings, you can utilize the Base64 Encoder/Decoder available here: (https://emn178.github.io/online-tools/base64_decode.html)[Base 64 Encoder/Decoder] 
-Be sure to set your Input/Output Encoding to HEX
+Want to know more about these codes and how they work?  Read the documentation here: [Tuya Cloud Development Instruction Set](https://developer.tuya.com/en/docs/iot/dj?id=K9i5ql3v98hn3#title-16-scene_select).
+To decode and Encode these strings, you can utilize the Base64 Encoder/Decoder available here: [Base 64 Encoder/Decoder](https://emn178.github.io/online-tools/base64_decode.html). Be sure to set your Input/Output Encoding to HEX.
 
 __Wish List__: I feel like these could be possible with python scripts if I figure out how to decode that raw scene string to something a little more human friendly. I've reached out to XMCOSY, but I'm waiting on them to get back to me.
 - [ ] Per-bulb control with a custom card
