@@ -1,0 +1,98 @@
+pages:
+- name: Startpage
+  width: slim
+  hide-desktop-navigation: true
+  center-vertically: true
+  columns:
+    - size: full
+      widgets:
+        - type: search
+          autofocus: true
+        - type: monitor
+          cache: 1m
+          title: Core Services
+          sites:
+            - title: Proxmox
+              url: https://proxmox.hopki.net
+              icon: si:proxmox
+            - title: Blue Iris
+              url: https://iris.hopki.net
+              icon: si:
+            - title: Cockpit
+              url: https://vault.hopki.net
+              icon: si:cockpit
+            - title: Home Assistant
+              url: https://hass.hopki.net
+              icon: si:homeassistant
+            - title: Proxy
+              url: https://proxy.hopki.net
+              icon: si:nginx
+            - title: Pi-Hole
+              url: https://pihole.hopki.net
+              icon: si:pihole
+            - title: Grafana
+              url: https://grafana.hopki.net
+              icon: si:grafana
+            - title: Immich
+              url: https://immich.hopki.net
+              icon: si:immich
+            - title: Zigbee
+              url: https://zigbee.hopki.net
+              icon: si:zigbee
+        - type: monitor
+          cache: 1m
+          title: Media Services
+          sites:
+            - title: Plex
+              url: https://plex.hopki.net
+              icon: si:plex
+            - title: Sonarr
+              url: https://arr.hopki.net/sonarr
+              icon: si:sonarr
+            - title: Radarr
+              url: https://arr.hopki.net/radarr
+              icon: si:radarr
+            - title: Prowlarr
+              url: https://arr.hopki.net/prowlarr
+              icon: si:prowlarr
+            - title: Lidarr
+              url: https://arr.hopki.net/lidarr
+              icon: si:lidarr
+              - title: Bazarr
+              url: https://arr.hopki.net/bazzar
+              icon: si:bazarr
+            - title: Overseer
+              url: https://request.hopkins.sh
+              icon: si:overseer
+            - title: NZBGet
+              url: https://nzbget.hopki.net
+              icon: si:nzbget
+            - title: qBittorrent
+              url: https://torrent.hopki.net
+              icon: si:qbittorrent
+        - type: bookmarks
+          groups:
+            - title: Business
+              links:
+                - title: Zoho Mail
+                  url: https://mail.zoho.com
+                - title: Zoho One
+                  url: https://one.zoho.com
+                - title: Github
+                  url: https://github.com
+            - title: Entertainment
+              links:
+                - title: YouTube
+                  url: https://www.youtube.com
+                - title: Prime Video
+                  url: https://www.primevideo.com
+                - title: Disney+
+                  url: https://www.disneyplus.com
+            - title: Social
+              links:
+                - title: Reddit
+                  url: https://www.reddit.com
+                - title: Twitter
+                  url: https://twitter.com
+                - title: Instagram
+                  url: https://www.instagram.com
