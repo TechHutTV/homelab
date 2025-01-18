@@ -18,6 +18,7 @@ This is currently a work in progress. Make sure to review everything here and if
     * [Passing Through Containers](#passing-through-containers)
     * [External Container to Gluetun](#external-container-to-gluetun)
     * [Container in another docker-compose.yml](#container-in-another-docker-composeyml)
+    * [Arr apps wont connect to prowlarr](#arr-apps-wont-connect-to-prowlarr)
     * [Gluetun Proxmox Fix](#gluetun-proxmox-fix)
     * [Testing Other Containers](#testing-other-containers)
   - [Download Clients](#download-clients)
