@@ -23,6 +23,7 @@ services:
       - VPN_SERVICE_PROVIDER=airvpn
       - VPN_TYPE=wireguard
       - FIREWALL_VPN_INPUT_PORTS=port
+    # - FIREWALL_OUTBOUND_SUBNETS=192.168.0.0/24 # add if prowlarr wont connect to other arr apps, change to your specific subnet
       - WIREGUARD_PRIVATE_KEY=key
       - WIREGUARD_PRESHARED_KEY=key
       - WIREGUARD_ADDRESSES=ip
