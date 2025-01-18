@@ -114,6 +114,15 @@ Add ```--network=container:gluetun``` when launching the container, provided Glu
 ### Container in another docker-compose.yml
 Add network_mode: "container:gluetun" to your docker-compose.yml, provided Gluetun is already running. Ensure you open the ports through the the gluetun container.
 
+### Arr apps wont connect to prowlarr
+
+I like to run Prowlarr though a VPN as it is the service that will fetch magnet links and skim torrent sites. If you have issues with connections between arr apps and prowlarr you may need to [allow gluetun to access your lan](https://github.com/qdm12/gluetun-wiki/blob/main/setup/connect-a-lan-device-to-gluetun.md#access-your-lan-through-gluetun). You can do this by adding the following to your docker compose file under the glutun enviromental varibles. 
+``` yaml
+- FIREWALL_OUTBOUND_SUBNETS=192.168.1.0/24 #change to your specific subnet
+```
+
+see issue [here](https://github.com/TechHutTV/homelab/issues/9)
+
 ### Gluetun Proxmox Fix
 
 "cannot Unix Open TUN device file: operation not permitted and cannot create TUN device file node: operation not permitted" May happen if you're running this on LXC containers.
