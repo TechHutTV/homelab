@@ -9,7 +9,7 @@ This is something I am still trying to learn on figure out. My configuration is 
 
 ## LXC Setup
 
-'''
+```
 # USB passthrough
 lxc.cgroup2.devices.allow: a
 lxc.cap.drop:
@@ -30,7 +30,7 @@ lxc.cgroup2.devices.allow: c 29:0 rwm
 lxc.mount.entry: /dev/fb0 dev/fb0 none bind,optional,create=file
 lxc.mount.entry: /dev/dri dev/dri none bind,optional,create=dir
 lxc.mount.entry: /dev/dri/renderD128 dev/dri/renderD128 none bind,optional,create=file
-'''
+```
 
 ## Install Coral AI PCIe Accelerator Drivers
 https://coral.ai/docs/m2/get-started/#2a-on-linux
