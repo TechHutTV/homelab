@@ -1,4 +1,4 @@
-# Frigate NVR
+# Frigate NVR in Proxmox with Coral TPU
 
 This is something I am still trying to learn on figure out. My configuration is far from perfect as many of the features I want are not working or set up yet.
 
@@ -8,6 +8,7 @@ This is something I am still trying to learn on figure out. My configuration is 
 * Configure zones for event capture
 
 ## LXC Setup
+Install docker as priv [https://community-scripts.github.io/ProxmoxVE/scripts?id=docker](https://community-scripts.github.io/ProxmoxVE/scripts?id=docker)
 
 ```
 # USB passthrough
