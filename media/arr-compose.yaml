@@ -126,7 +126,7 @@ services:
     restart: unless-stopped
     environment:
       - PUID=1000
-      - PGID=100
+      - PGID=1000
       - TZ=America/Los_Angeles
     volumes:
       - /etc/localtime:/etc/localtime:ro
