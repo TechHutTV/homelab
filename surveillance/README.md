@@ -7,6 +7,12 @@ This is something I am still trying to learn on figure out. My configuration is 
 * Enable two-way audio for supported cameras
 * Configure zones for event capture
 
+```
+apt-get install linux-headers-`uname -r`
+```
+[debuild on proxmox](https://forum.proxmox.com/threads/facing-issues-installing-the-build-dependencies-for-building-the-pve-kernel-current-head-of-master-branch.132669/)
+
+
 ## LXC Setup
 Install docker as priv [https://community-scripts.github.io/ProxmoxVE/scripts?id=docker](https://community-scripts.github.io/ProxmoxVE/scripts?id=docker)
 
