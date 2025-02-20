@@ -4,6 +4,13 @@
 # share to aviod permissions issues of downloaded files, please refer
 # the read me file for more information.
 version: '3.9'
+
+networks:
+  servarrnetwork:
+    ipam:
+      config:
+        - subnet: 172.18.0.0/24
+
 services:
   gluetun:
     image: qmcgaw/gluetun
@@ -12,6 +19,9 @@ services:
       - NET_ADMIN
     devices:
       - /dev/net/tun:/dev/net/tun
+    networks:
+      servarrnetwork:
+        ipv4_address: 172.18.0.2
     ports:
       - 8080:8080 # qbittorrent web interface
       - 6881:6881 # qbittorrent torrent port
@@ -119,6 +129,9 @@ services:
       - /data:/data
     ports:
       - 8989:8989
+    networks:
+      servarrnetwork:
+        ipv4_address: 172.18.0.3
 
   radarr:
     image: lscr.io/linuxserver/radarr:latest
@@ -134,6 +147,9 @@ services:
       - /data:/data
     ports:
       - 7878:7878
+    networks:
+      servarrnetwork:
+        ipv4_address: 172.18.0.4
 
   lidarr:
     container_name: lidarr
@@ -149,6 +165,9 @@ services:
      - TZ=America/Los_Angeles
     ports:
       - 8686:8686
+    networks:
+      servarrnetwork:
+        ipv4_address: 172.18.0.5
   
   bazarr:
     image: lscr.io/linuxserver/bazarr:latest
@@ -164,6 +183,9 @@ services:
       - /data:/data
     ports:
       - 6767:6767
+    networks:
+      servarrnetwork:
+        ipv4_address: 172.18.0.6
 
   readarr:
     image: lscr.io/linuxserver/readarr:develop
@@ -178,4 +200,7 @@ services:
       - /data:/data
     ports:
       - 8787:8787
+    networks:
+      servarrnetwork:
+        ipv4_address: 172.18.0.7
     restart: unless-stopped
