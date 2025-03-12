@@ -1,98 +1,289 @@
+# Note: I installed this with the Proxmox Helper Script. So this config file is in /opt/glance. If you run with docker their may be multiple configuration files.
+theme:
+  background-color: 0 0 16
+  primary-color: 43 59 81
+  positive-color: 61 66 44
+  negative-color: 6 96 59
 pages:
-- name: Startpage
-  width: slim
-  hide-desktop-navigation: true
-  center-vertically: true
-  columns:
-    - size: full
-      widgets:
-        - type: search
-          autofocus: true
-        - type: monitor
-          cache: 1m
-          title: Core Services
-          sites:
-            - title: Proxmox
-              url: https://proxmox.hopki.net
-              icon: si:proxmox
-            - title: Blue Iris
-              url: https://iris.hopki.net
-              icon: si:
-            - title: Cockpit
-              url: https://vault.hopki.net
-              icon: si:cockpit
-            - title: Home Assistant
-              url: https://hass.hopki.net
-              icon: si:homeassistant
-            - title: Proxy
-              url: https://proxy.hopki.net
-              icon: si:nginx
-            - title: Pi-Hole
-              url: https://pihole.hopki.net
-              icon: si:pihole
-            - title: Grafana
-              url: https://grafana.hopki.net
-              icon: si:grafana
-            - title: Immich
-              url: https://immich.hopki.net
-              icon: si:immich
-            - title: Zigbee
-              url: https://zigbee.hopki.net
-              icon: si:zigbee
-        - type: monitor
-          cache: 1m
-          title: Media Services
-          sites:
-            - title: Plex
-              url: https://plex.hopki.net
-              icon: si:plex
-            - title: Sonarr
-              url: https://arr.hopki.net/sonarr
-              icon: si:sonarr
-            - title: Radarr
-              url: https://arr.hopki.net/radarr
-              icon: si:radarr
-            - title: Prowlarr
-              url: https://arr.hopki.net/prowlarr
-              icon: si:prowlarr
-            - title: Lidarr
-              url: https://arr.hopki.net/lidarr
-              icon: si:lidarr
+  - name: Startpage
+    width: slim
+    hide-desktop-navigation: false
+    center-vertically: true
+    columns:
+
+      - size: small
+        widgets:
+          - type: dns-stats
+            service: pihole
+            url: https://pihole.hopki.net
+            token: 12345abcdefghijk
+          - type: custom-api
+            title: Immich stats
+            cache: 1d
+            url: https://immich.hopki.net/api/server/statistics
+            headers:
+              x-api-key: 12345abcdefghijk
+              Accept: application/json
+            template: |
+              <div class="flex justify-between text-center">
+                <div>
+                    <div class="color-highlight size-h3">{{ .JSON.Int "photos" | formatNumber }}</div>
+                    <div class="size-h6">PHOTOS</div>
+                </div>
+                <div>
+                    <div class="color-highlight size-h3">{{ .JSON.Int "videos" | formatNumber }}</div>
+                    <div class="size-h6">VIDEOS</div>
+                </div>
+                <div>
+                    <div class="color-highlight size-h3">{{ div (.JSON.Int "usage" | toFloat) 1073741824 | toInt | formatNumber }}GB</div>
+                    <div class="size-h6">USAGE</div>
+                </div>
+              </div>
+
+          - type: repository
+            repository: TechHutTV/homelab
+            pull-requests-limit: 5
+            issues-limit: 3
+            commits-limit: 3
+
+      - size: full
+        widgets:
+          - type: search
+            autofocus: true
+            search-engine: google
+            new-tab: true
+            bangs:
+              - title: YouTube
+                shortcut: "!yt"
+                url: https://www.youtube.com/results?search_query={QUERY}
+              - title: Github
+                shortcut: "!gh"
+                url: https://github.com/search?q={QUERY}&type=repositories
+
+          - type: monitor
+            cache: 1m
+            title: Services
+            sites:
+              - title: Proxmox
+                url: https://proxmox.hopki.net/
+                check-url: https://10.0.0.80:8006
+                allow-insecure: true
+                icon: di:proxmox
+              - title: Plex
+                url: https://plex.hopki.net/
+                check-url: http://10.0.0.100:32400
+                icon: di:plex
+                alt-status-codes:
+                  - 401
+                  - 403
+              - title: Nextcloud
+                url: https://cloud.hopki.net/
+                check-url: http://10.0.0.104:11000
+                icon: di:nextcloud
+              - title: Immich
+                url: https://immich.hopki.net/
+                check-url: http://10.0.0.104:2283
+                icon: di:immich
+              - title: Pi-Hole
+                url: https://pihole.hopki.net/admin
+                check-url: http://10.0.0.103:80
+                icon: di:pi-hole
+              - title: Vaultwarden
+                url: https://warden.hopki.net/
+                check-url: http://10.0.0.109:8000
+                icon: di:vaultwarden-light
+              - title: Home Assistant
+                url: https://hass.hopki.net/
+                check-url: http://10.0.0.250:8123
+                icon: di:home-assistant
+              - title: Frigate
+                url: https://frigate.hopki.net/
+                check-url: http://10.0.0.107:5000
+                icon: di:frigate-light
+              - title: Zigbee2MQTT
+                url: https://zigbee.hopki.net/
+                check-url: http://10.0.0.106:9442
+                icon: di:zigbee2mqtt
+              - title: NGINX Proxy Manager
+                url: https://proxy.hopki.net/
+                check-url: http://10.0.0.102:81
+                icon: di:nginx
+              - title: Docmost
+                url: https://doc.hopki.net/
+                check-url: http://10.0.0.104:3001
+                icon: di:notion
+              - title: Hoarder
+                url: https://hoarder.hopki.net/
+                check-url: http://10.0.0.104:3000
+                icon: di:hoarder-light
+              - title: Tautulli
+                url: https://tautulli.hopki.net/
+                check-url: http://10.0.0.201:8181
+                icon: di:tautulli
+              - title: Jellyfin
+                url: https://jellyfin.hopki.net/
+                check-url: http://10.0.0.100:8096
+                icon: di:jellyfin
+              - title: TeslaMate
+                url: https://tesla.hopki.net/
+                check-url: http://10.0.0.101:4000
+                icon: di:teslamate-light
+              - title: Grafana
+                url: https://grafana.hopki.net/
+                check-url: http://10.0.0.101:3001
+                icon: di:grafana
+              - title: OctoPrint
+                url: https://3d.hopki.net/
+                check-url: http://10.0.0.71
+                icon: di:octoprint
+              - title: Proxmox Backup Server
+                url: https://backup.hopki.net/
+                check-url: https://10.0.0.251:8007
+                icon: di:proxmox-light
+                alt-status-codes:
+                  - 401
+                  - 403
+
+          - type: monitor
+            cache: 1m
+            title: Servarr
+            sites:
+              - title: Overseerr
+                url: https://request.hopki.net
+                check-url: http://10.0.0.202:5055
+                icon: di:overseerr
+              - title: Radarr
+                url: https://arr.hopki.net/radarr
+                check-url: http://10.0.0.100:7878
+                icon: di:radarr
+              - title: Sonarr
+                url: https://arr.hopki.net/sonarr
+                check-url: http://10.0.0.100:8989
+                icon: di:sonarr
+              - title: Lidarr
+                url: https://arr.hopki.net/lidarr
+                check-url: http://10.0.0.100:8686
+                icon: di:lidarr
               - title: Bazarr
-              url: https://arr.hopki.net/bazzar
-              icon: si:bazarr
-            - title: Overseer
-              url: https://request.hopkins.sh
-              icon: si:overseer
-            - title: NZBGet
-              url: https://nzbget.hopki.net
-              icon: si:nzbget
-            - title: qBittorrent
-              url: https://torrent.hopki.net
-              icon: si:qbittorrent
-        - type: bookmarks
-          groups:
-            - title: Business
-              links:
-                - title: Zoho Mail
-                  url: https://mail.zoho.com
-                - title: Zoho One
-                  url: https://one.zoho.com
-                - title: Github
-                  url: https://github.com
-            - title: Entertainment
-              links:
-                - title: YouTube
-                  url: https://www.youtube.com
-                - title: Prime Video
-                  url: https://www.primevideo.com
-                - title: Disney+
-                  url: https://www.disneyplus.com
-            - title: Social
-              links:
-                - title: Reddit
-                  url: https://www.reddit.com
-                - title: Twitter
-                  url: https://twitter.com
-                - title: Instagram
-                  url: https://www.instagram.com
+                url: https://arr.hopki.net/bazarr
+                check-url: http://10.0.0.100:6767
+                icon: di:bazarr
+              - title: Prowlarr
+                url: https://arr.hopki.net/prowlarr
+                check-url: http://10.0.0.100:9696
+                icon: di:prowlarr
+              - title: qBittorrent
+                url: https://torrent.hopki.net/
+                check-url: http://10.0.0.100:8080
+                icon: di:qbittorrent
+              - title: NZBGet
+                url: https://nzbget.hopki.net/
+                check-url: http://10.0.0.100:6789
+                icon: di:nzbget
+                alt-status-codes:
+                  - 401
+                  - 403
+              - title: File Browser
+                url: https://arrfiles.hopki.net/
+                icon: di:filebrowser
+              - title: Portainer
+                url: https://arr.hopki.net/
+                check-url: http://10.0.0.100:80
+                icon: di:portainer
+
+  - name: Home
+    # Optionally, if you only have a single page you can hide the desktop navigation for a cleaner look
+    # hide-desktop-navigation: true
+    columns:
+      - size: small
+        widgets:
+          - type: calendar
+            first-day-of-week: monday
+
+          - type: rss
+            limit: 10
+            collapse-after: 3
+            cache: 12h
+            feeds:
+              - url: https://omgubuntu.co.uk/feed
+                title: OmgUbuntu
+                limit: 4
+              - url: https://9to5linux.com/feed/atom
+                title: 9to5Linux
+                limit: 4
+
+          - type: twitch-channels
+            channels:
+              - technotim
+              - piratesoftware
+
+      - size: full
+        widgets:
+          - type: group
+            widgets:
+              - type: hacker-news
+              - type: lobsters
+
+          - type: videos
+            channels:
+              - UCXuqSBlHAE6Xw-yeJA0Tunw # Linus Tech Tips
+              - UCR-DXc1voovS8nhAvccRZhg # Jeff Geerling
+              - UCsBjURrPoezykLs9EqgamOA # Fireship
+              - UCBJycsmduvYEL83R_U4JriQ # Marques Brownlee
+
+          - type: group
+            widgets:
+              - type: reddit
+                subreddit: technology
+                show-thumbnails: true
+              - type: reddit
+                subreddit: selfhosted
+                show-thumbnails: true
+
+      - size: small
+        widgets:
+          - type: weather
+            location: 98664
+            units: imperial
+            hour-format: 12h # alternatively "24h"
+            # Optionally hide the location from being displayed in the widget
+            # hide-location: true
+
+          - type: markets
+            # The link to go to when clicking on the symbol in the UI,
+            # {SYMBOL} will be substituded with the symbol for each market
+            symbol-link-template: https://www.tradingview.com/symbols/{SYMBOL}/news
+            markets:
+              - symbol: LTC-USD
+                name: Litecoin
+              - symbol: XRP-USD
+                name: Ripple
+              - symbol: AAPL
+                name: Apple
+              - symbol: MSFT
+                name: Microsoft
+
+          - type: releases
+            cache: 1d
+            # Without authentication the Github API allows for up to 60 requests per hour. You can create a
+            # read-only token from your Github account settings and use it here to increase the limit.
+            # token: ...
+            repositories:
+              - glanceapp/glance
+              - TechHutTV/homelab
+              - immich-app/immich
+
+  # Add more pages here:
+  # - name: Your page name
+  #   columns:
+  #     - size: small
+  #       widgets:
+  #         # Add widgets here
+
+  #     - size: full
+  #       widgets:
+  #         # Add widgets here
+
+  #     - size: small
+  #       widgets:
+  #         # Add widgets here
