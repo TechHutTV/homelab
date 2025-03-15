@@ -35,9 +35,12 @@ This is currently a work in progress. Make sure to review everything here and if
 
 ## Companion Video
 [![my NEW Proxmox Media Server - Full Walkthrough Guide Pt.2 (Jellyfin, Sonarr, Gluetun, and MORE)](https://i3.ytimg.com/vi/Uzqf0qlcQlo/mqdefault.jpg)](https://www.youtube.com/watch?v=Uzqf0qlcQlo)
+
 ### Updates Since Video Publish
 * Set my networking interface to ```tun0``` and added the ```HEALTH_VPN_DURATION_INITIAL=120s``` enviroment variable to gluetun. 
 * Added the [deunhealth](https://github.com/qdm12/deunhealth/tree/main) container to restart qbittorrent if it becomes unhealth due to a VPN timeout. See details [here](https://github.com/TechHutTV/homelab/blob/main/media/README.md#qBittorrent).
+* Added static IPs with a custom docker networking making it easier to configure Prowlarr with internal docker IP addresses. See details [here](https://github.com/TechHutTV/homelab/pull/14).
+* Removed Readarr and added [ytdl-sub](https://ytdl-sub.readthedocs.io/en/latest/) to the arr-compose.
 
 ## Data Directory
 ### Folder Mapping
