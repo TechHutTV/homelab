@@ -11,7 +11,7 @@ services:
     cap_add:
       - NET_ADMIN
     devices:
-      - /dev/net/tun:/dev/net/tun
+      - /dev/net/tun:/dev/net/tun # If running proxmox see readme for more info.
     ports:
       - 8080:8080 # qbittorrent web interface
       - 6881:6881 # qbittorrent torrent port
@@ -165,17 +165,19 @@ services:
     ports:
       - 6767:6767
 
-  readarr:
-    image: lscr.io/linuxserver/readarr:develop
-    container_name: readarr
+# Newer addition to this stack feel free to remove if unwarnted.
+# Used to browse the file system via a web browser.
+# Default login is admin/admin. Change password in Settings > User Managment.
+# Permissions set to my dault user 1000:1000 as that's the user that owns my data directory.
+  filebrowser:
+    image: filebrowser/filebrowser:s6
+    container_name: filebrowser
+    volumes:
+      - /data:/srv # Directory you want exposed to filebrowser.
+      - /docker/filebrowser/filebrowser.db:/database/filebrowser.db
+      - /docker/filebrowser/settings.json:/config/settings.json
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=America/Los_Angeles
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - /docker/readarr:/config
-      - /data:/data
     ports:
-      - 8787:8787
-    restart: unless-stopped
+      - 80:80
