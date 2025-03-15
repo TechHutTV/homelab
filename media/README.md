@@ -20,6 +20,7 @@ This is currently a work in progress. Make sure to review everything here and if
     * [Container in another docker-compose.yml](#container-in-another-docker-composeyml)
     * [Arr apps wont connect to prowlarr](#arr-apps-wont-connect-to-prowlarr)
     * [Gluetun Proxmox Fix](#gluetun-proxmox-fix)
+    * [Reduce Gluetun Ram Usage](#reduce-gluetun-ram-usage)
     * [Testing Other Containers](#testing-other-containers)
   - [Download Clients](#download-clients)
     * [NZBGet](#nzbget)
@@ -138,6 +139,15 @@ lxc.mount.entry: /dev/net dev/net none bind,create=dir
 lxc.mount.entry: /dev/net/tun dev/net/tun none bind,create=file
 ```
 Make sure you pass through the tun device (/dev/net/tun:/dev/net/tun) as shown in my compose file.
+
+### Reduce Gluetun Ram Usage
+As mentioned in this [issue](https://github.com/TechHutTV/homelab/issues/12) there is a [feature request](https://github.com/qdm12/gluetun/issues/765#issuecomment-1019367595) on the Glutun Github page to help reduce ram usage. Gluetun bundles a recursive caching DNS resolver called unbound for handling domain name requests securely. Over time the cache size, which rests in RAM, can balloon to gigabytes.
+
+You can do this by adding the following to your docker compose file under the glutun enviromental varibles.
+```
+BLOCK_MALICIOUS=off
+```
+This may not be an issue as [DNS over HTTPS in Go to replace Unbound](https://github.com/qdm12/gluetun/issues/137) is impletmented, but it's worth the mention.
 
 ### Testing Other Containers
 Jump into the Exec console and run the wget command below. Tested with nzbget, deluge, and prowlarr. Ensure you open the ports through the the gluetun container.
