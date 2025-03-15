@@ -59,7 +59,7 @@ services:
     restart: always
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      
+
 # Healthcheck was added to work with deunhealth to restart container
 # on unhealthy status. labels allows deunhealth to monitor.
   qbittorrent:
@@ -167,7 +167,7 @@ services:
     networks:
       servarrnetwork:
         ipv4_address: 172.18.0.5
-  
+
   bazarr:
     image: lscr.io/linuxserver/bazarr:latest
     container_name: bazarr
@@ -220,4 +220,7 @@ services:
     volumes:
       - /docker/ytdl-sub/config:/config
       - /data/youtube:/youtube
+    networks:
+      servarrnetwork:
+        ipv4_address: 172.18.0.8
     restart: unless-stopped
