@@ -186,7 +186,8 @@ services:
       servarrnetwork:
         ipv4_address: 172.18.0.6
 
-# Newer addition to this stack feel free to remove if unwarnted.
+# Newer additions to this stack feel free to remove if unwanted.
+
 # Used to browse the file system via a web browser.
 # Default login is admin/admin. Change password in Settings > User Managment.
 # Permissions set to my dault user 1000:1000 as that's the user that owns my data directory.
@@ -205,4 +206,18 @@ services:
     networks:
       servarrnetwork:
         ipv4_address: 172.18.0.7
+    restart: unless-stopped
+
+# Youtube downloading and subscription service. Information not yet added to readme.md
+  ytdl-sub:
+    image: ghcr.io/jmbannon/ytdl-sub:latest
+    container_name: ytdl-sub
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+      - DOCKER_MODS=linuxserver/mods:universal-cron
+    volumes:
+      - /docker/ytdl-sub/config:/config
+      - /data/youtube:/youtube
     restart: unless-stopped
