@@ -77,6 +77,8 @@ services:
     volumes:
       - /docker/qbittorrent:/config
       - /data:/data
+    depends_on:
+      - gluetun
     network_mode: service:gluetun
     healthcheck:
         test: ping -c 1 www.google.com || exit 1
@@ -98,6 +100,8 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /docker/nzbget:/config
       - /data:/data
+    depends_on:
+      - gluetun
     restart: unless-stopped
     network_mode: service:gluetun
 
@@ -112,6 +116,8 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /docker/prowlarr:/config
     restart: unless-stopped
+    depends_on:
+      - gluetun
     network_mode: service:gluetun
 
   sonarr:
