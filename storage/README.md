@@ -96,7 +96,7 @@ This is my configuration
    browseable = yes
    read only = yes
    create mask = 0666
-   directory mask = 1337
+   directory mask = 0337
    guest ok = yes
    guest only = yes
 [data]
