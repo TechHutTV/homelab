@@ -1,39 +1,49 @@
 # Storage and Backup
-In this reposity I will layout my storage and backup solutions for all of the services and platforms running on my homelab. Currently, I have two main platforms that manage my storage; Proxmox and Unraid. Below I will explain their uses and how I created and manage them.
+In this repo I will layout my storage and backup solutions for all of the services and platforms running on my homelab. Currently, I manage everything with Proxmox and Proxmox Backup Server. While soultions like Unraid and TrueNAS are awesome, I have found over the years the Proxmox is actually an amazing solution for managing storage, network shares, and backups.
 
-[please see this video](https://youtu.be/zLFB6ulC0Fg)
+## Proxmox as a NAS
+My current setup involves a single server with x3 NVME drives and a bunch of harddrives in a ZFS configuration. These are combined into seperate ZFS pools for the HDDs (vault) and the SSDs (flash). Vault is used as a large data storage pool and Flash is used for containers and virtual machines disks. No mattery your configuratiuon you can follow this guide. However, I would recommend at least one NVME SSD for your boot drive, and at least 512gb if you don't have any other NVME SSDs and at least x2 HHDs for file storage.
 
-## Proxmox
-Proxmox is responible for managaging my storage for video, images, logs, databases, and docker configurations. This is done on a network attached storage device with six 4TB HHDs and three 1TB NVME SSDs. These are combined into seperate ZFS pools for the HDDs (vault) and the SSDs (flash). Vault is used as a large data storage pool and Flash is used for containers and virtual machines disks.
+### 1. Post Install Steps (optional)
 
-__This is a work in progress__
+Removing Proxmox Notice 
+```
+cd /usr/share/javascript/proxmox-widget-toolkit/
+cp proxmoxlib.js proxmoxlib.js.bak # make a backup
+nano proxmoxlib.js
+```
+Edit the following line by adding `void({ //`
+```
+# Before
+Ext.Msg.show({
+  title: gettext('No valid subscription'),
+# After
+void({ //Ext.Msg.show({
+  title: gettext('No valid subscription'),
+```
+Now restart the Proxmox web server
+```
+systemctl restart pveproxy.service
+```
+### 2. Create ZFS Pools
 
-### 1. Create ZFS Pools
+First, we are going to setup two ZFS Pools. A "Vault" pool which is used for larger stored data sets such as media, images and archives. We also will make a "Flash" pool which is used for virtual machine and container root file systems. To do this, on the Proxmox sidebar for your datacenter, go to Disks -> ZFS -> Create: ZFS. This will pop up the screen to create a ZFS pool.
 
-First, we are going to setup two ZFS Pools. A "Vault" pool which is used for backups and shared data such as media and downloads. We also will make a "Flash" pool which is used for virtual machines and container storage. In my case I have an NVMe drive for my flash storage that will contain my containers and VM disks, and four hard drives for shared storage. To do this, on the Proxmox sidebar for your datacenter, go to Disks -> ZFS -> Create: ZFS. This will pop up the screen to create a ZFS pool.
+From this screen, it should show all of your drives, so select the ones you want in your pool, and select your RAID level (in my case RAIDZ for my vault pool and mirror for my flash pool) and compression, (in my case lz4). Make sure you check the box that says **Add to Storage**. This will make the pools immiatily avalible and will prevent using .raw files as obsosed to my previous setup when I added directorties. 
 
-![create zfs](https://github.com/TechHutTV/homelab/blob/main/storage/createzfs.png)
+## 3. Creating Containers using ZFS Pools
+Work in progress
 
-From this screen, it should show all of your drives, so select the ones you want in your pool, and select your RAID level (in my case RAIDZ for my vault pool and mirror for my flash pool) and compression, (in my case lz4). 
+## 4. Creating SMB Shares
 
-**NOTE: CHECK THE ADD TO STORAGE BOX**
+Great video resource by KeepItTechie: [https://www.youtube.com/watch?v=2gW4rWhurUs](https://www.youtube.com/watch?v=2gW4rWhurUs)
+[source](https://gist.github.com/pjobson/3811b73740a3a09597511c18be845a6c)
 
-![create zfs dialog](https://github.com/TechHutTV/homelab/blob/main/storage/createzfsdialog.png)
-
-2. Assigning Pools to Primary Vault Container
-
-Process chaged (WIP)
-
-4. Adding Virtual Drives (zfs mount points) in Pool to Other Containers
-
-Process chaged (WIP)
-
-4. Creating SMB Shares
-
-Create your share director and set permissions 
+Create your share directory and set permissions 
 ```
 sudo mkdir /data
-sudo chmod 777 /data
+sudo chmod -R 0777 /data
+sudo chown -R brandon:brandon /data
 ```
 Install Samba
 ```
@@ -43,13 +53,19 @@ Edit the samba config
 ```
 sudo nano /etc/samba/smb.conf
 ```
-Add this to the bottom on the configuration
+sudo nano /etc/samba/shares.conf
+Add this to the configuration
 ```
-[share]
-path = /data
-browseable = ues
-read only = no
-guest ok = no
+[data]
+   path = /data
+   browseable = yes
+   read only = no
+   guest ok = no
+[docker]
+   path = /docker
+   browseable = yes
+   read only = no
+   guest ok = no
 ```
 Add your samba user
 ```
@@ -63,3 +79,9 @@ Restart samba services
 sudo systemctl restart smbd
 sudo systemctl restart nmbd
 ```
+Allow samba on firewall
+```
+sudo ufw allow Samba
+sudo ufw status
+```
+
