@@ -22,27 +22,11 @@ From this screen, it should show all of your drives, so select the ones you want
 
 2. Assigning Pools to Primary Vault Container
 
-Now we want to assign our pools to certain tasks in Proxmox. So in the storage tab of our data center, we can add directories to our pools used for certain tasks. To do this go to Datacenter -> Storage -> Add -> Directory, and from here you can set the ID, where on the proxnox server, and the content.
+Process chaged (WIP)
 
-![assigning pool](https://github.com/TechHutTV/homelab/blob/main/storage/assigningpool.png)
+4. Adding Virtual Drives (zfs mount points) in Pool to Other Containers
 
-For me, I first made a directory for backups inside the vault. For the directory I made sure it was inside my /vault pool by setting the directory to /vault/backups, and than set the content to VZDump backup file for my backups.
-
-![backup pool](https://github.com/TechHutTV/homelab/blob/main/storage/backuppool.png)
-
-I also edited my local storage to not contain my VZDump backup files.
-
-Next up I create a directory for my data which will contain my disk images and containers. So I created a new directory called "data" inside /vault/data, and here I set the content to disk image, and containers.
-
-![data pool](https://github.com/TechHutTV/homelab/blob/main/storage/datapool.png)
-
-Finally, I want a disks directory for my virtual machines on my NVMe drives. So, I made another "disks" pool inside /flash/disks, and just like data, I set the content to disk images and containers.
-
-![disks pool](https://github.com/TechHutTV/homelab/blob/main/storage/diskspool.png)
-
-3. Adding Virtual Drives (zfs mount points) in Pool to Other Containers
-
-Now, I
+Process chaged (WIP)
 
 4. Creating SMB Shares
 
