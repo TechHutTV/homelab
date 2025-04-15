@@ -31,14 +31,23 @@ Lear about enabling PCI Passthrough [here](https://pve.proxmox.com/wiki/PCI_Pass
 
 ### 2. Create ZFS Pools
 
-First, we are going to setup two ZFS Pools. A "Vault" pool which is used for larger stored data sets such as media, images and archives. We also will make a "Flash" pool which is used for virtual machine and container root file systems. To do this, on the Proxmox sidebar for your datacenter, go to Disks -> ZFS -> Create: ZFS. This will pop up the screen to create a ZFS pool.
+First, we are going to setup two ZFS Pools. A "Tank" pool which is used for larger stored data sets such as media, images and archives. We also will make a "Flash" pool which is used for virtual machine and container root file systems. To do this, on the Proxmox sidebar for your datacenter, go to Disks -> ZFS -> Create: ZFS. This will pop up the screen to create a ZFS pool.
 
 From this screen, it should show all of your drives, so select the ones you want in your pool, and select your RAID level (in my case RAIDZ for my vault pool and mirror for my flash pool) and compression, (in my case lz4). Make sure you check the box that says **Add to Storage**. This will make the pools immiatily avalible and will prevent using .raw files as obsosed to my previous setup when I added directorties. 
 
 ## 3. Creating Containers using ZFS Pools
-Work in progress
 
-## 4. Creating SMB Shares
+Now time to put these new storage pools in use. For this, we are going to create our first LXC. In this example the LXC is going to be in charge of managing our media server. First we need a operating system image. Click on your local storage in the sidebar and click on CT Templates then the Templates button. From there search for Ubuntu and download the ubuntu-22.04-standard template.
+
+Now in the top right click on Create CT. The "Create: LXC Container" prompt should show up. On the general tab I set my CT ID to 100 (later I will match this to a local IP for organization) and I set the hostname to "servarr", you can name it anything like media, jellyfin, or whatever. Set your password, keep the container and unpriviledged and click Next. Select your downloaded Ubuntu template and click next. Under disk you can select your storage location. If you created the flash pool like we did eariler select it, otherwise local is fine. For storage I picked 64gb as my media server is quite large. Click next as we will add the data and docker directory later. Give it as many CPU cores and ram as you need, for my setup I gave it 6 cores and 8gb of memory.
+
+Under network we will leave most everything, but I like to give it a static IP here. If you want to manage this with your router select DHCP. Under IPv4 I set the IPv4/CIDR to `10.0.0.100/24' and the gateway to `10.0.0.1` your local IP may be different. Keep DNS as is and confirm the installation. 
+
+## 4. Adding Mount Points
+
+Now that our container is created I want to add some storage and mount the data and docker directories on my system. Click on your newly created LXC and then click on Resources. From there click the Add button and select mount point. The first one I'll add is going to be for the bulk file storage or I will change the option under storage to tank. For path I will set this to /data and uncheck backup. We will set up backups later. I want to dedicate a ton of room to this so I 26078 GiB (28 TB). Set this to what works best your how much media you'd like to store there. I keep everything else as is and click create. For the docker mount I repeated all these steps, but set the storage to flash, mount point to /docker, and gave it about 128gb of space.
+
+## 5. Creating SMB Shares
 
 Great video resource by KeepItTechie: [https://www.youtube.com/watch?v=2gW4rWhurUs](https://www.youtube.com/watch?v=2gW4rWhurUs)
 [source](https://gist.github.com/pjobson/3811b73740a3a09597511c18be845a6c)
@@ -88,5 +97,5 @@ Allow samba on firewall
 sudo ufw allow Samba
 sudo ufw status
 ```
-# Backup
-Work in progress
+# Backups
+Work in Progress
