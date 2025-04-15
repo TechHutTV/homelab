@@ -16,6 +16,8 @@ First, we are going to setup two ZFS Pools. A "Vault" pool which is used for bac
 
 From this screen, it should show all of your drives, so select the ones you want in your pool, and select your RAID level (in my case RAIDZ for my vault pool and mirror for my flash pool) and compression, (in my case lz4). 
 
+**NOTE: CHECK THE ADD TO STORAGE BOX**
+
 ![create zfs dialog](https://github.com/TechHutTV/homelab/blob/main/storage/createzfsdialog.png)
 
 2. Assigning Pools to Primary Vault Container
@@ -42,17 +44,38 @@ Finally, I want a disks directory for my virtual machines on my NVMe drives. So,
 
 Now, I
 
-4. Setup Cockpit for Shares
+4. Creating SMB Shares
 
-Steps above are based on [this video](https://www.youtube.com/watch?v=zLFB6ulC0Fg), when creating the data directory in that video I [changed how it's setup](https://www.youtube.com/watch?v=ObgzcKlozWQ).
-
-* Proxmox: [https://www.proxmox.com/en/downloads](https://www.proxmox.com/en/downloads)
-* Cockpit: [https://github.com/cockpit-project/cockpit](https://github.com/cockpit-project/cockpit)
-* Cockpit Sharing: [https://github.com/45Drives/cockpit-file-sharing](https://github.com/45Drives/cockpit-file-sharing)
-* Cockpit Identities: [https://github.com/45Drives/cockpit-identities](https://github.com/45Drives/cockpit-identities)
-* Cockpit Navigator: [https://github.com/45Drives/cockpit-navigator](https://github.com/45Drives/cockpit-navigator)
-* ZFS on Linux: [https://pve.proxmox.com/wiki/ZFS_on_Linux](https://pve.proxmox.com/wiki/ZFS_on_Linux)
-* ZFS in Proxmox: [https://www.reddit.com/r/Proxmox/comments/jppohv/a_very_short_guide_into_how_proxmox_uses_zfs/](https://www.reddit.com/r/Proxmox/comments/jppohv/a_very_short_guide_into_how_proxmox_uses_zfs/)
-
-5. Adding network shares to unprivalized containers
-6. [https://www.youtube.com/watch?v=DMPetY4mX-c](https://www.youtube.com/watch?v=DMPetY4mX-c)
+Create your share director and set permissions 
+```
+sudo mkdir /data
+sudo chmod 777 /data
+```
+Install Samba
+```
+sudo apt install samba
+```
+Edit the samba config
+```
+sudo nano /etc/samba/smb.conf
+```
+Add this to the bottom on the configuration
+```
+[share]
+path = /data
+browseable = ues
+read only = no
+guest ok = no
+```
+Add your samba user
+```
+sudo smbpasswd -a [username]
+```
+Set services to auto start on startup
+```
+sudo systemctl enable smbd
+sudo systemctl enable nmbd
+Restart samba services
+sudo systemctl restart smbd
+sudo systemctl restart nmbd
+```
