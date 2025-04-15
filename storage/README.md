@@ -90,6 +90,15 @@ This is my configuration
    name resolve order = bcast host
    hosts allow = 10.0.0.0/24
    hosts deny = 0.0.0.0/0
+[guest]
+   comment = Public share for guests
+   path = /data
+   browseable = yes
+   read only = yes
+   create mask = 0666
+   directory mask = 1337
+   guest ok = yes
+   guest only = yes
 [data]
    path = /data
    force user = brandon
@@ -101,7 +110,7 @@ This is my configuration
    browseable = yes
    writable = yes
    read only = no
-   guest ok = yes
+   guest ok = no
 [docker]
    path = /docker
    force user = brandon
@@ -113,7 +122,7 @@ This is my configuration
    browseable = yes
    writable = yes
    read only = no
-   guest ok = yes
+   guest ok = no
 ```
 Add your samba user
 ```
