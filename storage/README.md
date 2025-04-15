@@ -25,6 +25,10 @@ Now restart the Proxmox web server
 ```
 systemctl restart pveproxy.service
 ```
+Disable enterprise repositories under Node > Repositories. Now click Add and enable the no subscription repository. Finally, go Updates > Refresh.
+
+Lear about enabling PCI Passthrough [here](https://pve.proxmox.com/wiki/PCI_Passthrough)
+
 ### 2. Create ZFS Pools
 
 First, we are going to setup two ZFS Pools. A "Vault" pool which is used for larger stored data sets such as media, images and archives. We also will make a "Flash" pool which is used for virtual machine and container root file systems. To do this, on the Proxmox sidebar for your datacenter, go to Disks -> ZFS -> Create: ZFS. This will pop up the screen to create a ZFS pool.
@@ -84,4 +88,5 @@ Allow samba on firewall
 sudo ufw allow Samba
 sudo ufw status
 ```
-
+# Backup
+Work in progress
