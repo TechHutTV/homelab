@@ -64,7 +64,7 @@ Great video resource by KeepItTechie: [https://www.youtube.com/watch?v=2gW4rWhur
 Create your share directory and set permissions 
 ```
 sudo mkdir /data
-sudo chmod -R 0777 /data
+sudo chmod -R 0774 /data
 sudo chown -R brandon:brandon /data
 ```
 Install Samba
@@ -75,19 +75,40 @@ Edit the samba config
 ```
 sudo nano /etc/samba/smb.conf
 ```
-sudo nano /etc/samba/shares.conf
-Add this to the configuration
+This is my configuration
 ```
+[global]
+   server string = Servarr
+   workgroup = WORKGROUP
+   security = user
+   map to guest = Bad User
+   name resolve order = bcast host
+   hosts allow = 10.0.0.0/24
+   hosts deny = 0.0.0.0/0
 [data]
    path = /data
+   force user = brandon
+   force group = brandon
+   create mask = 0774
+   force create mode = 0774
+   directory mask = 0775
+   force directory mode = 0775
    browseable = yes
+   writable = yes
    read only = no
-   guest ok = no
+   guest ok = yes
 [docker]
    path = /docker
+   force user = brandon
+   force group = brandon
+   create mask = 0774
+   force create mode = 0774
+   directory mask = 0775
+   force directory mode = 0775
    browseable = yes
+   writable = yes
    read only = no
-   guest ok = no
+   guest ok = yes
 ```
 Add your samba user
 ```
