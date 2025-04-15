@@ -71,9 +71,14 @@ Install Samba
 ```
 sudo apt install samba
 ```
+Create a backup of the default configuration
+```
+cd /etc/samba
+sudo mv smb.conf smb.conf.old
+```
 Edit the samba config
 ```
-sudo nano /etc/samba/smb.conf
+sudo nano smb.conf
 ```
 This is my configuration
 ```
