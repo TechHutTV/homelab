@@ -20,6 +20,15 @@ My current setup involves a single server with x3 NVME drives and a bunch of har
 **Disable Enterprise Repositories** 
 Node > Repositories. Now click Add and enable the no subscription repository. Finally, go Updates > Refresh.
 
+**Delete local-lvm and Resize local**
+1. Delete local-lvm manually from web interface.
+2. Run the following commands
+```
+lvremove /dev/pve/data
+lvresize -l +100%FREE /dev/pve/root
+resize2fs /dev/mapper/pve-root
+```
+
 Lear about enabling PCI Passthrough [here](https://pve.proxmox.com/wiki/PCI_Passthrough)
 
 ### 2. Create ZFS Pools
