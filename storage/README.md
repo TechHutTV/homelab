@@ -15,26 +15,10 @@ My current setup involves a single server with x3 NVME drives and a bunch of har
 
 ### 1. Post Install Steps (optional)
 
-Removing Proxmox Notice 
-```
-cd /usr/share/javascript/proxmox-widget-toolkit/
-cp proxmoxlib.js proxmoxlib.js.bak # make a backup
-nano proxmoxlib.js
-```
-Edit the following line by adding `void({ //`
-```
-# Before
-Ext.Msg.show({
-  title: gettext('No valid subscription'),
-# After
-void({ //Ext.Msg.show({
-  title: gettext('No valid subscription'),
-```
-Now restart the Proxmox web server
-```
-systemctl restart pveproxy.service
-```
-Disable enterprise repositories under Node > Repositories. Now click Add and enable the no subscription repository. Finally, go Updates > Refresh.
+**Removing Proxmox Subscription Notice** (not currently working)
+
+**Disable Enterprise Repositories** 
+Node > Repositories. Now click Add and enable the no subscription repository. Finally, go Updates > Refresh.
 
 Lear about enabling PCI Passthrough [here](https://pve.proxmox.com/wiki/PCI_Passthrough)
 
