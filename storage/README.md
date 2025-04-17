@@ -18,9 +18,12 @@ My current setup involves a single server with x3 NVME drives and a bunch of har
 **Removing Proxmox Subscription Notice** (not currently working)
 
 **Disable Enterprise Repositories** 
-Node > Repositories. Now click Add and enable the no subscription repository. Finally, go Updates > Refresh.
+1. Node > Repositories. Disable the enterprise repositories.
+2. Now click Add and enable the no subscription repository. Finally, go Updates > Refresh.
+3. Upgrade your system.
 
 **Delete local-lvm and Resize local**
+My boot drive is small and I run all my containers and virtual machine disks on a seperate storage pool. So the lvm paritiion is not nessesary for me and goes unused. If you're running everything off the same boot drive for fast storage skips this. Also you should check out this [video](https://www.youtube.com/watch?v=czQuRgoBrmM).
 1. Delete local-lvm manually from web interface.
 2. Run the following commands
 ```
@@ -28,8 +31,28 @@ lvremove /dev/pve/data
 lvresize -l +100%FREE /dev/pve/root
 resize2fs /dev/mapper/pve-root
 ```
+3. Check to ensure your local storage partition is using all avalible space. Reassign storage for containers and VM if needed.
 
-Lear about enabling PCI Passthrough [here](https://pve.proxmox.com/wiki/PCI_Passthrough)
+**Ensure IOMMU is enabled**
+Enable IOMMU on in grub configuration
+```
+nano /etc/default/grub
+```
+You will see the line with `GRUB_CMDLINE_LINUX_DEFAULT="quiet"`, all you need to do is add `intel_iommu=on` or amd_iommu=on` depending on your system.
+```
+GRUB_CMDLINE_LINUX_DEFAULT="quiet intel_iommu=on"
+```
+Next run the following commands and reboot your system.
+```
+update-grub
+update-initramfs -u
+```
+Now check to make sure everything is enabled.
+```
+dmesg | grep -e DMAR -e IOMMU
+dmesg | grep 'remapping'
+```
+Learn about enabling PCI Passthrough [here](https://pve.proxmox.com/wiki/PCI_Passthrough)
 
 ### 2. Create ZFS Pools
 
