@@ -46,7 +46,6 @@ GRUB_CMDLINE_LINUX_DEFAULT="quiet intel_iommu=on"
 Next run the following commands and reboot your system.
 ```
 update-grub
-update-initramfs -u
 ```
 Now check to make sure everything is enabled.
 ```
@@ -81,7 +80,6 @@ Great video resource by KeepItTechie: [https://www.youtube.com/watch?v=2gW4rWhur
 Create your share directory and set permissions 
 ```
 sudo mkdir /data
-sudo chmod -R 0774 /data
 sudo chown -R brandon:brandon /data
 ```
 Install Samba
@@ -144,10 +142,14 @@ Restart samba services
 sudo systemctl restart smbd
 sudo systemctl restart nmbd
 ```
-Allow samba on firewall
+Allow samba on firewall if you run into any issues.
 ```
 sudo ufw allow Samba
 sudo ufw status
+```
+Install wsdd for Windows discorvery
+```
+sudo apt install wsdd
 ```
 # Backups
 Work in Progress
