@@ -74,24 +74,36 @@ Now that our container is created I want to add some storage and mount the data 
 
 ### 5. Creating SMB Shares
 
+In our new LXC we first need to run some general updates and user creation.
+
+1. Update your system
+'''
+sudo apt update && sudo apt upgrade -y
+'''
+2. Create your user
+'''
+adduser brandon
+adduser brandon sudo
+'''
+
 Great video resource by KeepItTechie: [https://www.youtube.com/watch?v=2gW4rWhurUs](https://www.youtube.com/watch?v=2gW4rWhurUs)
 [source](https://gist.github.com/pjobson/3811b73740a3a09597511c18be845a6c)
 
-Create your share directory and set permissions 
+3. Set permissions of mount points created eariler.
 ```
-sudo mkdir /data
+sudo chown -R brandon:brandon /data
 sudo chown -R brandon:brandon /data
 ```
-Install Samba
+4. Install Samba
 ```
 sudo apt install samba
 ```
-Create a backup of the default configuration
+5. Create a backup of the default configuration
 ```
 cd /etc/samba
 sudo mv smb.conf smb.conf.old
 ```
-Edit the samba config
+6. Edit the samba config
 ```
 sudo nano smb.conf
 ```
@@ -130,24 +142,23 @@ This is my configuration
    read only = no
    guest ok = no
 ```
-Add your samba user
+7. Add your samba user
 ```
 sudo smbpasswd -a [username]
 ```
-Set services to auto start on startup
+8. Set services to auto start on reboot
 ```
 sudo systemctl enable smbd
 sudo systemctl enable nmbd
-Restart samba services
 sudo systemctl restart smbd
 sudo systemctl restart nmbd
 ```
-Allow samba on firewall if you run into any issues.
+9. Allow samba on firewall if you run into any issues.
 ```
 sudo ufw allow Samba
 sudo ufw status
 ```
-Install wsdd for Windows discorvery
+10. Install wsdd for Windows discorvery
 ```
 sudo apt install wsdd
 ```
