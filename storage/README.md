@@ -24,6 +24,7 @@ My current setup involves a single server with x3 NVME drives and a bunch of har
 3. Upgrade your system.
 
 #### Delete local-lvm and Resize local
+**Notice: this assumes a fresh installation without using ZFS or any other advanced storage settings during the installation. See this [issue](https://github.com/TechHutTV/homelab/issues/19).
 My boot drive is small and I run all my containers and virtual machine disks on a seperate storage pool. So the lvm paritiion is not nessesary for me and goes unused. If you're running everything off the same boot drive for fast storage skips this. Also you should check out this [video](https://www.youtube.com/watch?v=czQuRgoBrmM).
 1. Delete local-lvm manually from web interface.
 2. Run the following commands
