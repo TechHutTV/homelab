@@ -13,7 +13,7 @@ In this repo I will layout my storage and backup solutions for all of the servic
 ## Proxmox as a NAS
 My current setup involves a single server with x3 NVME drives and a bunch of harddrives in a ZFS configuration. These are combined into seperate ZFS pools for the HDDs (vault) and the SSDs (flash). Vault is used as a large data storage pool and Flash is used for containers and virtual machines disks. No mattery your configuratiuon you can follow this guide. However, I would recommend at least one NVME SSD for your boot drive, and at least 512gb if you don't have any other NVME SSDs and at least x2 HHDs for file storage.
 
-### 1. Post Install Steps (optional)
+### Post Install Steps (optional)
 
 #### Removing Proxmox Subscription Notice
 (not currently working)
@@ -23,8 +23,9 @@ My current setup involves a single server with x3 NVME drives and a bunch of har
 2. Now click Add and enable the no subscription repository. Finally, go Updates > Refresh.
 3. Upgrade your system.
 
-#### Delete local-lvm and Resize local
-**Notice: this assumes a fresh installation without using ZFS or any other advanced storage settings during the installation.** See this [issue](https://github.com/TechHutTV/homelab/issues/19).
+#### Delete local-lvm and Resize local (fresh install)
+**Notice: This assumes a fresh installation without advanced storage settings during the installation.** See this [issue](https://github.com/TechHutTV/homelab/issues/19).
+
 My boot drive is small and I run all my containers and virtual machine disks on a seperate storage pool. So the lvm paritiion is not nessesary for me and goes unused. If you're running everything off the same boot drive for fast storage skips this. Also you should check out this [video](https://www.youtube.com/watch?v=czQuRgoBrmM).
 1. Delete local-lvm manually from web interface.
 2. Run the following commands
