@@ -40,10 +40,54 @@ services:
     restart: unless-stopped
 ```
 [https://github.com/NVIDIA/nvidia-container-toolkit](https://github.com/NVIDIA/nvidia-container-toolkit)
-## Permissions
-wip
 
-[https://github.com/tteck/Proxmox/discussions/286](https://github.com/tteck/Proxmox/discussions/286)
+## Permissions
+If you're running this with docker, you can skip these steps!
+```sudo systemctl jellyfin stop```
+```sudo nano /lib/systemd/system/jellyfin.service```
+Now change the user and group to your main user
+```                      
+[Unit]
+Description = Jellyfin Media Server
+After = network-online.target
+
+[Service]
+Type = simple
+EnvironmentFile = /etc/default/jellyfin
+User = brandon
+Group = brandon
+WorkingDirectory = /var/lib/jellyfin
+ExecStart = /usr/bin/jellyfin $JELLYFIN_WEB_OPT $JELLYFIN_FFMPEG_OPT $JELLYFIN_SERVICE_O>
+Restart = on-failure
+TimeoutSec = 15
+SuccessExitStatus=0 143
+
+[Install]
+WantedBy = multi-user.target
+```
+Now change the permissions of the Jellyfin files and folders
+```
+chown -R brandon:brandon /etc/default/jellyfin
+chown -R brandon:brandon /usr/bin/jellyfin
+chown -R brandon:brandon /var/lib/jellyfin/
+chown -R brandon:brandon /etc/jellyfin/
+chown -R brandon:brandon /var/log/jellyfin/
+chown -R brandon:brandon /var/cache/jellyfin/
+chown -R brandon:brandon /usr/share/jellyfin
+chown -R brandon:brandon /usr/share/jellyfin-ffmpeg
+chown -R brandon:brandon /usr/lib/jellyfin/
+chown -R brandon:brandon /usr/lib/jellyfin-ffmpeg/
+```
+Reload the daemon and restart jellyfin
+```
+systemctl daemon-reload
+systemctl restart jellyfin
+```
+Check the user that is running Jellyfin
+```
+ps -aux | grep jellyfin
+```
+Source: [https://github.com/tteck/Proxmox/discussions/286](https://github.com/tteck/Proxmox/discussions/286)
 
 
 ## General Setup
