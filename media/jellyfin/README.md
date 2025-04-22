@@ -43,9 +43,12 @@ services:
 
 ## Permissions
 If you're running this with docker, you can skip these steps!
+
+Stop the Jellyfin service.
 ```sudo systemctl jellyfin stop```
+Edit the Jellyfin service configuration to reflext your user.
 ```sudo nano /lib/systemd/system/jellyfin.service```
-Now change the user and group to your main user
+Now change the user and group to your main user. You can run the `id` command if you're unsure.
 ```                      
 [Unit]
 Description = Jellyfin Media Server
