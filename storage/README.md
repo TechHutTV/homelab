@@ -99,7 +99,7 @@ Great video resource by KeepItTechie: [https://www.youtube.com/watch?v=2gW4rWhur
 3. Set permissions of mount points created eariler.
 ```
 sudo chown -R brandon:brandon /data
-sudo chown -R brandon:brandon /data
+sudo chown -R brandon:brandon /docker
 ```
 4. Install Samba
 ```
