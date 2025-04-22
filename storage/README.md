@@ -23,6 +23,8 @@ My current setup involves a single server with x3 NVME drives and a bunch of har
 2. Now click Add and enable the no subscription repository. Finally, go _Updates > Refresh_.
 3. Upgrade your system by clicking _Upgrade_ above the repository setting page.
 
+![](https://github.com/TechHutTV/homelab/blob/main/storage/1_proxmox-repos.jpeg)
+
 #### Delete local-lvm and Resize local (fresh install)
 ⚠️ Notice: This assumes a fresh installation without advanced storage settings during the installation.** See this [issue](https://github.com/TechHutTV/homelab/issues/19). ⚠️
 
@@ -46,6 +48,9 @@ You will see the line with `GRUB_CMDLINE_LINUX_DEFAULT="quiet"`, all you need to
 # Should look like this
 GRUB_CMDLINE_LINUX_DEFAULT="quiet intel_iommu=on"
 ```
+
+![](https://github.com/TechHutTV/homelab/blob/main/storage/2_proxmox-iommu.jpeg)
+
 Next run the following commands and reboot your system.
 ```
 update-grub
@@ -61,11 +66,15 @@ Learn about enabling PCI Passthrough [here](https://pve.proxmox.com/wiki/PCI_Pas
 
 First, we are going to setup two ZFS Pools. A _tank_ pool which is used for larger stored data sets such as media, images and archives. We also will make a _flash_ pool which is used for virtual machine and container root file systems. This is what I name them for my setup. You can name these however you'd like.
 
-First, checkout you disks and make sure that they're all there. Find this under _Node > Disks_. Make sure you whipe all the disks you plan on using and do note this will whipe any data on the disks, so make sure there is no important data on them and back up if needed.  
+First, checkout you disks and make sure that they're all there. Find this under _Node > Disks_. Make sure you whipe all the disks you plan on using and do note this will whipe any data on the disks, so make sure there is no important data on them and back up if needed.
+
+![](https://github.com/TechHutTV/homelab/blob/main/storage/3_proxmox-wipe-disk.jpeg)
 
 Now, on the Proxmox sidebar for your datacenter, go to _Disks > ZFS > Create: ZFS_. This will pop up the screen to create a ZFS pool.
 
 From this screen, it should show all of your drives, so select the ones you want in your pool, and select your RAID level (in my case RAIDZ for my vault pool and mirror for my flash pool) and compression, (in my case I keep it at on). Make sure you check the box that says __Add to Storage__. This will make the pools immiatily avalible and will prevent using .raw files as obsosed to my previous setup when I added directorties. 
+
+![](https://github.com/TechHutTV/homelab/blob/main/storage/4_proxmox-mirror-nvme.jpeg)
 
 ### 3. Creating Containers using ZFS Pools
 
