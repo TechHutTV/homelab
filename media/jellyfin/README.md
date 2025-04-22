@@ -9,18 +9,59 @@ wip
 wip
 
 ### System Installtion
-wip
+Run the following command on your Ubuntu system, VM, or Proxmox LXC. You can learn about verify the script download integrity [here](https://jellyfin.org/docs/general/installation/linux/).
+```
+curl https://repo.jellyfin.org/install-debuntu.sh | sudo bash
+```
 
 ### Docker Setup
 wip
 
+Paste in this compose file and make any edits if needed.
+```
+services:
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin:latest
+    container_name: jellyfin
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+      - JELLYFIN_PublishedServerUrl=http://10.0.0.100 #optional
+    volumes:
+      - ./config:/config
+      - /data:/data
+    devices:
+      - /dev/dri:/dev/dri #Use for Intel QuickSync
+    ports:
+      - 8096:8096
+      - 7359:7359/udp #Service Discovery
+      - 1900:1900/udp #Client Discovery
+    restart: unless-stopped
+```
+[https://github.com/NVIDIA/nvidia-container-toolkit](https://github.com/NVIDIA/nvidia-container-toolkit)
 ## Permissions
 wip
+
+[https://github.com/tteck/Proxmox/discussions/286](https://github.com/tteck/Proxmox/discussions/286)
+
 
 ## General Setup
 wip
 
 ## Hardware Transcoding
+Be sure to checkout the offical docs [here](https://jellyfin.org/docs/general/administration/hardware-acceleration/).
+
+The following steps take place on the system, virtual machine or Proxmox LXC you're running Jellyfin on. Install the jellyfin-ffmpeg7. Remove the deprecated jellyfin meta package if it breaks the dependencies.
+```
+sudo apt update && sudo apt install -y jellyfin-ffmpeg7
+```
+Add jellyfin (and the user you're running jellyfin as that) to the render group.
+```
+sudo usermod -aG render jellyfin
+sudo usermod -aG render brandon # since I'm running jellyfin as my user
+sudo systemctl restart jellyfin
+```
 ### Proxmox Setup (Intel QuickSync)
 I recommend running this as a unprivlaged LXC that houses all your media. 
 
@@ -37,6 +78,20 @@ Now we can confirm hardware transcoding is ready by intstalling the `intel-gpu-t
 wip 
 
 Grab the download link for the driver [here](https://www.nvidia.com/en-us/drivers/unix/). Click the link for the _Latest Production Branch Version_ and right click the download link and copy the link. Within the Proxmox shell for your node run a `wget` command and paste in the link to download.
+
+...
+
+If running with nvidia you'd add this and remove the `/dev/dri` devices lines in the docker compose above.
+```
+    runtime: nvidia
+       deploy:
+         resources:
+           reservations:
+             devices:
+               - driver: nvidia
+                 count: all
+                 capabilities: [gpu]
+```
 
 
 ## Plugins
