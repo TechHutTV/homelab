@@ -1,12 +1,10 @@
-wow, such unfinished :(
-
-working on this page for the updated part 2 guide.
+_Work in Progress_
 
 # Jellyfin Setup Guide
-wip
+Welcome to the ultimate Jellyfin setup guide. 
 
 ## Installation
-wip
+There are two options for installing Jellyfin. Both work great and it's all a matter of preference. I generally install Jellyfin directly on the LXC within Proxmox the contains all my data.
 
 ### System Installtion
 Run the following command on your Ubuntu system, VM, or Proxmox LXC. You can learn about verify the script download integrity [here](https://jellyfin.org/docs/general/installation/linux/).
