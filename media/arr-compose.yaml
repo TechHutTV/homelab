@@ -67,7 +67,7 @@ services:
     container_name: qbittorrent
     restart: unless-stopped
     labels:
-      - deunhealth.restart.on.unhealthy= "true"
+      - deunhealth.restart.on.unhealthy=true
     environment:
       - PUID=1000
       - PGID=1000
