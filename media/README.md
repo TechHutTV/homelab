@@ -69,10 +69,18 @@ Easy command to create the download directory scheme.
 mkdir -p downloads/qbittorrent/{completed,incomplete,torrents} && mkdir -p downloads/nzbget/{completed,intermediate,nzb,queue,tmp}
 ```
 
-### Network Share
-Before switching to zfs on Proxmox I used to use a network share from Unraid to store downloads and all my media. This was created by adding the share to the fstab file within my Docker server. Due note, the appliction ```cifs-utils``` is required for this method.
+### Network Share (VM)
+I generally install Docker on the same LXC that I have my media server on as well as all my data. This; however, is [not recommened by Proxmox](https://www.reddit.com/r/Proxmox/comments/1afslhs/should_i_use_lxc_or_vm_for_running_docker/). Going forward you should create a seperate VM for all your docker containers and mount the data directory we created in the storage guide with the share. 
+
+Within the VM install `cifs-utils` 
 ```
-//10.0.0.90/data /media/data cifs uid=1000,gid=100,username=user,password=password,iocharset=utf8 0 0
+sudo apt install cifs-utils
+```
+Now, edit the fstab file and add the following lines editing them to match your information.
+```
+sudo nano /etc/fstab
+//10.0.0.90/data /data cifs uid=1000,gid=1000,username=user,password=password,iocharset=utf8 0 0
+//10.0.0.90/docker /docker cifs uid=1000,gid=1000,username=user,password=password,iocharset=utf8 0 0
 ```
 Storing the user creditentials within this file it's the best idea. Check out [this question](https://unix.stackexchange.com/questions/178187/how-to-edit-etc-fstab-properly-for-network-drive) on Stack Exchange to learn more.
 ## User Permissions
