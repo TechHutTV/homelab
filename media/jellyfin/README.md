@@ -127,7 +127,7 @@ intel_gpu_top
 ```
 
 ## Plugins
-wip
+Below are the plugins I'm currently using. I'd recommend checking out [Awesome Jellyfin](https://github.com/awesome-jellyfin/awesome-jellyfin) for much more.
 
 1. [Intro Skipper](https://github.com/intro-skipper/intro-skipper)
 2. [Fan Art](https://github.com/jellyfin/jellyfin-plugin-fanart)
@@ -147,9 +147,14 @@ Find it [here](https://github.com/CyferShepard/Jellystat)
 Find it [here](https://github.com/fallenbagel/jellyseerr)
 
 ## DVR and Live TV
+
+### Live TV
 This will require some extra hardware and a paid service for the guide data. HDHomeRun is great and it's what I use. Go to _Dashboard → Live TV → TV Sources → Add Tuner Device_. Select your tuner type _HDHomeRun_. Enter the tuner’s IP address and click Save.
 
 Next you want to setup guide data. _Guide Providers → Add Guide Provider_. Schedules Direct is a paid service, but their awesome. It's a non-profit and they commit to the Jellyfin code directly. Create a account and you can use it free for a week. Input your username and password and give it some time to update the data. I didn't need to but you can map the channels by going to _Channels → Map Channels_.
+
+###
+Under DVR we have a bunch of different settings to go over. 
 
 ## Remote Connections
 wip
