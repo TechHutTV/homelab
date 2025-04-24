@@ -15,7 +15,7 @@ services:
     devices:
      - /dev/dri:/dev/dri # QuickSync
     volumes:
-      - /docker/plex:/config
+      - ./plex:/config
       - /data:/data
     restart: unless-stopped
 
@@ -27,7 +27,7 @@ services:
       - PGID=1000
       - TZ=America/Los_Angeles
     volumes:
-      - /docker/overseer/config:/config
+      - ./overseer/config:/config
       - /data:/data
     ports:
       - 5055:5055
@@ -41,7 +41,7 @@ services:
       - PGID=1000
       - TZ=America/Los_Angeles
     volumes:
-      - /docker/tautulli:/config
+      - ./tautulli:/config
     ports:
       - 8181:8181
     restart: unless-stopped
