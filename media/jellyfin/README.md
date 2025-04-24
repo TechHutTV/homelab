@@ -13,9 +13,8 @@ curl https://repo.jellyfin.org/install-debuntu.sh | sudo bash
 ```
 
 ### Docker Setup
-wip
+Docker is another option to install and run Jellyfin. Checkout the compose.yaml for the full stack.
 
-Paste in this compose file and make any edits if needed.
 ```
 services:
   jellyfin:
@@ -37,7 +36,6 @@ services:
       - 1900:1900/udp #Client Discovery
     restart: unless-stopped
 ```
-[https://github.com/NVIDIA/nvidia-container-toolkit](https://github.com/NVIDIA/nvidia-container-toolkit)
 
 ## Permissions
 If you're running this with docker, you can skip these steps!
@@ -91,13 +89,28 @@ ps -aux | grep jellyfin
 Source: [https://github.com/tteck/Proxmox/discussions/286](https://github.com/tteck/Proxmox/discussions/286)
 
 
-## General Setup
-wip
+## Configuring Jellyfin
+Open your web browser and navigate to your installed instance of Jellyfin using `http://IP:8096` and once there you can power through the initial setup by selecting your preferred language, then create an admin account with a secure username and password. Next, set up your media libraries by adding folders for movies, TV shows, or music. I tend to keep everything in my `/data` directory as shown in the media page on this repo.
 
 ## Hardware Transcoding
-Be sure to checkout the offical docs [here](https://jellyfin.org/docs/general/administration/hardware-acceleration/).
+This focuses on trascoding with Intel QuickSync. In my experiance it is simply the best option. If you're running a AMD CPU you can pickup a Intel Arc GPU fairly cheap. If you have any issues or don't have access to a Intel CPU or an Arc GPU be sure to checkout the offical docs [here](https://jellyfin.org/docs/general/administration/hardware-acceleration/). If you're not doing this on Proxmox you can skip to the Ubuntu setup.
 
-The following steps take place on the system, virtual machine or Proxmox LXC you're running Jellyfin on. Install the jellyfin-ffmpeg7. Remove the deprecated jellyfin meta package if it breaks the dependencies.
+### Proxmox Setup
+I recommend running this as a unprivlaged LXC that houses all your media. If you're running the Docker installation it's recommened to use a VM.
+
+Add the lines below to your containers configuration under changing the ID to match the container you've installed Jellyfin on.
+```
+nano /etc/pve/lxc/100.conf
+```
+```
+#Add these for Intel QuickSync
+lxc.cgroup2.devices.allow: c 10:200 rwm
+lxc.mount.entry: /dev/net dev/net none bind,create=dir
+lxc.mount.entry: /dev/net/tun dev/net/tun none bind,create=file
+```
+
+### Ubuntu Setup
+The following steps take place on the Ubuntu server, virtual machine or Proxmox LXC you're running Jellyfin on. Install the `jellyfin-ffmpeg7`. Remove the deprecated jellyfin meta package if it breaks the dependencies.
 ```
 sudo apt update && sudo apt install -y jellyfin-ffmpeg7
 ```
@@ -107,37 +120,11 @@ sudo usermod -aG render jellyfin
 sudo usermod -aG render brandon # since I'm running jellyfin as my user
 sudo systemctl restart jellyfin
 ```
-### Proxmox Setup (Intel QuickSync)
-I recommend running this as a unprivlaged LXC that houses all your media. 
-
-Add this your your containers configuration under using  `nano /etc/pve/lxc/100.conf` changing the ID to match the container you've installed Jellyfin on.
+Now we can confirm hardware transcoding is ready by intstalling the `intel-gpu-tools` package and running the command `intel_gpu_top`.
 ```
-#Add these for Intel QuickSync
-lxc.cgroup2.devices.allow: c 10:200 rwm
-lxc.mount.entry: /dev/net dev/net none bind,create=dir
-lxc.mount.entry: /dev/net/tun dev/net/tun none bind,create=file
+sudo apt install intel-gpu-tools
+intel_gpu_top
 ```
-Now we can confirm hardware transcoding is ready by intstalling the `intel-gpu-tools` package and running the command `intel_gpu_top`
-
-### Proxmox Setup (NVIDIA)
-wip 
-
-Grab the download link for the driver [here](https://www.nvidia.com/en-us/drivers/unix/). Click the link for the _Latest Production Branch Version_ and right click the download link and copy the link. Within the Proxmox shell for your node run a `wget` command and paste in the link to download.
-
-...
-
-If running with nvidia you'd add this and remove the `/dev/dri` devices lines in the docker compose above.
-```
-    runtime: nvidia
-       deploy:
-         resources:
-           reservations:
-             devices:
-               - driver: nvidia
-                 count: all
-                 capabilities: [gpu]
-```
-
 
 ## Plugins
 wip
@@ -151,7 +138,7 @@ wip
 7. [Media Bar](https://github.com/IAmParadox27/jellyfin-plugin-media-bar)
 
 ## Other Tools
-wip
+Now to expand functionality of Jellyfin I recommened these 3rd party tools that integrate well with Jellyfin.
 
 ### Jellystat
 Find it [here](https://github.com/CyferShepard/Jellystat)
@@ -160,4 +147,9 @@ Find it [here](https://github.com/CyferShepard/Jellystat)
 Find it [here](https://github.com/fallenbagel/jellyseerr)
 
 ## DVR and Live TV
+This will require some extra hardware and a paid service for the guide data. HDHomeRun is great and it's what I use. Go to _Dashboard → Live TV → TV Sources → Add Tuner Device_. Select your tuner type _HDHomeRun_. Enter the tuner’s IP address and click Save.
+
+Next you want to setup guide data. _Guide Providers → Add Guide Provider_. Schedules Direct is a paid service, but their awesome. It's a non-profit and they commit to the Jellyfin code directly. Create a account and you can use it free for a week. Input your username and password and give it some time to update the data. I didn't need to but you can map the channels by going to _Channels → Map Channels_.
+
+## Remote Connections
 wip
