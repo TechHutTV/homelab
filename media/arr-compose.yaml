@@ -197,13 +197,14 @@ services:
 # Used to browse the file system via a web browser.
 # Default login is admin/admin. Change password in Settings > User Managment.
 # Permissions set to my dault user 1000:1000 as that's the user that owns my data directory.
+
   filebrowser:
     image: filebrowser/filebrowser:s6
     container_name: filebrowser
     volumes:
       - /data:/srv # Directory you want exposed to filebrowser.
-      - /docker/filebrowser/filebrowser.db:/database/filebrowser.db
-      - /docker/filebrowser/settings.json:/config/settings.json
+      - /docker/filebrowser/data:/data
+      - /docker/filebrowser/config:/config
     environment:
       - PUID=1000
       - PGID=1000
