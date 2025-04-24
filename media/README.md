@@ -9,6 +9,7 @@ This is currently a work in progress. Make sure to review everything here and if
 * [__Media Server__](https://github.com/TechHutTV/homelab/tree/main/media)
   - [Companion Video](#companion-video)
     * [Updates Since Video Publish](#updates-since-video-publish)
+  - [Media Server](#media-server)
   - [Data Directory](#data-directory)
     * [Folder Mapping](#folder-mapping)
     * [Network Share](#network-share)
@@ -41,6 +42,12 @@ This is currently a work in progress. Make sure to review everything here and if
 * Added the [deunhealth](https://github.com/qdm12/deunhealth/tree/main) container to restart qbittorrent if it becomes unhealth due to a VPN timeout. See details [here](https://github.com/TechHutTV/homelab/blob/main/media/README.md#qBittorrent).
 * Added static IPs with a custom docker networking making it easier to configure Prowlarr with internal docker IP addresses. See details [here](https://github.com/TechHutTV/homelab/pull/14).
 * Removed Readarr and added [ytdl-sub](https://ytdl-sub.readthedocs.io/en/latest/) to the arr-compose.
+
+## Media Server
+Media Servers have their own guides! Check the link below and it will take you to the folder for the guides.
+
+- [Jellyfin](https://github.com/TechHutTV/homelab/tree/main/media/jellyfin)
+- [Plex](https://github.com/TechHutTV/homelab/tree/main/media/plex)
 
 ## Data Directory
 ### Folder Mapping
