@@ -17,6 +17,7 @@ services:
       - 7359:7359/udp #Service Discovery
       - 1900:1900/udp #Client Discovery
     restart: unless-stopped
+# Remove the Jellyfin service if installed directly on system.
 
   jellyseerr:
     container_name: jellyseerr
