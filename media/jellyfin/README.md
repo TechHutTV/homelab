@@ -3,6 +3,12 @@ _Work in Progress_
 # Jellyfin Setup Guide
 Welcome to the ultimate Jellyfin setup guide. 
 
+## Directories
+wip
+```
+chmod 755 /data
+```
+
 ## Installation
 There are two options for installing Jellyfin. Both work great and it's all a matter of preference. I generally install Jellyfin directly on the LXC within Proxmox the contains all my data.
 
