@@ -66,21 +66,22 @@ WantedBy = multi-user.target
 ```
 Now change the permissions of the Jellyfin files and folders
 ```
-chown -R brandon:brandon /etc/default/jellyfin
-chown -R brandon:brandon /usr/bin/jellyfin
-chown -R brandon:brandon /var/lib/jellyfin/
-chown -R brandon:brandon /etc/jellyfin/
-chown -R brandon:brandon /var/log/jellyfin/
-chown -R brandon:brandon /var/cache/jellyfin/
-chown -R brandon:brandon /usr/share/jellyfin
-chown -R brandon:brandon /usr/share/jellyfin-ffmpeg
-chown -R brandon:brandon /usr/lib/jellyfin/
-chown -R brandon:brandon /usr/lib/jellyfin-ffmpeg/
+sudo chown -R brandon:brandon /etc/default/jellyfin
+sudo chown -R brandon:brandon /usr/bin/jellyfin
+sudo chown -R brandon:brandon /var/lib/jellyfin/
+sudo chown -R brandon:brandon /etc/jellyfin/
+sudo chown -R brandon:brandon /var/log/jellyfin/
+sudo chown -R brandon:brandon /var/cache/jellyfin/
+sudo chown -R brandon:brandon /usr/share/jellyfin
+sudo chown -R brandon:brandon /usr/share/jellyfin-ffmpeg
+sudo chown -R brandon:brandon /usr/lib/jellyfin/
+sudo chown -R brandon:brandon /usr/lib/jellyfin-ffmpeg/
+sudo chown -R brandon:brandon /tmp/jellyfin/
 ```
 Reload the daemon and restart jellyfin
 ```
-systemctl daemon-reload
-systemctl restart jellyfin
+sudo systemctl daemon-reload
+sudo systemctl restart jellyfin
 ```
 Check the user that is running Jellyfin
 ```
