@@ -105,9 +105,8 @@ nano /etc/pve/lxc/100.conf
 ```
 ```
 #Add these for Intel QuickSync
-lxc.cgroup2.devices.allow: c 10:200 rwm
-lxc.mount.entry: /dev/net dev/net none bind,create=dir
-lxc.mount.entry: /dev/net/tun dev/net/tun none bind,create=file
+dev0: /dev/dri/card0,gid=44
+dev1: /dev/dri/renderD128,gid=104
 ```
 
 ### Ubuntu Setup
