@@ -345,7 +345,7 @@ Smart Home and Automation
 - [AgentDVR](https://www.ispyconnect.com/), [Shinobi NVR](https://shinobi.video/) (alts to Frigate)
 
 DNS and Remote Connections
-- [AgdGuard Home](https://adguard.com/en/adguard-home/overview.html) (alt to Pi-Hole)
+- [AdGuard Home](https://adguard.com/en/adguard-home/overview.html) (alt to Pi-Hole)
 - [SWAG](https://docs.linuxserver.io/general/swag/#creating-a-swag-container) (alt to NGINX Proxy Manager)
 - [Tailscale](https://tailscale.com/) (alt to Twingate)
 - [ddns-updater](https://github.com/qdm12/ddns-updater) (alt to Cloudflare DDNS)
