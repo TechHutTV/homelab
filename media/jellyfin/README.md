@@ -3,22 +3,10 @@ _Work in Progress_
 # Jellyfin Setup Guide
 Welcome to the ultimate Jellyfin setup guide. 
 
-## Directories
-wip
-```
-chmod 755 /data
-```
-
 ## Installation
 There are two options for installing Jellyfin. Both work great and it's all a matter of preference. I generally install Jellyfin directly on the LXC within Proxmox the contains all my data.
 
-### System Installtion
-Run the following command on your Ubuntu system, VM, or Proxmox LXC. You can learn about verify the script download integrity [here](https://jellyfin.org/docs/general/installation/linux/).
-```
-curl https://repo.jellyfin.org/install-debuntu.sh | sudo bash
-```
-
-### Docker Setup
+### Docker Setup (Recommended)
 Docker is another option to install and run Jellyfin. Checkout the compose.yaml for the full stack.
 
 ```
@@ -43,7 +31,13 @@ services:
     restart: unless-stopped
 ```
 
-## Permissions
+### System Installtion
+Run the following command on your Ubuntu system, VM, or Proxmox LXC. You can learn about verify the script download integrity [here](https://jellyfin.org/docs/general/installation/linux/).
+```
+curl https://repo.jellyfin.org/install-debuntu.sh | sudo bash
+```
+
+#### Permissions
 If you're running this with docker, you can skip these steps!
 
 Stop the Jellyfin service.
@@ -103,9 +97,13 @@ Open your web browser and navigate to your installed instance of Jellyfin using 
 This focuses on trascoding with Intel QuickSync. In my experiance it is simply the best option. If you're running a AMD CPU you can pickup a Intel Arc GPU fairly cheap. If you have any issues or don't have access to a Intel CPU or an Arc GPU be sure to checkout the offical docs [here](https://jellyfin.org/docs/general/administration/hardware-acceleration/). If you're not doing this on Proxmox you can skip to the Ubuntu setup.
 
 ### Proxmox Setup
-I recommend running this as a unprivlaged LXC that houses all your media. If you're running the Docker installation it's recommened to use a VM.
+Extra steps needing if running on Proxmox.
 
-Add the lines below to your containers configuration under changing the ID to match the container you've installed Jellyfin on.
+#### Running on a VM
+wip
+
+#### Running as Unprivlaged LXC 
+If you're running Jellyfin directly on the LXC that houses all your media. You will need to manually add the following to you LXC configuration. Add the lines below to your containers configuration under changing the ID to match the container you've installed Jellyfin on.
 ```
 nano /etc/pve/lxc/100.conf
 ```
