@@ -6,9 +6,9 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=America/Los_Angeles
-      - JELLYFIN_PublishedServerUrl=http://10.0.0.100 #optional
+      - JELLYFIN_PublishedServerUrl=http://10.0.0.101 #optional
     volumes:
-      - ./jellyfin:/config
+      - ./config:/config
       - /data:/data
     devices:
       - /dev/dri:/dev/dri #Use for Intel QuickSync
@@ -40,7 +40,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: mypassword
     volumes:
-      - ./stats/postgres:/var/lib/postgresql/data
+      - ./jellystat/postgres:/var/lib/postgresql/data
 
   jellystat:
     image: cyfershepard/jellystat:latest
@@ -54,7 +54,7 @@ services:
       JWT_SECRET: "my-secret-jwt-key"
       TZ: America/Los_Angeles
     volumes:
-      - ./stats/backup-data:/app/backend/backup-data
+      - ./jellystat/backup-data:/app/backend/backup-data
     ports:
       - "3000:3000"
     depends_on:
