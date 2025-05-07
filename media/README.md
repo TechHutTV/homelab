@@ -86,10 +86,17 @@ sudo apt install cifs-utils
 Now, edit the fstab file and add the following lines editing them to match your information.
 ```
 sudo nano /etc/fstab
-//10.0.0.90/data /data cifs uid=1000,gid=1000,username=user,password=password,iocharset=utf8 0 0
-//10.0.0.90/docker /docker cifs uid=1000,gid=1000,username=user,password=password,iocharset=utf8 0 0
+//10.0.0.100/data /data cifs uid=1000,gid=1000,username=user,password=password,iocharset=utf8 0 0
+//10.0.0.100/docker /docker cifs uid=1000,gid=1000,username=user,password=password,iocharset=utf8 0 0
 ```
 Storing the user creditentials within this file it's the best idea. Check out [this question](https://unix.stackexchange.com/questions/178187/how-to-edit-etc-fstab-properly-for-network-drive) on Stack Exchange to learn more.
+
+Now reload the configuration and mount the shares with the following commands.
+```
+sudo systemctl daemon-reload
+sudo mount -a
+```
+
 ## User Permissions
 Using bind mounts (path/to/config:/config) may lead to permissions conflicts between the host operating system and the container. To avoid this problem, you we specify the user ID (PUID) and group ID (PGID) to use within some of the containers. This will give your user permission to read and write configuration files, etc.
 
