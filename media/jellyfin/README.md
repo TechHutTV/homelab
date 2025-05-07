@@ -16,7 +16,7 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=America/Los_Angeles
-      - JELLYFIN_PublishedServerUrl=http://10.0.0.100 #optional
+      - JELLYFIN_PublishedServerUrl=http://10.0.0.101 #optional
     volumes:
       - ./config:/config
       - /data:/data
