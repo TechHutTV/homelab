@@ -20,7 +20,7 @@ This is currently a work in progress. Make sure to review everything here and if
     * [External Container to Gluetun](#external-container-to-gluetun)
     * [Container in another docker-compose.yml](#container-in-another-docker-composeyml)
     * [Arr apps wont connect to prowlarr](#arr-apps-wont-connect-to-prowlarr)
-    * [Gluetun Proxmox Fix](#gluetun-proxmox-fix)
+    * [Gluetun Proxmox LXC Setup](#gluetun-proxmox-fix)
     * [Reduce Gluetun Ram Usage](#reduce-gluetun-ram-usage)
     * [Testing Other Containers](#testing-other-containers)
   - [Download Clients](#download-clients)
@@ -110,6 +110,7 @@ In the example output above, If using a network share I would need to edit the c
 If you run into errors, after creating all the folders you can assign the permissions using chmod. For example,
 ```
 sudo chown -R 1000:1000 /data
+sudo chown -R 1000:1000 /docker
 ```
 
 ## Gluetun VPN
@@ -150,7 +151,7 @@ I like to run Prowlarr though a VPN as it is the service that will fetch magnet 
 
 see issue [here](https://github.com/TechHutTV/homelab/issues/9)
 
-### Gluetun Proxmox Fix
+### Gluetun Proxmox LXC Setup
 
 "cannot Unix Open TUN device file: operation not permitted and cannot create TUN device file node: operation not permitted" May happen if you're running this on LXC containers.
 
