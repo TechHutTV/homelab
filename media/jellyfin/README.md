@@ -1,5 +1,3 @@
-_Work in Progress_
-
 # Jellyfin Setup Guide
 Welcome to the ultimate Jellyfin setup guide. 
 
@@ -31,7 +29,7 @@ services:
     restart: unless-stopped
 ```
 
-### System Installtion
+### System Installation
 Run the following command on your Ubuntu system, VM, or Proxmox LXC. You can learn about verify the script download integrity [here](https://jellyfin.org/docs/general/installation/linux/).
 ```
 curl https://repo.jellyfin.org/install-debuntu.sh | sudo bash
@@ -76,7 +74,6 @@ sudo chown -R brandon:brandon /usr/share/jellyfin
 sudo chown -R brandon:brandon /usr/share/jellyfin-ffmpeg
 sudo chown -R brandon:brandon /usr/lib/jellyfin/
 sudo chown -R brandon:brandon /usr/lib/jellyfin-ffmpeg/
-sudo chown -R brandon:brandon /tmp/jellyfin/
 ```
 Reload the daemon and restart jellyfin
 ```
@@ -89,20 +86,26 @@ ps -aux | grep jellyfin
 ```
 Source: [https://github.com/tteck/Proxmox/discussions/286](https://github.com/tteck/Proxmox/discussions/286)
 
-
-## Configuring Jellyfin
-Open your web browser and navigate to your installed instance of Jellyfin using `http://IP:8096` and once there you can power through the initial setup by selecting your preferred language, then create an admin account with a secure username and password. Next, set up your media libraries by adding folders for movies, TV shows, or music. I tend to keep everything in my `/data` directory as shown in the media page on this repo.
+#### Hardware Transcoding
+For the System Installation only, install the `jellyfin-ffmpeg7`. Remove the deprecated jellyfin meta package if it breaks the dependencies.
+```
+sudo apt update && sudo apt install -y jellyfin-ffmpeg7
+```
+Continue with the steps below...
 
 ## Hardware Transcoding
 This focuses on trascoding with Intel QuickSync. In my experiance it is simply the best option. If you're running a AMD CPU you can pickup a Intel Arc GPU fairly cheap. If you have any issues or don't have access to a Intel CPU or an Arc GPU be sure to checkout the offical docs [here](https://jellyfin.org/docs/general/administration/hardware-acceleration/). If you're not doing this on Proxmox you can skip to the Ubuntu setup.
 
-### Proxmox Setup
-Extra steps needing if running on Proxmox.
+### Proxmox Passthough
 
-#### Running on a VM
-wip
+> [!NOTE]
+> Running Jellyfin with Docker on a VM is highly recommened. This elimates permissions issues with running Jellyfin on the system and running Docker on a VM is what is recommended by the Proxmox team.
+>
 
-#### Running as Unprivlaged LXC 
+#### Running on a VM (Recommened)
+Under your virutal machine Proxmox click the Hardware option on the sidebar. From there select Add > PCI Device. Then select Raw and pick the device that we will use for Quicksync or another GPU if you're not using Quicksync. For Quicksync it's often the very first Intel device that will say something like "Alderlake" in the name.
+
+#### Running on a Unprivlaged LXC
 If you're running Jellyfin directly on the LXC that houses all your media. You will need to manually add the following to you LXC configuration. Add the lines below to your containers configuration under changing the ID to match the container you've installed Jellyfin on.
 ```
 nano /etc/pve/lxc/100.conf
@@ -112,13 +115,8 @@ nano /etc/pve/lxc/100.conf
 dev0: /dev/dri/card0,gid=44
 dev1: /dev/dri/renderD128,gid=104
 ```
-
 ### Ubuntu Setup
-The following steps take place on the Ubuntu server, virtual machine or Proxmox LXC you're running Jellyfin on. Install the `jellyfin-ffmpeg7`. Remove the deprecated jellyfin meta package if it breaks the dependencies.
-```
-sudo apt update && sudo apt install -y jellyfin-ffmpeg7
-```
-Add jellyfin (and the user you're running jellyfin as that) to the render group.
+The following steps take place on the Ubuntu server, virtual machine or Proxmox LXC you're running Jellyfin on. Add jellyfin (and the user you're running jellyfin as that) to the render group.
 ```
 sudo usermod -aG render jellyfin
 sudo usermod -aG render brandon # since I'm running jellyfin as my user
@@ -130,8 +128,11 @@ sudo apt install intel-gpu-tools
 intel_gpu_top
 ```
 
+## Configuring Jellyfin
+Open your web browser and navigate to your installed instance of Jellyfin using `http://IP:8096` and once there you can power through the initial setup by selecting your preferred language, then create an admin account with a secure username and password. Next, set up your media libraries by adding folders for movies, TV shows, or music. I tend to keep everything in my `/data` directory as shown in the media page on this repo.
+
 ## Plugins
-Below are the plugins I'm currently using. I'd recommend checking out [Awesome Jellyfin](https://github.com/awesome-jellyfin/awesome-jellyfin) for much more.
+Below are the plugins I'm currently testing. I'd recommend checking out [Awesome Jellyfin](https://github.com/awesome-jellyfin/awesome-jellyfin) for much more.
 
 1. [Intro Skipper](https://github.com/intro-skipper/intro-skipper)
 2. [Fan Art](https://github.com/jellyfin/jellyfin-plugin-fanart)
@@ -158,14 +159,10 @@ This will require some extra hardware and a paid service for the guide data. HDH
 Next you want to setup guide data. _Guide Providers → Add Guide Provider_. Schedules Direct is a paid service, but their awesome. It's a non-profit and they commit to the Jellyfin code directly. Create a account and you can use it free for a week. Input your username and password and give it some time to update the data. I didn't need to but you can map the channels by going to _Channels → Map Channels_.
 
 ### DVR
-Under DVR we have a bunch of different settings to go over. 
 
 > [!NOTE]
 > This is a work in progress. Don't quite have it working yet.
 >
-
-[https://forum.jellyfin.org/t-live-tv-recording-not-showing-in-recordings-tab](https://forum.jellyfin.org/t-live-tv-recording-not-showing-in-recordings-tab)
-[https://www.reddit.com/r/jellyfin/comments/sz8tnq/a_much_more_detailed_guide_on_how_to_use_post/](https://www.reddit.com/r/jellyfin/comments/sz8tnq/a_much_more_detailed_guide_on_how_to_use_post/)
 
 ## Remote Connections
 wip
