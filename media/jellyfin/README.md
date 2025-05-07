@@ -165,4 +165,8 @@ Next you want to setup guide data. _Guide Providers → Add Guide Provider_. Sch
 >
 
 ## Remote Connections
-wip
+
+> [!NOTE]
+> This is a work in progress.
+
+In the meantime checkout [this](https://youtu.be/79e6KBYcVmQ?si=0yTkdD5UtDVs-jNX) video.
