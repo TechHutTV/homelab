@@ -87,7 +87,6 @@ Now, edit the fstab file and add the following lines editing them to match your 
 ```
 sudo nano /etc/fstab
 //10.0.0.100/data /data cifs uid=1000,gid=1000,username=user,password=password,iocharset=utf8 0 0
-//10.0.0.100/docker /docker cifs uid=1000,gid=1000,username=user,password=password,iocharset=utf8 0 0
 ```
 Storing the user creditentials within this file it's the best idea. Check out [this question](https://unix.stackexchange.com/questions/178187/how-to-edit-etc-fstab-properly-for-network-drive) on Stack Exchange to learn more.
 
