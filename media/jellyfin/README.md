@@ -1,6 +1,70 @@
 # Jellyfin Setup Guide
 Welcome to the ultimate Jellyfin setup guide. 
 
+## Data Directory
+### Folder Mapping
+It's good practise to give all containers the same access to the same root directory or share. This is why all containers in the compose file have the bind volume mount ```/data:/data```. It makes everything easier, plus passing in two volumes such as the commonly suggested /tv, /movies, and /downloads makes them look like two different file systems, even if they are a single file system outside the container. See my current setup below. 
+```
+data
+├── books
+├── downloads
+│   ├── qbittorrent
+│   │   ├── completed
+│   │   ├── incomplete
+│   │   └── torrents
+│   └── nzbget
+│       ├── completed
+│       ├── intermediate
+│       ├── nzb
+│       ├── queue
+│       └── tmp
+├── movies
+├── music
+├── shows
+└── youtube
+docker
+└── jellyfin
+│   ├── config
+│   ├── jellyseerr
+│   └── jellystat
+```
+
+### Network Share (VM)
+I generally install Docker on the same LXC that I have my media server on as well as all my data. This; however, is [not recommened by Proxmox](https://www.reddit.com/r/Proxmox/comments/1afslhs/should_i_use_lxc_or_vm_for_running_docker/). Going forward you should create a seperate VM for all your docker containers and mount the data directory we created in the storage guide with the share. 
+
+Within the VM install `cifs-utils` 
+```
+sudo apt install cifs-utils
+```
+Now, edit the fstab file and add the following lines editing them to match your information.
+```
+sudo nano /etc/fstab
+//10.0.0.100/data /data cifs uid=1000,gid=1000,username=user,password=password,iocharset=utf8 0 0
+```
+Storing the user creditentials within this file it's the best idea. Check out [this question](https://unix.stackexchange.com/questions/178187/how-to-edit-etc-fstab-properly-for-network-drive) on Stack Exchange to learn more.
+
+Now reload the configuration and mount the shares with the following commands.
+```
+sudo systemctl daemon-reload
+sudo mount -a
+```
+
+## User Permissions
+Using bind mounts (path/to/config:/config) may lead to permissions conflicts between the host operating system and the container. To avoid this problem, you we specify the user ID (PUID) and group ID (PGID) to use within some of the containers. This will give your user permission to read and write configuration files, etc.
+
+In the compose files I use PUID=1000 and PGID=1000, as those are generally the default ID's in most Linux systems, but depending on your setup you may need to chage this.
+
+```
+id your_user
+uid=1000(brandon),gid=1003(brandon),groups=1000(data-share),988(docker)
+```
+In the example output above, If using a network share I would need to edit the compose.yaml with gid=1003. If you are using a network share mounted though ```/etc/fstab``` match the permissions there. I use Cockpit with a custom group fpr shares so my permissions are ```uid=1000(brandon),gid=1000(data-share)```.
+If you run into errors, after creating all the folders you can assign the permissions using chmod. For example,
+```
+sudo chown -R 1000:1000 /data
+sudo chown -R 1000:1000 /docker
+```
+
 ## Installation
 There are two options for installing Jellyfin. Both work great and it's all a matter of preference. I generally install Jellyfin directly on the LXC within Proxmox the contains all my data.
 
