@@ -18,11 +18,8 @@ This is currently a work in progress. Make sure to review everything here and if
     * [Testing Gluetun Connectivity](#testing-gluetun-connectivity)
     * [Passing Through Containers](#passing-through-containers)
     * [External Container to Gluetun](#external-container-to-gluetun)
-    * [Container in another docker-compose.yml](#container-in-another-docker-composeyml)
-    * [Arr apps wont connect to prowlarr](#arr-apps-wont-connect-to-prowlarr)
     * [Gluetun Proxmox LXC Setup](#gluetun-proxmox-fix)
     * [Reduce Gluetun Ram Usage](#reduce-gluetun-ram-usage)
-    * [Testing Other Containers](#testing-other-containers)
   - [Download Clients](#download-clients)
     * [NZBGet](#nzbget)
       + [Fix "directory does not appear" error in Sonarr/Radarr](#fix-directory-does-not-appear-to-exist-inside-the-container-error)
@@ -71,7 +68,7 @@ data
 ├── shows
 └── youtube
 ```
-Easy command to create the download directory scheme.
+Here is a easy command to create the download directory scheme.
 ```
 mkdir -p downloads/qbittorrent/{completed,incomplete,torrents} && mkdir -p downloads/nzbget/{completed,intermediate,nzb,queue,tmp}
 ```
@@ -109,14 +106,22 @@ In the example output above, If using a network share I would need to edit the c
 If you run into errors, after creating all the folders you can assign the permissions using chmod. For example,
 ```
 sudo chown -R 1000:1000 /data
+```
+Also, I like to store all my Docker configurations in a root /docker directory on my Linux system. These can go whereever you prefer whether that be your home directory or somewhere else. Do note, many Docker apps may have issues if you're trying to store you Docker configurations in a SMB network share.
+```
+mkdir /docker
 sudo chown -R 1000:1000 /docker
 ```
-
 ## Gluetun VPN
 ### Testing Gluetun Connectivity 
 Once your containers are up and running, you can test your connection is correct and secured. This assumes you keeo the gluetun container name. Learn more at the [gluetun wiki](https://github.com/qdm12/gluetun-wiki/blob/main/setup/test-your-setup.md).
 ```
 docker run --rm --network=container:gluetun alpine:3.18 sh -c "apk add wget && wget -qO- https://ipinfo.io"
+```
+If you'd like to test Gluetun Connectivity from a container using the service jump into the Exec console and run the wget command below. Tested with nzbget, deluge, and prowlarr. Ensure you open the ports through the the gluetun container.
+```
+docker exec -it conatiner_name bash
+wget -qO- https://ipinfo.io
 ```
 ### Passing Through Containers 
 When containers are in the same docker compose they all you need to add is a ```network_mode: service:container_name``` and open the ports through the the gluetun container. See example from the compose.yaml below.
@@ -136,11 +141,14 @@ services:
     network_mode: service:gluetun
 ```
 ### External Container to Gluetun
-Add ```--network=container:gluetun``` when launching the container, provided Gluetun is already running on the same machine.
-
-### Container in another docker-compose.yml
-Add network_mode: "container:gluetun" to your docker-compose.yml, provided Gluetun is already running. Ensure you open the ports through the the gluetun container.
-
+Add the following when launching the container, provided Gluetun is already running on the same machine. 
+```
+--network=container:gluetun
+``` 
+If the container is in another docker compose.yaml, assuming Gluetun is already running add the following network mode. Ensure you open the ports through the the gluetun container.
+```
+network_mode: "container:gluetun"
+```
 ### Arr apps wont connect to prowlarr
 
 I like to run Prowlarr though a VPN as it is the service that will fetch magnet links and skim torrent sites. If you have issues with connections between arr apps and prowlarr you may need to [allow gluetun to access your lan](https://github.com/qdm12/gluetun-wiki/blob/main/setup/connect-a-lan-device-to-gluetun.md#access-your-lan-through-gluetun). You can do this by adding the following to your docker compose file under the glutun enviromental varibles. 
@@ -157,7 +165,6 @@ see issue [here](https://github.com/TechHutTV/homelab/issues/9)
 Find your container number, for example mine is 101
 
 Edit `/etc/pve/lxc/101.conf` and add:
-
 ```
 lxc.cgroup2.devices.allow: c 10:200 rwm
 lxc.mount.entry: /dev/net dev/net none bind,create=dir
@@ -166,7 +173,7 @@ lxc.mount.entry: /dev/net/tun dev/net/tun none bind,create=file
 Make sure you pass through the tun device (/dev/net/tun:/dev/net/tun) as shown in my compose file.
 
 ### Reduce Gluetun Ram Usage
-As mentioned in this [issue](https://github.com/TechHutTV/homelab/issues/12) there is a [feature request](https://github.com/qdm12/gluetun/issues/765#issuecomment-1019367595) on the Glutun Github page to help reduce ram usage. Gluetun bundles a recursive caching DNS resolver called unbound for handling domain name requests securely. Over time the cache size, which rests in RAM, can balloon to gigabytes.
+As mentioned in this [issue](https://github.com/TechHutTV/homelab/issues/12) there is [feature request](https://github.com/qdm12/gluetun/issues/765#issuecomment-1019367595) on the Glutun Github page to help reduce ram usage. Gluetun bundles a recursive caching DNS resolver called unbound for handling domain name requests securely. Over time the cache size, which rests in RAM, can balloon to gigabytes.
 
 You can do this by adding the following to your docker compose file under the glutun enviromental varibles.
 ```
@@ -174,12 +181,6 @@ BLOCK_MALICIOUS=off
 ```
 This may not be an issue as [DNS over HTTPS in Go to replace Unbound](https://github.com/qdm12/gluetun/issues/137) is impletmented, but it's worth the mention.
 
-### Testing Other Containers
-Jump into the Exec console and run the wget command below. Tested with nzbget, deluge, and prowlarr. Ensure you open the ports through the the gluetun container.
-```
-docker exec -it conatiner_name bash
-wget -qO- https://ipinfo.io
-```
 ## Download Clients
 
 ### NZBGet
@@ -223,7 +224,7 @@ Next we need to add a health check and label to our qbittorrent container. We ad
     container_name: qbittorrent
     restart: unless-stopped
     labels:
-      deunhealth.restart.on.unhealthy= "true" # Label added for deunhealth monitoring
+      deunhealth.restart.on.unhealthy=true # Label added for deunhealth monitoring
     environment:
       - PUID=1000
       - PGID=1000
@@ -231,7 +232,7 @@ Next we need to add a health check and label to our qbittorrent container. We ad
       - WEBUI_PORT=8080
       - TORRENTING_PORT=6881
     volumes:
-      - /docker/qbittorrent:/config
+      - ./qbittorrent:/config
       - /data:/data
     network_mode: service:gluetun
     healthcheck:
@@ -246,55 +247,3 @@ Relevent Resources: [DBTech video on deunhealth](https://www.youtube.com/watch?v
 ## arr Apps
 
 Please refer to the [video tutorial](https://www.youtube.com/watch?v=Uzqf0qlcQlo) for this. We will soon update this section with text documentation.
-
-## No VPN arr-compose (NOT RECOMMEDED)
-
-```
-services:
-  qbittorrent:
-    image: lscr.io/linuxserver/qbittorrent:latest
-    container_name: qbittorrent
-    restart: unless-stopped
-    ports:
-      - 8080:8080 # web interface
-      - 6881:6881 # torrent port
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Los_Angeles
-      - WEBUI_PORT=8080
-      - TORRENTING_PORT=6881
-    volumes:
-      - /docker/qbittorrent:/config
-      - /data:/data
-  nzbget:
-    image: lscr.io/linuxserver/nzbget:latest
-    container_name: nzbget
-    ports:
-      - 6789:6789
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Los_Angeles
-      - NZBGET_USER=user
-      - NZBGET_PASS=password
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - /docker/nzbget:/config
-      - /data:/data
-    restart: unless-stopped
-  prowlarr:
-    image: lscr.io/linuxserver/prowlarr:latest
-    container_name: prowlarr
-    ports:
-      - 9696:9696
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Los_Angeles
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - /docker/prowlarr:/config
-    restart: unless-stopped
-
-```
