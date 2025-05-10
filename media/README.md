@@ -189,26 +189,26 @@ This may not be an issue as [DNS over HTTPS in Go to replace Unbound](https://gi
 This error may appear within Sonarr and Radarr. Once NZBGet is setup go to settings and under **INCOMING NZBS** change the **AppendCategoryDir** to **No**. This will prevent some potential mapping issues and save on unnessesary directories.
 
 ### qBittorrent
+
+#### qBittorrent Login Credentials
 When you first launch qBittorrent it will be givin a random password. To find this password you can stop the stack and run without detached mode.
-'''
+```
 docker compose up
-'''
+```
 You will find the password in the console. Keep it running and login with 'admin' and the random short string password it generated.
 
 Now, go to your settings and setup a new username and password under WebUI > Authentication.
 
 #### qBittorrent Stalls with VPN Timeout
-I experianced where qBittorrent stalls out if there is a timeout or any type of interuption on the VPN. This is good becuase it drops connection, but I need it to fire back up when the connection is restored without manually restarting the container.
+qBittorrent stalls out if there is a timeout or any type of interuption on the VPN. This is good becuase it drops connection, but we need it to fire back up when the connection is restored without manually restarting the container.
 
 __Solution #1:__ Within the WebUI of qbittorrent head over to advanced options and select ```tun0``` as the networking interface. See image below for example.
 
 ![Set Network Interface to tun0](https://github.com/TechHutTV/homelab/blob/main/media/images/qbittorrent_tun0.jpeg)
 
-Next, I added ```HEALTH_VPN_DURATION_INITIAL=120s``` to my glutun enviroment varibles as [per this issue](https://github.com/qdm12/gluetun/issues/1832). I updated my arr-compose.yaml above with this varible so you may already have this enabled. You can learn more about this on their [wiki](https://github.com/qdm12/gluetun-wiki/blob/main/faq/healthcheck.md). If you continue to have issues continue to next solution.
+Next, I added ```HEALTH_VPN_DURATION_INITIAL=120s``` to my glutun enviroment varibles as [per this issue](https://github.com/qdm12/gluetun/issues/1832). I updated my compose.yaml above with this varible so you may already have this enabled. You can learn more about this on their [wiki](https://github.com/qdm12/gluetun-wiki/blob/main/faq/healthcheck.md). If you continue to have issues continue to next solution.
 
-__Solution #2:__ Another solution, that can be used in conjection with __Solution #1__ is using the [deunhealth](https://github.com/qdm12/deunhealth/tree/main) container to automatically restart qbittorrent when it give an unheathly status. 
-
-First, add the deunhealth service to your stack.
+__Solution #2:__ Another solution, that can be used in conjection with __Solution #1__ is using the [deunhealth](https://github.com/qdm12/deunhealth/tree/main) container to automatically restart qbittorrent when it give an unheathly status. We've added this to our compose.yaml for this stack.
 ```
   deunhealth:
     image: qmcgaw/deunhealth
@@ -232,25 +232,10 @@ Next we need to add a health check and label to our qbittorrent container. We ad
     restart: unless-stopped
     labels:
       deunhealth.restart.on.unhealthy=true # Label added for deunhealth monitoring
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Los_Angeles
-      - WEBUI_PORT=8080
-      - TORRENTING_PORT=6881
-    volumes:
-      - ./qbittorrent:/config
-      - /data:/data
-    network_mode: service:gluetun
-    healthcheck:
-        test: ping -c 1 www.google.com || exit 1
-        interval: 60s
-        retries: 3
-        start_period: 20s
-        timeout: 10s
+    ...
 ```
 Relevent Resources: [DBTech video on deunhealth](https://www.youtube.com/watch?v=Oeo-mrtwRgE), [gluetun/issues/2442](https://github.com/qdm12/gluetun/issues/2442) and [gluetun/issues/1277](https://github.com/qdm12/gluetun/issues/1277#issuecomment-1352009151)
 
 ## arr Apps
 
-Please refer to the [video tutorial](https://www.youtube.com/watch?v=Uzqf0qlcQlo) for this. We will soon update this section with text documentation.
+When connecting your *arr applications be sure to use the new configured IP addresses in the servarrnetwork. We will soon update this section with more text documentation.
