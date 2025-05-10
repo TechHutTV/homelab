@@ -6,6 +6,12 @@ Ditching services like Google Workspace, Dropbox, iCloud, Microsoft 365, Amazon 
 ## Nextcloud
 Work in progress.
 
+### Use a Network Share for Data Directory
+[source](https://github.com/nextcloud/all-in-one?tab=readme-ov-file#can-i-use-a-cifssmb-share-as-nextclouds-datadir)
+```
+sudo nano /etc/fstab
+//10.0.0.100/nextcloud /nextcloud cifs rw,mfsymlinks,seal,username=user,password=password,uid=33,gid=0,file_mode=0770,dir_mode=0770 0 0
+```
 ### Notes
 Nextcloud steps to add files manually to data directory.
 #### Fix permissions 
