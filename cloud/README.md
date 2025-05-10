@@ -12,8 +12,8 @@ Work in progress.
 sudo nano /etc/fstab
 //10.0.0.100/nextcloud /nextcloud cifs rw,mfsymlinks,seal,username=user,password=password,uid=33,gid=0,file_mode=0770,dir_mode=0770 0 0
 ```
-### Notes
-Nextcloud steps to add files manually to data directory.
+### Add Files to Data Directory Manually
+Nextcloud steps to add files manually to data directory. 
 #### Fix permissions 
 ```
 chown -r www-data:www-data 
