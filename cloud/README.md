@@ -6,6 +6,14 @@ Ditching services like Google Workspace, Dropbox, iCloud, Microsoft 365, Amazon 
 ## Nextcloud
 Work in progress.
 
+### NGINX Proxy Manager
+Under details set the scheme to http, your local IP for the server, and the port 11000 then enable Block Common Exploits and Websocket Support under details. Under SSL enable Force SSL and HTTP/2 support. Under advanced add the following lines.
+```
+client_body_buffer_size 512k;
+proxy_read_timeout 86400s;
+client_max_body_size 0;
+```
+
 ### Use a Network Share for Data Directory
 [source](https://github.com/nextcloud/all-in-one?tab=readme-ov-file#can-i-use-a-cifssmb-share-as-nextclouds-datadir)
 ```
