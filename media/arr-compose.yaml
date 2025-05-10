@@ -1,16 +1,19 @@
 # Compose file for the *arr stack. Configuration files are stored in the 
 # directory you launch the compose file on. Change to bind mounts if needed.
 # All containers are ran with user and group ids of the main user and 
-# share to aviod permissions issues of downloaded files, please refer
+# group to aviod permissions issues of downloaded files, please refer
 # the read me file for more information.
 
 networks:
   servarrnetwork:
+    name: servarrnetwork 
     ipam:
       config:
         - subnet: 172.69.0.0/24
 
 services:
+
+# airvpn recommended (referral url: https://airvpn.org/?referred_by=673908)
   gluetun:
     image: qmcgaw/gluetun
     container_name: gluetun
@@ -22,6 +25,7 @@ services:
       servarrnetwork:
         ipv4_address: 172.69.0.2
     ports:
+      - port:port # airvpn forwarded port (https://airvpn.org/ports/)
       - 8080:8080 # qbittorrent web interface
       - 6881:6881 # qbittorrent torrent port
       - 6789:6789 # nzbget
@@ -31,21 +35,49 @@ services:
     environment:
       - VPN_SERVICE_PROVIDER=airvpn
       - VPN_TYPE=wireguard
-      - FIREWALL_VPN_INPUT_PORTS=port
-      - WIREGUARD_PRIVATE_KEY=key
-      - WIREGUARD_PRESHARED_KEY=key
-      - WIREGUARD_ADDRESSES=ip
-      - SERVER_COUNTRIES=country
-      - SERVER_CITIES=city
       - HEALTH_VPN_DURATION_INITIAL=120s
+      - FIREWALL_VPN_INPUT_PORTS=port # mandatory, airvpn forwarded port
+      - WIREGUARD_PUBLIC_KEY=key # copy from config file
+      - WIREGUARD_PRIVATE_KEY=key # copy from config file
+      - WIREGUARD_PRESHARED_KEY=key # copy from config file
+      - WIREGUARD_ADDRESSES=ip # copy from config file
+      - SERVER_REGIONS=region # optional, comma seperated list, no spaces after commas, make sure it matches the config you created
+      - SERVER_COUNTRIES=country # optional, comma seperated list, no spaces after commas, make sure it matches the config you created
+      - SERVER_CITIES=city # optional, comma seperated list, no spaces after commas, make sure it matches the config you created
     healthcheck:
       test: ping -c 1 www.google.com || exit 1
-      interval: 60s
-      timeout: 20s
+      interval: 20s
+      timeout: 10s
       retries: 5
     restart: unless-stopped
 
-# This is a new addition since creating the tutorial video on this stack. 
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    restart: unless-stopped
+    labels:
+      - deunhealth.restart.on.unhealthy=true
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+      - WEBUI_PORT=8080 # must match "qbittorrent web interface" port number in gluetun's service above
+      - TORRENTING_PORT=port # airvpn forwarded port
+    volumes:
+      - ./qbittorrent:/config
+      - /data:/data
+    depends_on:
+      gluetun:
+        condition: service_healthy
+        restart: true
+    network_mode: service:gluetun
+    healthcheck:
+        test: ping -c 1 www.google.com || exit 1
+        interval: 60s
+        retries: 3
+        start_period: 20s
+        timeout: 10s
+
 # See the 'qBittorrent Stalls with VPN Timeout' section for more information.
   deunhealth:
     image: qmcgaw/deunhealth
@@ -58,33 +90,6 @@ services:
     restart: always
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-
-# Healthcheck was added to work with deunhealth to restart container
-# on unhealthy status. labels allows deunhealth to monitor.
-  qbittorrent:
-    image: lscr.io/linuxserver/qbittorrent:latest
-    container_name: qbittorrent
-    restart: unless-stopped
-    labels:
-      - deunhealth.restart.on.unhealthy=true
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Los_Angeles
-      - WEBUI_PORT=8080
-      - TORRENTING_PORT=6881
-    volumes:
-      - ./qbittorrent:/config
-      - /data:/data
-    depends_on:
-      - gluetun
-    network_mode: service:gluetun
-    healthcheck:
-        test: ping -c 1 www.google.com || exit 1
-        interval: 60s
-        retries: 3
-        start_period: 20s
-        timeout: 10s
 
   nzbget:
     image: lscr.io/linuxserver/nzbget:latest
@@ -100,7 +105,9 @@ services:
       - ./nzbget:/config
       - /data:/data
     depends_on:
-      - gluetun
+      gluetun:
+        condition: service_healthy
+        restart: true
     restart: unless-stopped
     network_mode: service:gluetun
 
@@ -116,7 +123,9 @@ services:
       - ./prowlarr:/config
     restart: unless-stopped
     depends_on:
-      - gluetun
+      gluetun:
+        condition: service_healthy
+        restart: true
     network_mode: service:gluetun
 
   sonarr:
