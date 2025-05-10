@@ -189,6 +189,13 @@ This may not be an issue as [DNS over HTTPS in Go to replace Unbound](https://gi
 This error may appear within Sonarr and Radarr. Once NZBGet is setup go to settings and under **INCOMING NZBS** change the **AppendCategoryDir** to **No**. This will prevent some potential mapping issues and save on unnessesary directories.
 
 ### qBittorrent
+When you first launch qBittorrent it will be givin a random password. To find this password you can stop the stack and run without detached mode.
+'''
+docker compose up
+'''
+You will find the password in the console. Keep it running and login with 'admin' and the random short string password it generated.
+
+Now, go to your settings and setup a new username and password under WebUI > Authentication.
 
 #### qBittorrent Stalls with VPN Timeout
 I experianced where qBittorrent stalls out if there is a timeout or any type of interuption on the VPN. This is good becuase it drops connection, but I need it to fire back up when the connection is restored without manually restarting the container.
