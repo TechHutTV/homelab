@@ -1,5 +1,5 @@
-# Compose file for the *arr stack. Configuration files are stored 
-# in a docker folder mounted in root. Change to bind mounts if needed.
+# Compose file for the *arr stack. Configuration files are stored in the 
+# directory you launch the compose file on. Change to bind mounts if needed.
 # All containers are ran with user and group ids of the main user and 
 # share to aviod permissions issues of downloaded files, please refer
 # the read me file for more information.
@@ -8,7 +8,7 @@ networks:
   servarrnetwork:
     ipam:
       config:
-        - subnet: 172.18.0.0/24
+        - subnet: 172.69.0.0/24
 
 services:
   gluetun:
@@ -17,22 +17,21 @@ services:
     cap_add:
       - NET_ADMIN
     devices:
-      - /dev/net/tun:/dev/net/tun # If running proxmox see readme for more info.
+      - /dev/net/tun:/dev/net/tun # If running on an LXC see readme for more info.
     networks:
       servarrnetwork:
-        ipv4_address: 172.18.0.2
+        ipv4_address: 172.69.0.2
     ports:
       - 8080:8080 # qbittorrent web interface
       - 6881:6881 # qbittorrent torrent port
       - 6789:6789 # nzbget
       - 9696:9696 # prowlarr
     volumes:
-      - /docker/gluetun:/gluetun
+      - ./gluetun:/gluetun
     environment:
       - VPN_SERVICE_PROVIDER=airvpn
       - VPN_TYPE=wireguard
       - FIREWALL_VPN_INPUT_PORTS=port
-    # - FIREWALL_OUTBOUND_SUBNETS=192.168.0.0/24 # add if prowlarr wont connect to other arr apps, change to your specific subnet
       - WIREGUARD_PRIVATE_KEY=key
       - WIREGUARD_PRESHARED_KEY=key
       - WIREGUARD_ADDRESSES=ip
@@ -75,7 +74,7 @@ services:
       - WEBUI_PORT=8080
       - TORRENTING_PORT=6881
     volumes:
-      - /docker/qbittorrent:/config
+      - ./qbittorrent:/config
       - /data:/data
     depends_on:
       - gluetun
@@ -98,7 +97,7 @@ services:
       - NZBGET_PASS=password
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /docker/nzbget:/config
+      - ./nzbget:/config
       - /data:/data
     depends_on:
       - gluetun
@@ -114,7 +113,7 @@ services:
       - TZ=America/Los_Angeles
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /docker/prowlarr:/config
+      - ./prowlarr:/config
     restart: unless-stopped
     depends_on:
       - gluetun
@@ -130,13 +129,13 @@ services:
       - TZ=America/Los_Angeles
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /docker/sonarr:/config
+      - ./sonarr:/config
       - /data:/data
     ports:
       - 8989:8989
     networks:
       servarrnetwork:
-        ipv4_address: 172.18.0.3
+        ipv4_address: 172.69.0.3
 
   radarr:
     image: lscr.io/linuxserver/radarr:latest
@@ -148,13 +147,13 @@ services:
       - TZ=America/Los_Angeles
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /docker/radarr:/config
+      - ./radarr:/config
       - /data:/data
     ports:
       - 7878:7878
     networks:
       servarrnetwork:
-        ipv4_address: 172.18.0.4
+        ipv4_address: 172.69.0.4
 
   lidarr:
     container_name: lidarr
@@ -162,7 +161,7 @@ services:
     restart: unless-stopped
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /docker/lidarr:/config
+      - ./lidarr:/config
       - /data:/data
     environment:
      - PUID=1000
@@ -172,7 +171,7 @@ services:
       - 8686:8686
     networks:
       servarrnetwork:
-        ipv4_address: 172.18.0.5
+        ipv4_address: 172.69.0.5
 
   bazarr:
     image: lscr.io/linuxserver/bazarr:latest
@@ -184,36 +183,15 @@ services:
       - TZ=America/Los_Angeles
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /docker/bazarr:/config
+      - ./bazarr:/config
       - /data:/data
     ports:
       - 6767:6767
     networks:
       servarrnetwork:
-        ipv4_address: 172.18.0.6
+        ipv4_address: 172.69.0.6
 
 # Newer additions to this stack feel free to remove if unwanted.
-
-# Used to browse the file system via a web browser.
-# Default login is admin/admin. Change password in Settings > User Managment.
-# Permissions set to my dault user 1000:1000 as that's the user that owns my data directory.
-
-  filebrowser:
-    image: filebrowser/filebrowser:s6
-    container_name: filebrowser
-    volumes:
-      - /data:/srv # Directory you want exposed to filebrowser.
-      - /docker/filebrowser/data:/data
-      - /docker/filebrowser/config:/config
-    environment:
-      - PUID=1000
-      - PGID=1000
-    ports:
-      - 80:80
-    networks:
-      servarrnetwork:
-        ipv4_address: 172.18.0.7
-    restart: unless-stopped
 
 # Youtube downloading and subscription service. Information not yet added to readme.md
   ytdl-sub:
@@ -225,9 +203,9 @@ services:
       - TZ=America/Los_Angeles
       - DOCKER_MODS=linuxserver/mods:universal-cron
     volumes:
-      - /docker/ytdl-sub/config:/config
+      - ./ytdl-sub:/config
       - /data/youtube:/youtube
     networks:
       servarrnetwork:
-        ipv4_address: 172.18.0.8
+        ipv4_address: 172.69.0.8
     restart: unless-stopped
