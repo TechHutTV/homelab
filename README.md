@@ -48,14 +48,3 @@ This NUC has a base install of Ubuntu 24.04 with docker. This machine is dedicat
 * [TP-Link EAP610 Ultra-Slim Wireless Access Point](https://amzn.to/4e2clNc)
 * [TP-Link EAP653 Wireless Access Point](https://amzn.to/48pY8IT)
 * [TP-Link TL-SG2016P 16 Port Gigabit Smart Managed PoE Switch](https://amzn.to/3BYq5uV)
-
-### Notes
-Nextcloud steps to add files manually to data directory.
-#### Fix permissions 
-```
-chown -r www-data:www-data 
-```
-#### Scan for new files
-```
-sudo docker exec --user www-data -it nextcloud-aio-nextcloud php occ files:scan --all
-```
