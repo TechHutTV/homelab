@@ -2,7 +2,7 @@
 Welcome to the ultimate Jellyfin setup guide. 
 
 > [!NOTE]
-> For simplicity and compatibility it is recommended to install Jellyfin with Docker in a __virutal machine__ if you're running Proxmox.
+> For simplicity and compatibility it is recommended to install Jellyfin with Docker in a __virutal machine__ if you're running Proxmox. See more information [here](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#chapter_pct).
 >
 
 ## Data Directory
