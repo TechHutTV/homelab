@@ -74,7 +74,7 @@ mkdir -p downloads/qbittorrent/{completed,incomplete,torrents} && mkdir -p downl
 ```
 
 ### Network Share (VM)
-I generally install Docker on the same LXC that I have my media server on as well as all my data. This; however, is [not recommened by Proxmox](https://www.reddit.com/r/Proxmox/comments/1afslhs/should_i_use_lxc_or_vm_for_running_docker/). Going forward you should create a seperate VM for all your docker containers and mount the data directory we created in the storage guide with the share. 
+I generally install Docker on the same LXC that I have my media server on as well as all my data. This; however, is [not recommened by Proxmox](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#chapter_pct). Going forward you should create a seperate VM for all your docker containers and mount the data directory we created in the storage guide with the share. 
 
 Within the VM install `cifs-utils` 
 ```
