@@ -1,6 +1,10 @@
 # Jellyfin Setup Guide
 Welcome to the ultimate Jellyfin setup guide. 
 
+> [!NOTE]
+> For simplicity and compatibility it is recommended to install Jellyfin with Docker in a __virutal machine__ if you're running Proxmox.
+>
+
 ## Data Directory
 ### Folder Mapping
 It's good practise to give all containers the same access to the same root directory or share. This is why all containers in the compose file have the bind volume mount ```/data:/data```. It makes everything easier, plus passing in two volumes such as the commonly suggested /tv, /movies, and /downloads makes them look like two different file systems, even if they are a single file system outside the container. See my current setup below.
