@@ -119,37 +119,38 @@ sudo chown -R 1000:1000 /docker
 ### Setup and Configuration
 I like to set this out with [AirVPN](https://airvpn.org/?referred_by=673908) (referral link). I'm not affliated with them in anyway other than the referral link. I've tried a few other providers and they're my preference. If you already have a VPN checkout the [providers](https://github.com/qdm12/gluetun-wiki/tree/main/setup/providers) page on their wiki.
 
-#### Configuration File
-On AirVPN navigate to the 'Client Area' from here select the Config Generator. Now in the options select 'Linux' then toggle the WireGuard option. Select 'New device' and then scroll down to 'By single server' and select a server that is best for you. For example, 'Titawin (Vancouver)' was my selection becuase, at the time, it had the fewest users with good speeds. Scoll all the way to the bottom and select 'Generate'.
+On AirVPN navigate to the 'Client Area' from here select the Config Generator. Now in the options select 'Linux' then toggle the WireGuard option. Select 'New device' and then scroll down to 'By single server' and select a server that is best for you. For example, 'Titawin (Vancouver)' was my selection becuase, at the time, it had the fewest users with good speeds. Scoll all the way to the bottom and select 'Generate'. This will download a conf file with all of your information.
 
-Copy/paste the information into your docker compose.yaml.
-
-#### Ports
-On AirVPN navigate to the 'Client Area' from here select Manage under Ports. If you already have a port open click on 'Test open' otherwise click the plus button under 'Add a new port' then click 'Test open' for that port. Here you will find the specific servers that you can use your port on. If there is a Connection refused warning next the server you generated your configuration for change the port until the warning goes away. For example, in my case the 'Titawin (Vancouver)' sever that I selected with my port is good to use.
+Back AirVPN navigate to the 'Client Area' from here select Manage under Ports. If you already have a port open click on 'Test open' otherwise click the plus button under 'Add a new port' then click 'Test open' for that port. Here you will find the specific servers that you can use your port on. If there is a Connection refused warning next the server you generated your configuration for change the port until the warning goes away. For example, in my case the 'Titawin (Vancouver)' sever that I selected with my port is good to use.
 
 > [!CAUTION]
 > do NOT forward on your router the same ports you use on your listening services while connected to the VPN.
 
-When you have your port be sure to enter it in all the feilds in the Docker compose labled with `# airvpn forwarded port`
+Now, in the same directory as your docker compose.yaml file create a new enviorments file. Paste in the varibles below and then add all the information from your downloaded conf file.
 
 ```
-  gluetun:
-    image: qmcgaw/gluetun
-    container_name: gluetun
-    ...
-    ports:
-      - port:port # airvpn forwarded port (https://airvpn.org/ports/)
-    ...
-    environment:
-      ...
-      - FIREWALL_VPN_INPUT_PORTS=port # mandatory, airvpn forwarded port
-  qbittorrent:
-    image: lscr.io/linuxserver/qbittorrent:latest
-    container_name: qbittorrent
-    ...
-    environment:
-      ...
-      - TORRENTING_PORT=port # airvpn forwarded port
+nano .env
+```
+```
+# Input your VPN provider and type here
+VPN_SERVICE_PROVIDER=airvpn
+VPN_TYPE=wireguard
+
+# Mandatory, airvpn forwarded port
+FIREWALL_VPN_INPUT_PORTS=port # mandatory, airvpn forwarded port
+
+# Copy all these varibles from your generated configuration file
+WIREGUARD_PUBLIC_KEY=key
+WIREGUARD_PRIVATE_KEY=key
+WIREGUARD_PRESHARED_KEY=key
+WIREGUARD_ADDRESSES=ip
+
+# Optional location varbiles, comma seperated list,no spaces after commas, make sure it matches the config you created
+SERVER_COUNTRIES=country
+SERVER_CITIES=city 
+
+# Heath check duration
+HEALTH_VPN_DURATION_INITIAL=120s
 ```
 
 ### Testing Gluetun Connectivity 
