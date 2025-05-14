@@ -237,6 +237,23 @@ This may not be an issue as [DNS over HTTPS in Go to replace Unbound](https://gi
 #### NZBGet Login Credentials 
 The default credentials for NZBGet are a username of `nzbget` and a password of `tegbzn6789`. It's strongly recommended to change these default credentials for security reasons. This can be done under Settings > SECURITY, then change the ControlUsername and ControlPassword.
 
+#### Download Directories Mapping
+If following the /data:/data directory scheme and used the command to setup the download directories open the qBitttorent Web UI and do under Settings > PATHS and change the paths.
+
+_MainDir:_ `/data/downloads/nzbget`
+
+_DestDir:_ `${MainDir}/completed`
+
+_InterDir:_ `${MainDir}/intermediate`
+
+_NzbDir:_ `${MainDir}/nzb`
+
+_QueueDir:_ `${MainDir}/queue`
+
+_TempDir:_ `${MainDir}/tmp`
+
+And keep everything else as is.
+
 #### Fix directory does not appear to exist inside the container error
 This error may appear within Sonarr and Radarr. Once NZBGet is setup go to settings and under **INCOMING NZBS** change the **AppendCategoryDir** to **No**. This will prevent some potential mapping issues and save on unnessesary directories.
 
@@ -249,7 +266,7 @@ docker container logs qbittorrent
 ```
 Now, go to your settings and setup a new username and password under WebUI > Authentication.
 
-### Download Directories Mapping
+#### Download Directories Mapping
 If following the /data:/data directory scheme and used the command to setup the download directories open the qBitttorent Web UI and do under Settings > Downloads and change the paths.
 
 _Default Save Path:_ `/data/downloads/qbittorrent/completed`
