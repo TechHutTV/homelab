@@ -88,8 +88,6 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=America/Los_Angeles
-      - NZBGET_USER=user
-      - NZBGET_PASS=password
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./nzbget:/config
