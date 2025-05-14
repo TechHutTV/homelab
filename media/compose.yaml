@@ -4,6 +4,9 @@
 # group to aviod permissions issues of downloaded files, please refer
 # the read me file for more information.
 
+# NOTICE: We recently switched to using a .env file. PLEASE refer to the docs.
+# https://github.com/TechHutTV/homelab/tree/main/media#docker-compose-and-env
+
 networks:
   servarrnetwork:
     name: servarrnetwork 
