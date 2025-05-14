@@ -41,8 +41,8 @@ Make sure to review everything here and if you have any issues please submit it 
 ## Companion Video
 ```
 # Updated video coming soon
-[![my NEW Proxmox Media Server - Full Walkthrough Guide Pt.2 (Jellyfin, Sonarr, Gluetun, and MORE)](https://i3.ytimg.com/vi/Uzqf0qlcQlo/mqdefault.jpg)](https://www.youtube.com/watch?v=Uzqf0qlcQlo)```
-
+[![alt text)](image url)](video link)
+```
 ### Updates Since Video Publish
 * Added [ytdl-sub](https://ytdl-sub.readthedocs.io/en/latest/) to the compose.yaml. Remove if unwanted.
 
