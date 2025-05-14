@@ -38,7 +38,7 @@ services:
       - ./gluetun:/gluetun
     # Make a 'vpn.env' file in the same directory.
     env_file:
-      - vpn.env
+      - .env
     healthcheck:
       test: ping -c 1 www.google.com || exit 1
       interval: 20s
