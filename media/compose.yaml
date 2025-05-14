@@ -48,9 +48,9 @@ services:
     labels:
       - deunhealth.restart.on.unhealthy=true
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Los_Angeles
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
       - WEBUI_PORT=8080 # must match "qbittorrent web interface" port number in gluetun's service above
       - TORRENTING_PORT=${FIREWALL_VPN_INPUT_PORTS} # airvpn forwarded port, pulled from .env
     volumes:
@@ -76,7 +76,7 @@ services:
     environment:
       - LOG_LEVEL=info
       - HEALTH_SERVER_ADDRESS=127.0.0.1:9999
-      - TZ=America/Los_Angeles
+      - TZ=${TZ}
     restart: always
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -85,9 +85,9 @@ services:
     image: lscr.io/linuxserver/nzbget:latest
     container_name: nzbget
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Los_Angeles
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./nzbget:/config
@@ -103,9 +103,9 @@ services:
     image: lscr.io/linuxserver/prowlarr:latest
     container_name: prowlarr
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Los_Angeles
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./prowlarr:/config
@@ -121,9 +121,9 @@ services:
     container_name: sonarr
     restart: unless-stopped
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Los_Angeles
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./sonarr:/config
@@ -139,9 +139,9 @@ services:
     container_name: radarr
     restart: unless-stopped
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Los_Angeles
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./radarr:/config
@@ -161,9 +161,9 @@ services:
       - ./lidarr:/config
       - /data:/data
     environment:
-     - PUID=1000
-     - PGID=1000
-     - TZ=America/Los_Angeles
+     - PUID=${PUID}
+     - PGID=${PGID}
+     - TZ=${TZ}
     ports:
       - 8686:8686
     networks:
@@ -175,9 +175,9 @@ services:
     container_name: bazarr
     restart: unless-stopped
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Los_Angeles
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./bazarr:/config
@@ -195,9 +195,9 @@ services:
     image: ghcr.io/jmbannon/ytdl-sub:latest
     container_name: ytdl-sub
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Los_Angeles
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
       - DOCKER_MODS=linuxserver/mods:universal-cron
     volumes:
       - ./ytdl-sub:/config
