@@ -24,6 +24,8 @@ Make sure to review everything here and if you have any issues please submit it 
     * [NZBGet](#nzbget)
       + [Fix "directory does not appear" error in Sonarr/Radarr](#fix-directory-does-not-appear-to-exist-inside-the-container-error)
     * [qBittorrent](#qbittorrent)
+      + [qBittorrent Login Credentials](#qbittorrent-login-credentials)
+      + [Download Directories Mapping](#download-directories-mapping)
       + [qBittorrent Stalls with VPN Timeout](#qbittorrent-stalls-with-vpn-timeout)
   - [arr Apps](#arr-apps)
 * [Server Monitoring](https://github.com/TechHutTV/homelab/tree/main/monitoring)
@@ -68,13 +70,13 @@ data
 ├── shows
 └── youtube
 ```
-Here is a easy command to create the download directory scheme.
+Here is a easy command to create the download directory scheme. Run within the /data directory.
 ```
 mkdir -p downloads/qbittorrent/{completed,incomplete,torrents} && mkdir -p downloads/nzbget/{completed,intermediate,nzb,queue,tmp}
 ```
 
 ### Network Share (VM)
-I generally install Docker on the same LXC that I have my media server on as well as all my data. This; however, is [not recommened by Proxmox](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#chapter_pct). Going forward you should create a seperate VM for all your docker containers and mount the data directory we created in the storage guide with the share. 
+I generally install Docker on the same LXC that I have my media server on as well as all my data. This; however, is [not recommened by Proxmox](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#chapter_pct). Going forward you should create a seperate VM for all your docker containers and mount the data directory we created in the storage guide with the share. You can also use this method if you're using a serpate share on another machine running something like Unraid or TrueNAS.
 
 Within the VM install `cifs-utils` 
 ```
@@ -96,13 +98,14 @@ sudo mount -a
 ## User Permissions
 Using bind mounts (path/to/config:/config) may lead to permissions conflicts between the host operating system and the container. To avoid this problem, you we specify the user ID (PUID) and group ID (PGID) to use within some of the containers. This will give your user permission to read and write configuration files, etc.
 
-In the compose files I use PUID=1000 and PGID=1000, as those are generally the default ID's in most Linux systems, but depending on your setup you may need to chage this.
+In the compose file I use `PUID=1000` and `PGID=1000`, as those are generally the default user ID's in most Linux systems, but depending on your setup you may need to chage this.
 
 ```
 id your_user
-uid=1000(brandon),gid=1003(brandon),groups=1000(data-share),988(docker)
+uid=1000(brandon) gid=1000(brandon) groups=1000(brandon),4(adm),24(cdrom),27(sudo),30(dip),46(plugdev),101(lxd),988(docker),993(render)
 ```
-In the example output above, If using a network share I would need to edit the compose.yaml with gid=1003. If you are using a network share mounted though ```/etc/fstab``` match the permissions there. I use Cockpit with a custom group fpr shares so my permissions are ```uid=1000(brandon),gid=1000(data-share)```.
+If you are using a network share mounted though ```/etc/fstab``` match the permissions there. Learn more above.
+
 If you run into errors, after creating all the folders you can assign the permissions using chmod. For example,
 ```
 sudo chown -R 1000:1000 /data
@@ -182,23 +185,21 @@ This error may appear within Sonarr and Radarr. Once NZBGet is setup go to setti
 
 ### qBittorrent
 
-### Download Directories
-If following my /data:/data directory scheme and used the command to setup the download directories open the qBitttorent Web UI and do under Settings > Downloads and change the paths.
-
-__Default Save Path:__ `/data/downloads/qbittorrent/completed`
-
-__Keep incomplete torrents in:__ `/data/downloads/qbittorrent/incomplete`
-
-__Copy .torrent files to:__ `/data/downloads/qbittorrent/torrents`
-
 #### qBittorrent Login Credentials
-When you first launch qBittorrent it will be givin a random password. To find this password you can stop the stack and run without detached mode.
+When you first launch qBittorrent it will be givin a random password. To find this password you can view the logs to see what the password is.
 ```
-docker compose up
+docker container logs qbittorrent 
 ```
-You will find the password in the console. Keep it running and login with 'admin' and the random short string password it generated.
-
 Now, go to your settings and setup a new username and password under WebUI > Authentication.
+
+### Download Directories Mapping
+If following the /data:/data directory scheme and used the command to setup the download directories open the qBitttorent Web UI and do under Settings > Downloads and change the paths.
+
+_Default Save Path:_ `/data/downloads/qbittorrent/completed`
+
+_Keep incomplete torrents in:_ `/data/downloads/qbittorrent/incomplete`
+
+_Copy .torrent files to:_ `/data/downloads/qbittorrent/torrents`
 
 #### qBittorrent Stalls with VPN Timeout
 qBittorrent stalls out if there is a timeout or any type of interuption on the VPN. This is good becuase it drops connection, but we need it to fire back up when the connection is restored without manually restarting the container.
