@@ -24,7 +24,7 @@ services:
       servarrnetwork:
         ipv4_address: 172.69.0.2
     ports:
-      - port:port # airvpn forwarded port (https://airvpn.org/ports/)
+      - ${FIREWALL_VPN_INPUT_PORTS}:${FIREWALL_VPN_INPUT_PORTS} # airvpn forwarded port, pulled from .env
       - 8080:8080 # qbittorrent web interface
       - 6881:6881 # qbittorrent torrent port
       - 6789:6789 # nzbget
@@ -52,7 +52,7 @@ services:
       - PGID=1000
       - TZ=America/Los_Angeles
       - WEBUI_PORT=8080 # must match "qbittorrent web interface" port number in gluetun's service above
-      - TORRENTING_PORT=port # airvpn forwarded port
+      - TORRENTING_PORT=${FIREWALL_VPN_INPUT_PORTS} # airvpn forwarded port, pulled from .env
     volumes:
       - ./qbittorrent:/config
       - /data:/data
