@@ -116,6 +116,42 @@ mkdir /docker
 sudo chown -R 1000:1000 /docker
 ```
 ## Gluetun VPN
+### Setup and Configuration
+I like to set this out with [AirVPN](https://airvpn.org/?referred_by=673908) (referral link). I'm not affliated with them in anyway other than the referral link. I've tried a few other providers and they're my preference. If you already have a VPN checkout the [providers](https://github.com/qdm12/gluetun-wiki/tree/main/setup/providers) page on their wiki.
+
+#### Configuration File
+On AirVPN navigate to the 'Client Area' from here select the Config Generator. Now in the options select 'Linux' then toggle the WireGuard option. Select 'New device' and then scroll down to 'By single server' and select a server that is best for you. For example, 'Titawin (Vancouver)' was my selection becuase, at the time, it had the fewest users with good speeds. Scoll all the way to the bottom and select 'Generate'.
+
+Copy/paste the information into your docker compose.yaml.
+
+#### Ports
+On AirVPN navigate to the 'Client Area' from here select Manage under Ports. If you already have a port open click on 'Test open' otherwise click the plus button under 'Add a new port' then click 'Test open' for that port. Here you will find the specific servers that you can use your port on. If there is a Connection refused warning next the server you generated your configuration for change the port until the warning goes away. For example, in my case the 'Titawin (Vancouver)' sever that I selected with my port is good to use.
+
+> [!CAUTION]
+> do NOT forward on your router the same ports you use on your listening services while connected to the VPN.
+
+When you have your port be sure to enter it in all the feilds in the Docker compose labled with `# airvpn forwarded port`
+
+```
+  gluetun:
+    image: qmcgaw/gluetun
+    container_name: gluetun
+    ...
+    ports:
+      - port:port # airvpn forwarded port (https://airvpn.org/ports/)
+    ...
+    environment:
+      ...
+      - FIREWALL_VPN_INPUT_PORTS=port # mandatory, airvpn forwarded port
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    ...
+    environment:
+      ...
+      - TORRENTING_PORT=port # airvpn forwarded port
+```
+
 ### Testing Gluetun Connectivity 
 Once your containers are up and running, you can test your connection is correct and secured. This assumes you keeo the gluetun container name. Learn more at the [gluetun wiki](https://github.com/qdm12/gluetun-wiki/blob/main/setup/test-your-setup.md).
 ```
