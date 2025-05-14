@@ -5,7 +5,7 @@ Homelab stacks, templates, and more fun resources! This is a *work in progress*.
 * [Apps](https://github.com/TechHutTV/homelab/tree/main/apps) - List of all the apps and services.
 * [Home Assistant](https://github.com/TechHutTV/homelab/tree/main/homeassistant) - Smart home services and automation.
 * [Media Server](https://github.com/TechHutTV/homelab/tree/main/media) - Plex, Jellyfin, *arr stack, and more.
-* [Server Monitoring](https://github.com/TechHutTV/homelab/tree/main/monitoring) - Graphs and Visualizations for Unriad, Proxmox, and more.
+* [Server Monitoring](https://github.com/TechHutTV/homelab/tree/main/monitoring) - Graphs and Visualizations for Unraid, Proxmox, and more.
 * [Surveillance System](https://github.com/TechHutTV/homelab/tree/main/surveillance) - Frigate NVR Solution with Coral TPU.
 * [Storage](https://github.com/TechHutTV/homelab/tree/main/storage) - Current Storage and Backup Solution.
 * [Proxy Managment](https://github.com/TechHutTV/homelab/tree/main/proxy) - NGINX Proxy Manager, DDNS with Cloudflare, Local Domains, and more.
@@ -16,7 +16,7 @@ Homelab stacks, templates, and more fun resources! This is a *work in progress*.
 
 ### Servers and NAS
 #### ZimaCube Pro (Proxmox)
-This machine is running our Proxmox Server. Handling our media storage, arr services, proxy, home assistnat, monitoring, and many others.
+This machine is running our Proxmox Server. Handling our media storage, arr services, proxy, home assistant, monitoring, and many others.
 * 12th Gen Intel Core i5 1235U
 * [32GB SODIMM DDR5](https://amzn.to/3Um77VB)
 * 256GB NVMe SSD (Boot Drive)
@@ -24,7 +24,7 @@ This machine is running our Proxmox Server. Handling our media storage, arr serv
 * x6 [Western Digital 4TB WD Red Plus](https://amzn.to/4gCpv6d) (Vault Pool raidz1)
 
 #### UGREEN DXP6800 Pro (Proxmox)
-This machine is running Proxomx. Due to a free PCIe slot this has an additional Coral TPU and I'm currently testing it with Blue Iris. Running Immich for personal photo backups and MeTube to pull YouTube videos for use in media projects. This machines handles the network shares that connect to our Nextcloud instance.
+This machine is running Proxmox. Due to a free PCIe slot this has an additional Coral TPU and I'm currently testing it with Blue Iris. Running Immich for personal photo backups and MeTube to pull YouTube videos for use in media projects. This machines handles the network shares that connect to our Nextcloud instance.
 * 12th Gen Intel Core i5 1235U
 * [16GB SODIMM DDR5](https://amzn.to/3YqeZ9A)
 * [DataTraveler 3.0 32GB USB](https://amzn.to/4fovZUR) (Boot Drive)
