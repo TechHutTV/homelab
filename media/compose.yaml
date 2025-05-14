@@ -12,7 +12,6 @@ networks:
         - subnet: 172.69.0.0/24
 
 services:
-
 # airvpn recommended (referral url: https://airvpn.org/?referred_by=673908)
   gluetun:
     image: qmcgaw/gluetun
@@ -32,17 +31,9 @@ services:
       - 9696:9696 # prowlarr
     volumes:
       - ./gluetun:/gluetun
-    environment:
-      - VPN_SERVICE_PROVIDER=airvpn
-      - VPN_TYPE=wireguard
-      - HEALTH_VPN_DURATION_INITIAL=120s
-      - FIREWALL_VPN_INPUT_PORTS=port # mandatory, airvpn forwarded port
-      - WIREGUARD_PUBLIC_KEY=key # copy from config file
-      - WIREGUARD_PRIVATE_KEY=key # copy from config file
-      - WIREGUARD_PRESHARED_KEY=key # copy from config file
-      - WIREGUARD_ADDRESSES=ip # copy from config file
-      - SERVER_COUNTRIES=country # optional, comma seperated list, no spaces after commas, make sure it matches the config you created
-      - SERVER_CITIES=city # optional, comma seperated list, no spaces after commas, make sure it matches the config you created
+    # Make a 'vpn.env' file in the same directory.
+    env_file:
+      - vpn.env
     healthcheck:
       test: ping -c 1 www.google.com || exit 1
       interval: 20s
