@@ -193,9 +193,11 @@ This error may appear within Sonarr and Radarr. Once NZBGet is setup go to setti
 ### Download Directories
 If following my /data:/data directory scheme and used the command to setup the download directories open the qBitttorent Web UI and do under Settings > Downloads and change the paths.
 
-Default Save Path: `/data/downloads/qbittorrent/completed`
-Keep incomplete torrents in: `/data/downloads/qbittorrent/incomplete`
-Copy .torrent files to: `/data/downloads/qbittorrent/torrents`
+__Default Save Path:__ `/data/downloads/qbittorrent/completed`
+
+__Keep incomplete torrents in:__ `/data/downloads/qbittorrent/incomplete`
+
+__Copy .torrent files to:__ `/data/downloads/qbittorrent/torrents`
 
 #### qBittorrent Login Credentials
 When you first launch qBittorrent it will be givin a random password. To find this password you can stop the stack and run without detached mode.
