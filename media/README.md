@@ -130,14 +130,14 @@ Most of our editing is going to be done in the .env file. Here you change your U
 ### Setup and Configuration
 I like to set this out with [AirVPN](https://airvpn.org/?referred_by=673908) (referral link). I'm not affliated with them in anyway other than the referral link. I've tried a few other providers and they're my preference. If you already have a VPN checkout the [providers](https://github.com/qdm12/gluetun-wiki/tree/main/setup/providers) page on their wiki.
 
-On AirVPN navigate to the 'Client Area' from here select the Config Generator. Now in the options select 'Linux' then toggle the WireGuard option. Select 'New device' and then scroll down to 'By single server' and select a server that is best for you. For example, 'Titawin (Vancouver)' was my selection becuase, at the time, it had the fewest users with good speeds. Scoll all the way to the bottom and select 'Generate'. This will download a conf file with all of your information.
+On AirVPN navigate to the **Client Area** from here select the Config Generator. Now in the options select **Linux** then toggle the **WireGuard** option. Select **New device** and then scroll down to **By single server** and select a server that is best for you. For example, _Titawin (Vancouver)_ was my selection becuase, at the time, it had the fewest users with good speeds. Scoll all the way to the bottom and select **Generate**. This will download a conf file with all of your information.
 
-Back AirVPN navigate to the 'Client Area' from here select Manage under Ports. If you already have a port open click on 'Test open' otherwise click the plus button under 'Add a new port' then click 'Test open' for that port. Here you will find the specific servers that you can use your port on. If there is a Connection refused warning next the server you generated your configuration for change the port until the warning goes away. For example, in my case the 'Titawin (Vancouver)' sever that I selected with my port is good to use.
+Back AirVPN navigate to the **Client Area** from here select Manage under Ports. If you already have a port open click on **Test open** otherwise click the plus button under **Add a new port** then click **Test open** for that port. Here you will find the specific servers that you can use your port on. If there is a Connection refused warning next the server you generated your configuration for change the port until the warning goes away. For example, in my case the _'Titawin (Vancouver)_ sever that I selected with my port is good to use.
 
 > [!CAUTION]
 > do NOT forward on your router the same ports you use on your listening services while connected to the VPN.
 
-Now, in the same directory as your docker compose.yaml file create a new enviorments file. Paste in the varibles below and then add all the information from your downloaded conf file.
+Now, in the same directory as your docker compose.yaml file create a `.env` file. Paste in the varibles below and then add all the information from your downloaded .conf file.
 
 ```
 nano .env
@@ -159,7 +159,7 @@ FIREWALL_VPN_INPUT_PORTS=port # mandatory, airvpn forwarded port
 WIREGUARD_PUBLIC_KEY=key
 WIREGUARD_PRIVATE_KEY=key
 WIREGUARD_PRESHARED_KEY=key
-WIREGUARD_ADDRESSES=ip
+WIREGUARD_ADDRESSES=ipv4
 
 # Optional location varbiles, comma seperated list,no spaces after commas, make sure it matches the config you created
 SERVER_COUNTRIES=country
