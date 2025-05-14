@@ -10,11 +10,15 @@ Make sure to review everything here and if you have any issues please submit it 
   - [Companion Video](#companion-video)
     * [Updates Since Video Publish](#updates-since-video-publish)
   - [Media Server](#media-server)
+    * [Jellyfin](https://github.com/TechHutTV/homelab/tree/main/media/jellyfin)
+    * [Plex](https://github.com/TechHutTV/homelab/tree/main/media/jellyfin)
   - [Data Directory](#data-directory)
     * [Folder Mapping](#folder-mapping)
     * [Network Share](#network-share)
   - [User Permissions](#user-permissions)
+  - [Docker Compose and .env](#docker-compose-and-env)
   - [Gluetun VPN](#gluetun-vpn)
+    * [Setup and Configuration](#setup-and-configuration)
     * [Testing Gluetun Connectivity](#testing-gluetun-connectivity)
     * [Passing Through Containers](#passing-through-containers)
     * [External Container to Gluetun](#external-container-to-gluetun)
@@ -22,6 +26,7 @@ Make sure to review everything here and if you have any issues please submit it 
     * [Reduce Gluetun Ram Usage](#reduce-gluetun-ram-usage)
   - [Download Clients](#download-clients)
     * [NZBGet](#nzbget)
+      + [NZBGet Login Credentials](#nzbget-login-credentials)
       + [Fix "directory does not appear" error in Sonarr/Radarr](#fix-directory-does-not-appear-to-exist-inside-the-container-error)
     * [qBittorrent](#qbittorrent)
       + [qBittorrent Login Credentials](#qbittorrent-login-credentials)
@@ -75,7 +80,7 @@ Here is a easy command to create the download directory scheme. Run within the /
 mkdir -p downloads/qbittorrent/{completed,incomplete,torrents} && mkdir -p downloads/nzbget/{completed,intermediate,nzb,queue,tmp}
 ```
 
-### Network Share (VM)
+### Network Share
 I generally install Docker on the same LXC that I have my media server on as well as all my data. This; however, is [not recommened by Proxmox](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#chapter_pct). Going forward you should create a seperate VM for all your docker containers and mount the data directory we created in the storage guide with the share. You can also use this method if you're using a serpate share on another machine running something like Unraid or TrueNAS.
 
 Within the VM install `cifs-utils` 
