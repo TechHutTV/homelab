@@ -29,10 +29,11 @@ Make sure to review everything here and if you have any issues please submit it 
   - [Download Clients](#download-clients)
     * [NZBGet](#nzbget)
       + [NZBGet Login Credentials](#nzbget-login-credentials)
+      + [Download Directories Mapping](#nzbget-download-directories)
       + [Fix "directory does not appear" error in Sonarr/Radarr](#fix-directory-does-not-appear-to-exist-inside-the-container-error)
     * [qBittorrent](#qbittorrent)
       + [qBittorrent Login Credentials](#qbittorrent-login-credentials)
-      + [Download Directories Mapping](#download-directories-mapping)
+      + [Download Directories Mapping](#qbittorrent-download-directories)
       + [qBittorrent Stalls with VPN Timeout](#qbittorrent-stalls-with-vpn-timeout)
   - [arr Apps](#arr-apps)
 * [Server Monitoring](https://github.com/TechHutTV/homelab/tree/main/monitoring)
@@ -237,7 +238,7 @@ This may not be an issue as [DNS over HTTPS in Go to replace Unbound](https://gi
 #### NZBGet Login Credentials 
 The default credentials for NZBGet are a username of `nzbget` and a password of `tegbzn6789`. It's strongly recommended to change these default credentials for security reasons. This can be done under Settings > SECURITY, then change the ControlUsername and ControlPassword.
 
-#### Download Directories Mapping
+#### NZBGet Download Directories
 If following the /data:/data directory scheme and used the command to setup the download directories open the qBitttorent Web UI and do under Settings > PATHS and change the paths.
 
 _MainDir:_ `/data/downloads/nzbget`
@@ -266,7 +267,7 @@ docker container logs qbittorrent
 ```
 Now, go to your settings and setup a new username and password under WebUI > Authentication.
 
-#### Download Directories Mapping
+#### Qbittorrent Download Directories
 If following the /data:/data directory scheme and used the command to setup the download directories open the qBitttorent Web UI and do under Settings > Downloads and change the paths.
 
 _Default Save Path:_ `/data/downloads/qbittorrent/completed`
