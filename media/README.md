@@ -1,6 +1,6 @@
 # Self-Hosted Media Server and Aggregation
 
-This is currently a work in progress. Make sure to review everything here and if you have any issues please submit it or suggest any edits. Also, checkout the [Servarr Docker Setup](https://wiki.servarr.com/docker-guide) for more details on installing the stack.
+Make sure to review everything here and if you have any issues please submit it as an issue. Also, we are more than open to any suggests or edits. Also, checkout the [Servarr Docker Setup](https://wiki.servarr.com/docker-guide) for more details on installing the stack.
 
 
 ## Navigation
@@ -124,10 +124,10 @@ docker exec -it conatiner_name bash
 wget -qO- https://ipinfo.io
 ```
 ### Passing Through Containers 
-When containers are in the same docker compose they all you need to add is a ```network_mode: service:container_name``` and open the ports through the the gluetun container. See example from the compose.yaml below.
+When containers are in the same docker compose they all you need to add is a ```network_mode: service:container_name``` and open the ports through the the gluetun container. See example with a different torrent client below.
 ```
 services:
-  gluetun: # This config is for wireguard only tested with AirVPN
+  gluetun:
     image: qmcgaw/gluetun
     container_name: gluetun
     ...
@@ -149,14 +149,6 @@ If the container is in another docker compose.yaml, assuming Gluetun is already 
 ```
 network_mode: "container:gluetun"
 ```
-### Arr apps wont connect to prowlarr
-
-I like to run Prowlarr though a VPN as it is the service that will fetch magnet links and skim torrent sites. If you have issues with connections between arr apps and prowlarr you may need to [allow gluetun to access your lan](https://github.com/qdm12/gluetun-wiki/blob/main/setup/connect-a-lan-device-to-gluetun.md#access-your-lan-through-gluetun). You can do this by adding the following to your docker compose file under the glutun enviromental varibles. 
-``` yaml
-- FIREWALL_OUTBOUND_SUBNETS=192.168.1.0/24 #change to your specific subnet
-```
-
-see issue [here](https://github.com/TechHutTV/homelab/issues/9)
 
 ### Gluetun Proxmox LXC Setup
 
