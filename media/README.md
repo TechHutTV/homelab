@@ -132,6 +132,11 @@ Now, in the same directory as your docker compose.yaml file create a new enviorm
 nano .env
 ```
 ```
+# General UID/GIU and Timezone
+TZ=America/Los_Angeles
+PUID=1000
+PGID=1000
+
 # Input your VPN provider and type here
 VPN_SERVICE_PROVIDER=airvpn
 VPN_TYPE=wireguard
@@ -216,6 +221,9 @@ This may not be an issue as [DNS over HTTPS in Go to replace Unbound](https://gi
 ## Download Clients
 
 ### NZBGet
+
+#### NZBGet Login Credentials 
+The default credentials for NZBGet are a username of `nzbget` and a password of `tegbzn6789`. It's strongly recommended to change these default credentials for security reasons. This can be done under Settings > SECURITY, then change the ControlUsername and ControlPassword.
 
 #### Fix directory does not appear to exist inside the container error
 This error may appear within Sonarr and Radarr. Once NZBGet is setup go to settings and under **INCOMING NZBS** change the **AppendCategoryDir** to **No**. This will prevent some potential mapping issues and save on unnessesary directories.
