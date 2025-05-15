@@ -2,27 +2,27 @@
 
 # Awesome Homelab
 
-This page in the homelab repoistory is a way to feature all of the apps that I have running! While the purpose of the directory is to give a home of all the apps that don't need their own guides and resources, it will still feature everything I run on my machines. Formatting of the readme inspired by [awesome-selfhosted](https://github.com/awesome-selfhosted/awesome-selfhosted).
+This page in the homelab repository is a way to feature all of the apps that I have running! While the purpose of the directory is to give a home of all the apps that don't need their own guides and resources, it will still feature everything I run on my machines. Formatting of the readme inspired by [awesome-selfhosted](https://github.com/awesome-selfhosted/awesome-selfhosted).
 
 ## Navigation
 * [__Apps__](https://github.com/TechHutTV/homelab/tree/main/apps) - List of all the apps and services.
 * [Home Assistant](https://github.com/TechHutTV/homelab/tree/main/homeassistant) - Smart home services and automation.
 * [Media Server](https://github.com/TechHutTV/homelab/tree/main/media) - Plex, Jellyfin, *arr stack, and more.
-* [Server Monitoring](https://github.com/TechHutTV/homelab/tree/main/monitoring) - Graphs and Visualizations for Unriad, Proxmox, and more.
+* [Server Monitoring](https://github.com/TechHutTV/homelab/tree/main/monitoring) - Graphs and Visualizations for Unraid, Proxmox, and more.
 * [Surveillance System](https://github.com/TechHutTV/homelab/tree/main/surveillance) - Frigate NVR Solution with Coral TPU.
 * [Storage](https://github.com/TechHutTV/homelab/tree/main/storage) - Current Storage and Backup Solution.
-* [Proxy Managment](https://github.com/TechHutTV/homelab/tree/main/proxy) - NGINX Proxy Manager, DDNS with Cloudflare, Local Domains, and more.
+* [Proxy Management](https://github.com/TechHutTV/homelab/tree/main/proxy) - NGINX Proxy Manager, DDNS with Cloudflare, Local Domains, and more.
 
 
 In my network I also have two Raspberry Pis. One of them is a Pi 5 with a PoE HAT and that is responsible for a Twingate connector and updating my IP address on Cloudflare. The other is hooked up to a 3D printer running Octoprint.
 
 ## Dashboards
 
-Dashboard are used to create a simple webpage with links to all the services, websites, or really anything you care about. What makes each dashboard special and unique is the features they come with. Many can act as monitoring tools, have widgets to get more details from services, weather, and more.
+Dashboards are used to create a simple webpage with links to all the services, websites, or really anything you care about. What makes each dashboard special and unique is the features they come with. Many can act as monitoring tools, have widgets to get more details from services, weather, and more.
 
 ### Glance
 
-![](https://github.com/TechHutTV/homelab/blob/main/apps/images/01_glace-dashboard.png)
+![](https://github.com/TechHutTV/homelab/blob/main/apps/images/01_glance-dashboard.png)
 
 This dashboard is a new addition for me, it’s not the most feature rich of the options out there, but for me it’s simplistic and default look and feel is what stands out to me. You can use it to monitor and link to all your applications, like most tools in this category, but it also is great for monitoring various feeds, websites, and a customizable RSS feed. I use the tool as a start page for my web browser and it gives a quick and simple _glance_ of everything that I care about. One of the best things about it, in my opinion, is that everything is customized and configured in a simple yaml file.
 
@@ -30,7 +30,7 @@ This dashboard is a new addition for me, it’s not the most feature rich of the
 
 ### Homarr
 
-I’m not using this one at the moment, but it’s currently a VERY CLOSE second for me. This one is more feature rich than Glance as it has much more widgets and is customizable though the graphical interface of the application. Homarr has it’s main focus in the name and that is a deep integration with the \*arr stack of applications. This dashboard, like Glance, can be used to monitor the up status of your applications, but it also integrates easily with Docker, Proxmox and other platforms.
+I’m not using this one at the moment, but it’s currently a VERY CLOSE second for me. This one is more feature rich than Glance as it has much more widgets and is customizable through the graphical interface of the application. Homarr has its main focus in the name and that is a deep integration with the \*arr stack of applications. This dashboard, like Glance, can be used to monitor the up status of your applications, but it also integrates easily with Docker, Proxmox and other platforms.
 
 **Resources:** [Video](https://youtu.be/A6vcTIzp_Ww) | [Github](https://github.com/homarr-labs/homarr) | [Website](https://homarr.dev/)
 
@@ -48,7 +48,7 @@ This is another new addition, while not great for moving or copying large amount
 
 ![](https://github.com/TechHutTV/homelab/blob/main/apps/images/03_vaultwarden-password-manager.png)
 
-After being suggested this for YEARS I finally bit the bullet and have a self-hosted password vault. It’s fully compatible with Bitwardens extensions and applications, this allows be to keep all my passwords, emails, and payment information in one place.
+After being suggested this for YEARS I finally bit the bullet and have a self-hosted password vault. It’s fully compatible with Bitwardens extensions and applications, this allows me to keep all my passwords, emails, and payment information in one place.
 
 **Resources:** [Github](https://github.com/dani-garcia/vaultwarden)
 
@@ -56,7 +56,7 @@ After being suggested this for YEARS I finally bit the bullet and have a self-ho
 
 ![](https://github.com/TechHutTV/homelab/blob/main/apps/images/04_hoarder-bookmark-manager.png)
 
-My video covering Hoarder may have turned into a unfortunate story of drama, that’s not to take away from how awesome this tool actually is. I think of it as a dumping ground for anything I come across that is slightly interesting. This is a self-hostable bookmark-everything app with a touch of AI for the data hoarders out there. Some of the features include the ability to take simple notes and store images and pdfs, automatic fetching for link titles, descriptions and images, sorting tools, and full text search of all the content stored.
+My video covering Hoarder may have turned into an unfortunate story of drama, that’s not to take away from how awesome this tool actually is. I think of it as a dumping ground for anything I come across that is slightly interesting. This is a self-hostable bookmark-everything app with a touch of AI for the data hoarders out there. Some of the features include the ability to take simple notes and store images and pdfs, automatic fetching for link titles, descriptions and images, sorting tools, and full text search of all the content stored.
 
 **Resources:** [Video](https://youtu.be/TDWombBvK8c) | [Github](https://github.com/hoarder-app/hoarder) | [Website](https://hoarder.app/)
 
@@ -64,7 +64,7 @@ My video covering Hoarder may have turned into a unfortunate story of drama, tha
 
 ![](https://github.com/TechHutTV/homelab/blob/main/apps/images/05_portainer-docker-manager.png)
 
-I’ll admit, I do have plans to slowly remove Portainer from my home server. I’ve gotten conformable enough with using docker compose and other Docker features in the command line that is almost slows me down. With that said Portainer is a GREAT tool for managing Docker stacks, containers, and other instances on other machines.
+I’ll admit, I do have plans to slowly remove Portainer from my home server. I’ve gotten comfortable enough with using docker compose and other Docker features in the command line that it almost slows me down. With that said Portainer is a GREAT tool for managing Docker stacks, containers, and other instances on other machines.
 
 **Resources:** [Video](https://www.youtube.com/watch?v=olUD_F37n0E) | [Github](https://github.com/portainer/portainer) | [Website](https://docs.portainer.io/start/install-ce)
 
@@ -74,7 +74,7 @@ I’ll admit, I do have plans to slowly remove Portainer from my home server. I�
 
 Cockpit is one of the best tools that you can use to give your server a nice web interface to monitor and manage. Their website says; “See your server in a web browser and perform system tasks with a mouse. It’s easy to start containers, administer storage, configure networks, and inspect logs. Basically, you can think of Cockpit like a graphical “desktop interface”, but for individual servers.”
 
-I was using this in a centralized LXC for managing shares and using various extensions to give cockpit even more features. After a very resent change in my home server setup I yet to install it on anything, but I’m leaving it here on this list as it is an amazing tool.
+I was using this in a centralized LXC for managing shares and using various extensions to give cockpit even more features. After a very recent change in my home server setup I have yet to install it on anything, but I’m leaving it here on this list as it is an amazing tool.
 
 **Resources:** [Video](https://youtu.be/zLFB6ulC0Fg?si=9eFVzVcAebZUTgFi&t=1072) | [Github](https://github.com/cockpit-project/cockpit) | [Website](https://cockpit-project.org/)
 
@@ -82,7 +82,7 @@ I was using this in a centralized LXC for managing shares and using various exte
 
 ![](https://github.com/TechHutTV/homelab/blob/main/apps/images/07_octoprint-3d-printing.png)
 
-Octoprint is another great tool that has actually helped me increase the use of my 3D printer. I have this software setup on a Raspberry Pi 4 plugged directly into the printer. Essentially turning my dumb 3D printer smart. This allow control of all aspects of 3D printing including, uploading gcodes, printing, monitoring, and much more. Setting up camera monitoring and video recording is a simple as plugging in a webcam.
+Octoprint is another great tool that has actually helped me increase the use of my 3D printer. I have this software setup on a Raspberry Pi 4 plugged directly into the printer. Essentially turning my dumb 3D printer smart. This allows control of all aspects of 3D printing including, uploading gcodes, printing, monitoring, and much more. Setting up camera monitoring and video recording is as simple as plugging in a webcam.
 
 **Resources:** [Github](https://github.com/OctoPrint/OctoPrint) | [Website](https://octoprint.org/)
 
@@ -92,7 +92,7 @@ Octoprint is another great tool that has actually helped me increase the use of 
 
 ![](https://github.com/TechHutTV/homelab/blob/main/apps/images/08_jellyfin-media-server.png)
 
-Jellyfin is by far the best free and open source media server on the market right now. It has all the features you’d expect without any paywalls. This includes streaming to a wide variety of platforms. I currently run Jellyfin as a backup to Plex as that is currently my preferred platform. See the video about for much more information.
+Jellyfin is by far the best free and open source media server on the market right now. It has all the features you’d expect without any paywalls. This includes streaming to a wide variety of platforms. I currently run Jellyfin as a backup to Plex as that is currently my preferred platform. See the video above for much more information.
 
 **Resources:** [Video](https://www.youtube.com/watch?v=eJvQKLVrmU8) | [Github](https://github.com/jellyfin/jellyfin) | [Website](https://jellyfin.org/)
 
@@ -100,7 +100,7 @@ Jellyfin is by far the best free and open source media server on the market righ
 
 ![](https://github.com/TechHutTV/homelab/blob/main/apps/images/09_plex-media-server.png)
 
-Plex is my main media streaming platform. I have quite a few family members using it and Plex has support for more platforms and easier login capabilities. I’ve also recent setup a TV tuner and it has been working great. Another reason why I use Plex is the support for 3rd party tools such as Tautulli that we will get into below.
+Plex is my main media streaming platform. I have quite a few family members using it and Plex has support for more platforms and easier login capabilities. I’ve also recently setup a TV tuner and it has been working great. Another reason why I use Plex is the support for 3rd party tools such as Tautulli that we will get into below.
 
 **Resources:** [Video](https://youtu.be/lXcfKTNObOo) | [Github](https://github.com/plexinc) | [Website](https://www.plex.tv/)
 
@@ -108,7 +108,7 @@ Plex is my main media streaming platform. I have quite a few family members usin
 
 ![](https://github.com/TechHutTV/homelab/blob/main/apps/images/10_tautulli-plex-stats.png)
 
-While Plex does have some statistics and logs to see what’s going on, it is nothing compared to what we get from Tautulli. From their website; “Tautulli is a 3rd party application that you can run alongside your Plex Media Server to monitor activity and track various statistics. Most importantly, these statistics include what has been watched, who watched it, when and where they watched it, and how it was watched.” This data is very helpful when I clean up and remove some media from the server. One of my favorite features of all this is the newsletter option that you can setup giving the users a overview of new media that has been added to the server.
+While Plex does have some statistics and logs to see what’s going on, it is nothing compared to what we get from Tautulli. From their website; “Tautulli is a 3rd party application that you can run alongside your Plex Media Server to monitor activity and track various statistics. Most importantly, these statistics include what has been watched, who watched it, when and where they watched it, and how it was watched.” This data is very helpful when I clean up and remove some media from the server. One of my favorite features of all this is the newsletter option that you can setup giving the users an overview of new media that has been added to the server.
 
 **Resources:** [Github](https://github.com/Tautulli/Tautulli) | [Website](https://tautulli.com/)
 
@@ -118,9 +118,9 @@ Many of the applications below act in similar function with a slightly different
 
 ### Overseerr
 
-![](https://github.com/TechHutTV/homelab/blob/main/apps/images/11_overseerr-media-reuests.png)
+![](https://github.com/TechHutTV/homelab/blob/main/apps/images/11_overseerr-media-requests.png)
 
-Overseerr is an amazing tool for discovering new movies and shows as well as having Plex users request media they want to see. Overseerr integrates really well into Plex and some of the other services in this category. It can see what is already in your media library and if a request is made it can automatically add that entry to Radarr or Sonarr. I particularity like it because of the discover functionality, you can filter movies and shows by what streaming service they’re on, rating, and more.
+Overseerr is an amazing tool for discovering new movies and shows as well as having Plex users request media they want to see. Overseerr integrates really well into Plex and some of the other services in this category. It can see what is already in your media library and if a request is made it can automatically add that entry to Radarr or Sonarr. I particularly like it because of the discover functionality, you can filter movies and shows by what streaming service they’re on, rating, and more.
 
 **Resources:** [Github](https://github.com/sct/overseerr) | [Website](https://overseerr.dev/)
 
@@ -128,7 +128,7 @@ Overseerr is an amazing tool for discovering new movies and shows as well as hav
 
 ![](https://github.com/TechHutTV/homelab/blob/main/apps/images/12_radarr-movie-management.png)
 
-Radarr is a media organization tool for movies. This allows you see scan your library to see everything you have. Manage file file names, see the media quality, and even search indexers for media. From their wiki; “Radarr is a movie collection manager for Usenet and BitTorrent users. It can monitor multiple RSS feeds for new movies and will interface with clients and indexers to grab, sort, and rename them. It can also be configured to automatically upgrade the quality of existing files in the library when a better quality format becomes available.”
+Radarr is a media organization tool for movies. This allows you to scan your library to see everything you have. Manage file names, see the media quality, and even search indexers for media. From their wiki; “Radarr is a movie collection manager for Usenet and BitTorrent users. It can monitor multiple RSS feeds for new movies and will interface with clients and indexers to grab, sort, and rename them. It can also be configured to automatically upgrade the quality of existing files in the library when a better quality format becomes available.”
 
 **Resources:** [Wiki](https://wiki.servarr.com/radarr) | [Github](https://github.com/Radarr/Radarr) | [Website](https://radarr.video/)
 
@@ -164,7 +164,7 @@ Without using Prowlarr you’d need to manually setup your trackers and indexers
 
 ## Download Clients
 
-I highly recommened using a VPN for downloading things. Esspecially when using peer-to-peer downloaders. Using a VPN will keep your public IP address hidden. I have tired a few VPN services and so far my favorite is [AirVPN](https://airvpn.org/?referred_by=673908), they're not a sponsor, but that is a affilate link.
+I highly recommend using a VPN for downloading things. Especially when using peer-to-peer downloaders. Using a VPN will keep your public IP address hidden. I have tried a few VPN services and so far my favorite is [AirVPN](https://airvpn.org/?referred_by=673908), they're not a sponsor, but that is a affiliate link.
 
 [![](https://github.com/TechHutTV/homelab/blob/main/apps/images/airvpn.png)](https://airvpn.org/?referred_by=673908)
 
@@ -180,7 +180,7 @@ This is a web version of the popular qBittorrent peer-to-peer file sharing clien
 
 ![](https://github.com/TechHutTV/homelab/blob/main/apps/images/17_nzbget-newsletter-client.png)
 
-This is a Usenet client written is C++. It works very well and out of any that I’ve used it seems to give the least amount of issues. This can pull files, fix them in some cases is the health is low, rename and move files.
+This is a Usenet client written in C++. It works very well and out of any that I’ve used it seems to give the least amount of issues. This can pull files, fix them in some cases if the health is low, rename and move files.
 
 https://nzbget.net/
 **Resources:** [Github](https://github.com/nzbgetcom/nzbget) | [Website](https://radarr.video/)
@@ -200,7 +200,7 @@ Nextcloud is the best in the game for replacing cloud services like Google Drive
 
 ![](https://github.com/TechHutTV/homelab/blob/main/apps/images/19_immich-photo-backup.png)
 
-This is arguably the most important application that I am running. This is what I’ve used to completely replace Google Photos. Myself and a few of my family members use this as their primary Photo back solution. It has a mobile app that supports easy backups and some other key features include facial recognition and a location map of your photos. From their website; “Easily back up, organize, and manage your photos on your own server. Immich helps you browse, search and organize your photos and videos with ease, without sacrificing your privacy.”
+This is arguably the most important application that I am running. This is what I’ve used to completely replace Google Photos. Myself and a few of my family members use this as their primary Photo backup solution. It has a mobile app that supports easy backups and some other key features include facial recognition and a location map of your photos. From their website; “Easily back up, organize, and manage your photos on your own server. Immich helps you browse, search and organize your photos and videos with ease, without sacrificing your privacy.”
 
 **Resources:** [Video](https://www.youtube.com/watch?v=s1ufPvO0BVE) | [Github](https://github.com/immich-app/immich) | [Website](https://immich.app/)
 
@@ -245,7 +245,7 @@ I was originally using this with Home Assistant as an add-on, but I’ve noticed
 
 ![](https://github.com/TechHutTV/homelab/blob/main/apps/images/24_pi-hole-dns-sinkhole.png)
 
-By far the most popular “DNS Sinkhole” a Domain Name Service that blocks certain DNS inquires. In the case of Pi-Hole it uses black lists full of domains associated with advertisements and tracking. For example, one of the most blocked domain on my server is [s2s.mparticle.com](https://www.mparticle.com/about-us/) a data collection firm. And with Pi-Hole I can investigate and figure out why this data collection company is being reached out to so much. This is in addition to the main use case of simple ad blocking. Pi-Hole has many other features I’ve yet to dive into, but it’s a wonderful tool that is worth tying out of anyone.
+By far the most popular “DNS Sinkhole” a Domain Name Service that blocks certain DNS inquiries. In the case of Pi-Hole it uses black lists full of domains associated with advertisements and tracking. For example, one of the most blocked domain on my server is [s2s.mparticle.com](https://www.mparticle.com/about-us/) a data collection firm. And with Pi-Hole I can investigate and figure out why this data collection company is being reached out to so much. This is in addition to the main use case of simple ad blocking. Pi-Hole has many other features I’ve yet to dive into, but it’s a wonderful tool that is worth trying out of anyone.
 
 **Resources:** [Video](https://www.youtube.com/watch?v=xtMFcVx3cHU) | [Github](https://github.com/pi-hole/pi-hole) | [Website](https://pi-hole.net/)
 
@@ -267,7 +267,7 @@ Full disclosure, Twingate is one of the channel sponsors. This is a VPN alternat
 
 ![](https://github.com/TechHutTV/homelab/blob/main/apps/images/26_cloudflare-ddns.png)
 
-This is a very simple docker container used to update your public IP address within the Cloudflare A records using their API. I need to use this becuase my public IP is dynamic, meaning it will randomly and automatically change every few weeks or sometimes every few days. From their Github it’s; “A feature-rich and robust Cloudflare DDNS updater with a small footprint. The program will detect your machine’s public IP addresses and update DNS records using the Cloudflare API.”
+This is a very simple docker container used to update your public IP address within the Cloudflare A records using their API. I need to use this because my public IP is dynamic, meaning it will randomly and automatically change every few weeks or sometimes every few days. From their Github it’s; “A feature-rich and robust Cloudflare DDNS updater with a small footprint. The program will detect your machine’s public IP addresses and update DNS records using the Cloudflare API.”
 
 **Resources:** [Video](https://youtu.be/79e6KBYcVmQ?si=1h1daKy-0fZeiBtI) | [Github](https://github.com/favonia/cloudflare-ddns)
 
@@ -293,7 +293,7 @@ TeslaMate is a tool that uses the Tesla API to gather every possible data point 
 
 ![](https://github.com/TechHutTV/homelab/blob/main/apps/images/29_influxdb2-data-explorer.png)
 
-InfluxDB is described as; “Purpose-built database for all types of time series data at any scale.” This database tool has it’s own way to turn data into charts and graphs, but I’m primarily using it for helpful data from my Proxmox server and pulling that data to Grafana dashboards.
+InfluxDB is described as; “Purpose-built database for all types of time series data at any scale.” This database tool has its own way to turn data into charts and graphs, but I’m primarily using it for helpful data from my Proxmox server and pulling that data to Grafana dashboards.
 
 **Resources:** [Video](https://www.youtube.com/watch?v=vffhtqK3ZU) | [Github](https://github.com/influxdata/influxdb) | [Website](https://www.influxdata.com/)
 
@@ -305,7 +305,7 @@ Like InfluxDB this is a data collection tool for monitoring and data analytics. 
 
 **Resources:** [Video](https://www.youtube.com/watch?v=vffhtqK3ZU) | [Github](https://github.com/prometheus/prometheus) | [Website](https://prometheus.io/)
 
-**Warning!** This 'Alternatives and Extras' section is activily being worked on.
+**Warning!** This 'Alternatives and Extras' section is actively being worked on.
 
 ### Alternatives and Extras
 Dashboards
