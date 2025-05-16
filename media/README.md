@@ -125,10 +125,12 @@ sudo chown -R 1000:1000 /docker
 ## Docker Compose and .env
 Navigate to the directory you want to spin up the servarr stack in. I run mine from `/docker/servarr` but you can run it from anywhere you'd like such as `/home/user/docker/servarr`. Then download the compose.yaml and .env files from this repo.
 ```
-wget https://github.com/TechHutTV/homelab/blob/main/media/compose.yaml && wget https://github.com/TechHutTV/homelab/blob/main/media/.env
+wget https://github.com/TechHutTV/homelab/raw/refs/heads/main/media/compose.yaml && wget https://github.com/TechHutTV/homelab/raw/refs/heads/main/media/.env
 ```
 Most of our editing is going to be done in the .env file. Here you change your UID and GID, timezone, and add all your VPN keys and info. You can also make edits to the compose.yaml file such as the mount point locations, for example, if you are using something other than `/data:/data` or even changing the docker network IP addresses for your services.
+
 ## Gluetun VPN
+
 ### Setup and Configuration
 I like to set this out with [AirVPN](https://airvpn.org/?referred_by=673908) (referral link). I'm not affliated with them in anyway other than the referral link. I've tried a few other providers and they're my preference. If you already have a VPN checkout the [providers](https://github.com/qdm12/gluetun-wiki/tree/main/setup/providers) page on their wiki.
 
@@ -172,7 +174,7 @@ HEALTH_VPN_DURATION_INITIAL=120s
 ```
 
 ### Testing Gluetun Connectivity 
-Once your containers are up and running, you can test your connection is correct and secured. This assumes you keeo the gluetun container name. Learn more at the [gluetun wiki](https://github.com/qdm12/gluetun-wiki/blob/main/setup/test-your-setup.md).
+Once your containers are up and running, you can test your connection is correct and secured. This assumes you keeo the gluetun container name. Learn more at the [gluetun wiki](https://github.com/qdm12/gluetun-wiki/blob/main/setup/test-your-setup.md). __Note:__ If you run into issues try restarting the stack with `docker compose restart`.
 ```
 docker run --rm --network=container:gluetun alpine:3.18 sh -c "apk add wget && wget -qO- https://ipinfo.io"
 ```
