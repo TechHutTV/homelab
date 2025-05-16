@@ -249,12 +249,6 @@ _DestDir:_ `${MainDir}/completed`
 
 _InterDir:_ `${MainDir}/intermediate`
 
-_NzbDir:_ `${MainDir}/nzb`
-
-_QueueDir:_ `${MainDir}/queue`
-
-_TempDir:_ `${MainDir}/tmp`
-
 And keep everything else as is.
 
 #### Fix directory does not appear to exist inside the container error
