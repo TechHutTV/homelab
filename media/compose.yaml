@@ -14,7 +14,7 @@ networks:
     name: servarrnetwork 
     ipam:
       config:
-        - subnet: 172.69.0.0/24
+        - subnet: 172.39.0.0/24
 
 services:
 # airvpn recommended (referral url: https://airvpn.org/?referred_by=673908)
@@ -27,7 +27,7 @@ services:
       - /dev/net/tun:/dev/net/tun # If running on an LXC see readme for more info.
     networks:
       servarrnetwork:
-        ipv4_address: 172.69.0.2
+        ipv4_address: 172.39.0.2
     ports:
       - ${FIREWALL_VPN_INPUT_PORTS}:${FIREWALL_VPN_INPUT_PORTS} # airvpn forwarded port, pulled from .env
       - 8080:8080 # qbittorrent web interface
@@ -137,7 +137,7 @@ services:
       - 8989:8989
     networks:
       servarrnetwork:
-        ipv4_address: 172.69.0.3
+        ipv4_address: 172.39.0.3
 
   radarr:
     image: lscr.io/linuxserver/radarr:latest
@@ -155,7 +155,7 @@ services:
       - 7878:7878
     networks:
       servarrnetwork:
-        ipv4_address: 172.69.0.4
+        ipv4_address: 172.39.0.4
 
   lidarr:
     container_name: lidarr
@@ -173,7 +173,7 @@ services:
       - 8686:8686
     networks:
       servarrnetwork:
-        ipv4_address: 172.69.0.5
+        ipv4_address: 172.39.0.5
 
   bazarr:
     image: lscr.io/linuxserver/bazarr:latest
@@ -191,7 +191,7 @@ services:
       - 6767:6767
     networks:
       servarrnetwork:
-        ipv4_address: 172.69.0.6
+        ipv4_address: 172.39.0.6
 
 # Newer additions to this stack feel. Remove the '#' to add the service.
 #
@@ -208,7 +208,7 @@ services:
 #      - /data/youtube:/youtube
 #    networks:
 #      servarrnetwork:
-#        ipv4_address: 172.69.0.8
+#        ipv4_address: 172.39.0.8
 #    restart: unless-stopped
 #
 #  jellyseerr:
@@ -224,5 +224,5 @@ services:
 #      - 5055:5055
 #    networks:
 #      servarrnetwork:
-#        ipv4_address: 172.69.0.9
+#        ipv4_address: 172.39.0.9
 #    restart: unless-stopped
