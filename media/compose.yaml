@@ -1,6 +1,6 @@
-# Compose file for the *arr stack. Configuration files are stored in the 
+# Compose file for the *arr stack. Configuration files are stored in the
 # directory you launch the compose file on. Change to bind mounts if needed.
-# All containers are ran with user and group ids of the main user and 
+# All containers are ran with user and group ids of the main user and
 # group to aviod permissions issues of downloaded files, please refer
 # the read me file for more information.
 
@@ -11,13 +11,13 @@
 
 networks:
   servarrnetwork:
-    name: servarrnetwork 
+    name: servarrnetwork
     ipam:
       config:
         - subnet: 172.39.0.0/24
 
 services:
-# airvpn recommended (referral url: https://airvpn.org/?referred_by=673908)
+  # airvpn recommended (referral url: https://airvpn.org/?referred_by=673908)
   gluetun:
     image: qmcgaw/gluetun
     container_name: gluetun
@@ -67,13 +67,13 @@ services:
         restart: true
     network_mode: service:gluetun
     healthcheck:
-        test: ping -c 1 www.google.com || exit 1
-        interval: 60s
-        retries: 3
-        start_period: 20s
-        timeout: 10s
+      test: ping -c 1 www.google.com || exit 1
+      interval: 60s
+      retries: 3
+      start_period: 20s
+      timeout: 10s
 
-# See the 'qBittorrent Stalls with VPN Timeout' section for more information.
+  # See the 'qBittorrent Stalls with VPN Timeout' section for more information.
   deunhealth:
     image: qmcgaw/deunhealth
     container_name: deunhealth
@@ -166,9 +166,9 @@ services:
       - ./lidarr:/config
       - /data:/data
     environment:
-     - PUID=${PUID}
-     - PGID=${PGID}
-     - TZ=${TZ}
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
     ports:
       - 8686:8686
     networks:
