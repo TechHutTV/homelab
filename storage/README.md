@@ -101,7 +101,7 @@ In our new LXC we first need to run some general updates and user creation.
 
 1. Update your system
    ```bash
-   sudo apt update && sudo apt upgrade -y
+   apt update && apt upgrade -y
    ```
 2. Create your user
    ```bash
@@ -110,22 +110,25 @@ In our new LXC we first need to run some general updates and user creation.
    ```
 
    Great [video resource by KeepItTechie](https://www.youtube.com/watch?v=2gW4rWhurUs), [source](https://gist.github.com/pjobson/3811b73740a3a09597511c18be845a6c)
-
-3. Set permissions of mount points created earlier.
+3. Switch to your new user
+   ```bash
+   su - brandon
+   ```
+4. Set permissions of mount points created earlier.
    ```bash
    sudo chown -R brandon:brandon /data
    sudo chown -R brandon:brandon /docker
    ```
-4. Install Samba
+5. Install Samba
    ```bash
    sudo apt install samba
    ```
-5. Create a backup of the default configuration
+6. Create a backup of the default configuration
    ```bash
    cd /etc/samba
    sudo mv smb.conf smb.conf.old
    ```
-6. Edit the samba config
+7. Edit the samba config
    ```bash
    sudo nano smb.conf
    ```
@@ -164,25 +167,36 @@ In our new LXC we first need to run some general updates and user creation.
       read only = no
       guest ok = no
    ```
-7. Add your samba user
+8. Add your samba user
    ```bash
    sudo smbpasswd -a [username]
    ```
-8. Set services to auto start on reboot
+9. Set services to auto start on reboot
    ```bash
    sudo systemctl enable smbd
    sudo systemctl enable nmbd
    sudo systemctl restart smbd
    sudo systemctl restart nmbd
    ```
-9. Allow samba on firewall if you run into any issues.
-   ```bash
-   sudo ufw allow Samba
-   sudo ufw status
-   ```
 10. Install wsdd for Windows discovery
     ```bash
     sudo apt install wsdd
     ```
+11. Allow services on firewall if you run into any issues.
+    ```bash
+    sudo ufw allow OpenSSH
+    sudo ufw allow Samba
+    # following 3 are needed for wsdd
+    sudo ufw allow 3702/udp
+    sudo ufw allow 5357/tcp
+    sudo ufw allow 5358/tcp
+    # Check ufw status
+    sudo ufw status
+    ```
+    Optionally, enable the firewall.
+    ```bash
+    sudo ufw enable
+    ```
+
 # Backups
 Work in Progress
