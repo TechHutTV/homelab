@@ -89,7 +89,7 @@ Within the VM install `cifs-utils`
 ```bash
 sudo apt install cifs-utils
 ```
-Now, edit the fstab file and add the following lines editing them to match your information:
+Now, edit the `fstab` file and add the following lines editing them to match your information:
 ```bash
 sudo nano /etc/fstab
 ```
@@ -105,20 +105,20 @@ sudo mount -a
 ```
 
 ## User Permissions
-Using bind mounts (`path/to/config:/config`) may lead to permissions conflicts between the host operating system and the container. To avoid this problem, you we specify the user ID (`PUID`) and group ID (`PGID`) to use within some of the containers. This will give your user permission to read and write configuration files, etc.
+Using bind mounts (`path/to/config:/config`) may lead to permission conflicts between the host operating system and the container. To avoid this problem, you can specify the user ID (`PUID`) and group ID (`PGID`) to use within some of the containers. This will give your user permissions to read and write configuration files, etc.
 
-In the compose file I use `PUID=1000` and `PGID=1000`, as those are generally the default user ID's in most Linux systems, but depending on your setup you may need to change this.
+In the compose file I use `PUID=1000` and `PGID=1000`, as those are generally the default IDs in most Linux systems, but depending on your setup you may need to change this.
 
 ```bash
 id your_user
 ```
-This will return something like the following:
+This command will return something like the following:
 ```
 uid=1000(your_user) gid=1000(your_user) groups=1000(your_user),27(sudo),24(cdrom),30(dip),46(plugdev),108(lxd)
 ```
 If you are using a network share mounted though `/etc/fstab` match the permissions there. Learn more above.
 
-If you run into errors, after creating all the folders you can assign the permissions using `chmod`. For example,
+If you run into errors after creating all the folders you can assign the permissions using `chown`. For example:
 ```bash
 sudo chown -R 1000:1000 /data
 ```
