@@ -1,9 +1,23 @@
 services:
+
+# Remove the nginx-proxy-manager service if running elsewhere
+  nginx-proxy-manager:
+    image: 'docker.io/jc21/nginx-proxy-manager:latest'
+    restart: unless-stopped
+    container_name: nginx-proxy-manager
+    network_mode: host
+    environment: # Uncomment this if IPv6 is not enabled on your host
+      - DISABLE_IPV6=true # Uncomment this if IPv6 is not enabled on your host
+    volumes:
+      - ./npm/data:/data
+      - ./npm/letsencrypt:/etc/letsencrypt
+
   nextcloud-aio-mastercontainer:
     image: ghcr.io/nextcloud-releases/all-in-one:latest
     init: true
     restart: always
     container_name: nextcloud-aio-mastercontainer # This line is not allowed to be changed.
+    network_mode: bridge
     volumes:
       - nextcloud_aio_mastercontainer:/mnt/docker-aio-config # This line is not allowed to be changed.
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -12,8 +26,7 @@ services:
     environment:
       AIO_COMMUNITY_CONTAINERS: "local-ai memories" # Community containers https://github.com/nextcloud/all-in-one/tree/main/community-containers
       APACHE_PORT: 11000 # Use this port in Nginx Proxy Manager
-      APACHE_IP_BINDING: 0.0.0.0 # Should be set when running behind a web server or reverse proxy that is running on the same host.
-      NC_TRUSTED_PROXIES: 172.18.0.3  # this is the NPM proxy ip address in the docker network !
+      # NC_TRUSTED_PROXIES: 172.18.0.3  # this is the NPM proxy ip address in the docker network !
       FULLTEXTSEARCH_JAVA_OPTIONS: "-Xms1024M -Xmx1024M"
       NEXTCLOUD_DATADIR: /nextcloud/ncdata # ⚠️ Warning: do not set or adjust this value after the initial Nextcloud installation is done!
       # NEXTCLOUD_MOUNT: /mnt/ # Allows the Nextcloud container to access the chosen directory on the host.
@@ -23,40 +36,7 @@ services:
       NEXTCLOUD_ENABLE_DRI_DEVICE: true # Intel QuickSync
       SKIP_DOMAIN_VALIDATION: false # This should only be set to true if things are correctly configured. 
       TALK_PORT: 3478 # This allows to adjust the port that the talk container is using which is exposed on the host. See https://github.com/nextcloud/all-in-one#how-to-adjust-the-talk-port
-    networks: # Is needed when you want to create the nextcloud-aio network with ipv6-support using this file, see the network config at the bottom of the file
-      nextcloud-aio:
-        aliases:
-         - nextcloud
-        ipv4_address: '172.18.0.2'
-
-  nginx-proxy-manager:
-    image: 'docker.io/jc21/nginx-proxy-manager:latest'
-    restart: unless-stopped
-    container_name: nginx-proxy-manager
-    ports:
-      - '80:80'
-      - '81:81'
-      - '443:443'
-    volumes:
-      - ./npm/data:/data
-      - ./npm/letsencrypt:/etc/letsencrypt
-    healthcheck:
-      test: ["CMD", "/usr/bin/check-health"]
-      interval: 10s
-      timeout: 3s
-    networks: # Is needed when you want to create the nextcloud-aio network with ipv6-support using this file, see the network config at the bottom of the file
-      nextcloud-aio:
-        aliases:
-         - npm
-        ipv4_address: '172.18.0.3'
 
 volumes:
   nextcloud_aio_mastercontainer:
     name: nextcloud_aio_mastercontainer # This line is not allowed to be changed.
-
-networks:
-  nextcloud-aio:
-    ipam:
-      driver: default
-      config:
-        - subnet: 172.18.0.0/24
