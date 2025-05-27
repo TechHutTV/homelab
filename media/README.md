@@ -13,7 +13,7 @@ Make sure to review everything here and if you have any issues please submit it 
     * [Updates Since Video Publish](#updates-since-video-publish)
   - [Media Server](#media-server)
     * [Jellyfin](https://github.com/TechHutTV/homelab/tree/main/media/jellyfin)
-    * [Plex](https://github.com/TechHutTV/homelab/tree/main/media/jellyfin)
+    * [Plex](https://github.com/TechHutTV/homelab/tree/main/media/plex)
   - [Data Directory](#data-directory)
     * [Folder Mapping](#folder-mapping)
     * [Network Share](#network-share)
