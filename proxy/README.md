@@ -207,4 +207,55 @@ Next, create a new resource with the IP of your proxy manager and add the local 
 | [![Twingate Guide](https://github.com/TechHutTV/homelab/blob/main/proxy/images/technotim-security-guide.jpg)](https://www.youtube.com/watch?v=Cs8yOmTJNYQ "DITCH your VPN! - How I Access my Home Server from ANYWHERE @TechHut")  | [![Additional Security Steps](https://github.com/TechHutTV/homelab/blob/main/proxy/images/twingate-techhut.jpg)](https://youtu.be/yaw2A3DG664 "Self-Hosting Security Guide for your HomeLab @TechnoTim")  |
 
 
+## Setup Netbird for remote connections (work in progress)
+NetBird is an open source platform responsible for handling peer-to-peer connections, tunneling, authentication, and network management. While Netbird has a wonderful option to [fully self host](https://docs.netbird.io/selfhosted/self-hosted-vs-cloud-netbird), I opt for their free teir so I don't need to worry about having my own instance in my home or in a VPS. NetBird uses WireGuard’s lightweight encryption to establish direct, encrypted tunnels between devices or “peers" automatically. It eliminates manual configuration by handling tasks like IP assignment, NAT traversal, and firewall negotiation through built-in signaling servers. Plus you can setup various single sign on services and multi-factor authentication for added security. If you're interested in learning more about the technology used and how it works checkout [their docs](https://docs.netbird.io/about-netbird/how-netbird-works).
 
+(image here)
+
+### Self Hosting Netbird Managment (skip if using their platform)
+wip
+
+### Mangment Setup
+
+Obtain your [security key](https://docs.netbird.io/how-to/register-machines-using-setup-keys). 
+
+### Setup
+
+There are two ways you can go about setting this up. First is a Full Peer-to-Peer (P2P) Mesh Network. For this, NetBird is installed on every device. It enables a full mesh network, allowing direct, secure connections between all peers. Or you can enable Remote Network Access because sometimes, it’s not feasible or necessary to install NetBird on every device. You probably can’t install Netbird on all your printers and IoT devices. This is what I'm going to do for my main network, you can set up a NetBird-enabled connector on something like a Raspberry Pi, Proxmox LXC, or whatever you’d like. This acts as a bridge, allowing other devices in the network to securely access devices on your network that you allow it to.
+
+#### Installing on Linux
+Installing on Linux is simple with a single line command. You can install this directly on any Linux system such as the Proxmox host system, an LXC container, and so on.
+```
+curl -fsSL https://pkgs.netbird.io/install.sh | sh
+```
+Now connect it using the setup key from the managment dashboard.
+```
+netbird up --setup-key <SETUP KEY>
+```
+If you're self hosting you will need to specificy the URL that your instance is hosted on, for example, `netbird up --setup-key <SETUP KEY> --management-url http://10.0.0.102:33073`.
+
+#### Install on Docker
+If you want to spin up a docker container or run Netbird in a docker stack checkout the following docker compose.yaml.
+```
+#Untested
+services:
+    netbird:
+        container_name: netbird-client
+        hostname: PEER_NAM
+        cap_add:
+            - NET_ADMIN
+            - SYS_ADMIN
+            - SYS_RESOURCE
+        network_mode: host
+        privileged: true
+        environment:
+            # - NB_SETUP_KEY=SETUP
+            # - NB_FOREGROUND_MODE=true
+            # - NB_MANAGEMENT_URL=netbird.mydomain.net # Needed if self-hosting
+        volumes:
+            - netbird-client:/etc/netbird
+        image: netbirdio/netbird:lastest
+volumes:
+    netbird-client:
+        name: netbird-client
+```
