@@ -24,11 +24,15 @@ sudo nano /etc/fstab
 Nextcloud steps to add files manually to data directory. 
 #### Fix permissions 
 ```
-chown -r www-data:www-data 
+chown -R www-data:www-data ./directory
 ```
 #### Scan for new files
 ```
 sudo docker exec --user www-data -it nextcloud-aio-nextcloud php occ files:scan --all
+```
+### Find lost AIO Passphrase
+```
+docker exec nextcloud-aio-mastercontainer grep password /mnt/docker-aio-config/data/configuration.json
 ```
 
 ## Immich
