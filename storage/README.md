@@ -181,6 +181,7 @@ In our new LXC we first need to run some general updates and user creation.
 10. Install wsdd for Windows discovery
     ```bash
     sudo apt install wsdd
+    sudo apt install wsdd-server
     ```
 11. Allow services on firewall if you run into any issues.
     ```bash
