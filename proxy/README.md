@@ -216,7 +216,7 @@ NetBird is an open source platform responsible for handling peer-to-peer connect
 wip
 
 ### Mangment Setup
-
+If you're not using the self-hosted instance
 Obtain your [security key](https://docs.netbird.io/how-to/register-machines-using-setup-keys). 
 
 ### Setup
