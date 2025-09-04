@@ -134,38 +134,38 @@ In our new LXC we first need to run some general updates and user creation.
    ```
    This is my configuration
    ```
-   [global]
-      server string = Servarr
-      workgroup = WORKGROUP
-      security = user
-      map to guest = Bad User
-      name resolve order = bcast host
-      hosts allow = 10.0.0.0/24
-      hosts deny = 0.0.0.0/0
-   [data]
-      path = /data
-      force user = brandon
-      force group = brandon
-      create mask = 0774
-      force create mode = 0774
-      directory mask = 0775
-      force directory mode = 0775
-      browseable = yes
-      writable = yes
-      read only = no
-      guest ok = no
-   [docker]
-      path = /docker
-      force user = brandon
-      force group = brandon
-      create mask = 0774
-      force create mode = 0774
-      directory mask = 0775
-      force directory mode = 0775
-      browseable = yes
-      writable = yes
-      read only = no
-      guest ok = no
+  [global]
+   server string = media
+   workgroup = WORKGROUP
+   security = user
+   map to guest = Bad User
+   name resolve order = bcast host
+   hosts allow = 192.168.8.0/24
+   hosts deny = 0.0.0.0/0
+[data]
+   path = /data
+   force user = jason
+   force group = jason
+   create mask = 0774
+   force create mode = 0774
+   directory mask = 0775
+   force directory mode = 0775
+   browseable = yes
+   writable = yes
+   read only = no
+   guest ok = no
+[docker]
+   path = /docker
+   force user = jason
+   force group = jason
+   create mask = 0774
+   force create mode = 0774
+   directory mask = 0775
+   force directory mode = 0775
+   browseable = yes
+   writable = yes
+   read only = no
+   guest ok = no
    ```
 8. Add your samba user
    ```bash
