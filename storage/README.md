@@ -135,17 +135,17 @@ In our new LXC we first need to run some general updates and user creation.
    This is my configuration
    ```
    [global]
-      server string = Servarr
+      server string = media
       workgroup = WORKGROUP
       security = user
       map to guest = Bad User
       name resolve order = bcast host
-      hosts allow = 10.0.0.0/24
+      hosts allow = 192.168.8.0/24
       hosts deny = 0.0.0.0/0
    [data]
       path = /data
-      force user = brandon
-      force group = brandon
+      force user = jason
+      force group = jason
       create mask = 0774
       force create mode = 0774
       directory mask = 0775
@@ -156,8 +156,8 @@ In our new LXC we first need to run some general updates and user creation.
       guest ok = no
    [docker]
       path = /docker
-      force user = brandon
-      force group = brandon
+      force user = jason
+      force group = jason
       create mask = 0774
       force create mode = 0774
       directory mask = 0775
