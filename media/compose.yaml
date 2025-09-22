@@ -29,7 +29,6 @@ services:
       servarrnetwork:
         ipv4_address: 172.39.0.2
     ports:
-      - ${FIREWALL_VPN_INPUT_PORTS}:${FIREWALL_VPN_INPUT_PORTS} # airvpn forwarded port, pulled from .env
       - 8080:8080 # qbittorrent web interface
       - 6881:6881 # qbittorrent torrent port
       - 6789:6789 # nzbget
