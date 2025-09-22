@@ -132,7 +132,7 @@ In our new LXC we first need to run some general updates and user creation.
    ```bash
    sudo nano smb.conf
    ```
-   This is my configuration
+   This is my configuration (see [issue 51](https://github.com/TechHutTV/homelab/issues/51) for more info on subnets.) 
    ```
    [global]
       server string = Servarr
