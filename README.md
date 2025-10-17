@@ -15,14 +15,18 @@ wip
 
 ### Compute
 #### OpnNAS SL-R12 Pro (Unriad)
-The model I have is a early release press model. I'm not quite sure when they will be ready for sale, but you can learn more [here](https://opnnas.com/#hls).
+The model I have is a early release press model. I'm not quite sure when they will be ready for sale, but you can learn more [here](https://opnnas.com/#hls). This machine is running Unraid and acts as my main media server. Also includes a Ubuntu VM running NextCloud.
 * [13th Gen Intel® Core™ i5-13500T](https://amzn.to/4qblt9y)
 * [Crucial Pro 96GB DDR5 RAM](https://amzn.to/3Jbh2uD)
 * [x5 Seagate Exos 20TB](https://amzn.to/4nPhn5d) 
 * [x7 Seagate IronWolf 4TB](https://amzn.to/3W1IFt5)
 
 #### Miniforum AI X1 Pro (Proxmox)
+This acts as my Proxmox Node. Running a varity of services including; graphana, npm, n8n, and another other non-media related instances.
 [get it here](https://amzn.to/4n0xTOR)
+* AMD Ryzen AI 9 HX 370
+* 96GB SODIMM DDR5
+* [x2 Western Digital SN580 1TB](https://amzn.to/4hdfHzY) (Mirrored Boot Drives)
 
 ## Old Setup
 
