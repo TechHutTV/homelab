@@ -48,14 +48,18 @@ Other Unifi Devices
 ### Security
 Currently have two different systems as I was fully on Reolink for sometime, but since Ubiquiti sent over some equipment to try we currently have a mix. 
 
+[https://www.youtube.com/watch?v=2RiiKi4vjJc](https://www.youtube.com/watch?v=2RiiKi4vjJc)
+
 #### Reolink NVR Kit
-wip x8 B400 Cameras
+This is great if you're trying to save money and have a simple PoE plug and play solution. This does add difficulties to manage as all the streams are under a single device and kit camera NEED the NVR to function. Some kit cameras may have more features so check the specific features of the camera model in the kit. You can probably find a great deal used. Cameras are the B400s.
+* [REOLINK 8CH 5MP](https://amzn.to/4dulGgG)
+* [REOLINK 16CH 12MP](https://amzn.to/4d9YaWz) (my kit)
 
-#### Reolink Duo 2 PoE
-wip
+#### Reolink PoE
+I've had no issues with these. Great for the Reolink ecosystem and using 3rd party services such as Frigate.
+* [Reolink RLC-1224A 12MP UHD PoE](https://amzn.to/4d6BuGJ)
+* [Reolink 4K Floodlight](https://amzn.to/4ceRKnM)
 
-#### x2 Reolink RLC-1224A
-wip
 
 #### x3 UVC-G6-Turret-W
 These are running hooked up to the Dream Machine Pro Max. I like it enough I will be slowly switching to Unifi stuff as I can afford it.
