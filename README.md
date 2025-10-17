@@ -49,7 +49,7 @@ Other Unifi Devices
 Currently have two different systems as I was fully on Reolink for sometime, but since Ubiquiti sent over some equipment to try we currently have a mix. 
 
 #### Reolink NVR Kit
-wip
+wip x8 B400 Cameras
 
 #### Reolink Duo 2 PoE
 wip
