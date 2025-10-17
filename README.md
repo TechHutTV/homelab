@@ -27,3 +27,34 @@ This acts as my Proxmox Node. Running a varity of services including; graphana, 
 * AMD Ryzen AI 9 HX 370
 * 96GB SODIMM DDR5
 * [x2 Western Digital SN580 1TB](https://amzn.to/4hdfHzY) (Mirrored Boot Drives)
+
+
+### Networking
+Now, Ubiquiti sent all this over to me. There is no way I'd be able to afford all this stuff on my own dime, so note that. This setup is crazy overpowered for what I need.
+
+#### UDM Pro Max
+#### USW Pro Max 24 PoE
+#### USW Pro XG 10 PoE
+#### x2 U7 Pro XG
+
+Other Unifi Devices
+* 2 x 8TB-HDDs
+* 1 x U-Rack-6U-TL
+* 1 x UACC-Cable-Patch-EL-0.15M-W-24
+* 5 x UACC-Cable-Patch-EL-3M-W
+* 2 x UACC-Cable-Patch-EL-15M-W
+
+### Security
+Currently have two different systems as I was fully on Reolink for sometime, but since Ubiquiti sent over some equipment to try we currently have a mix. 
+
+#### Reolink NVR Kit
+wip
+
+#### Reolink Duo 2 PoE
+wip
+
+#### x2 Reolink RLC-1224A
+wip
+
+#### x3 UVC-G6-Turret-W
+These are running hooked up to the Dream Machine Pro Max. I like it enough I will be slowly switching to Unifi stuff as I can afford it.
