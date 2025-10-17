@@ -36,6 +36,7 @@ Now, Ubiquiti sent all this over to me. There is no way I'd be able to afford al
 #### USW Pro Max 24 PoE
 #### USW Pro XG 10 PoE
 #### x2 U7 Pro XG
+#### USW Lite 16 PoE
 
 Other Unifi Devices
 * 2 x 8TB-HDDs
