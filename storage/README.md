@@ -1,6 +1,9 @@
 # Storage and Backup
 In this repo I will layout my storage and backup solutions for all of the services and platforms running on my homelab. Currently, I manage everything with Proxmox and Proxmox Backup Server. While solutions like Unraid and TrueNAS are awesome, I have found over the years the Proxmox is actually an amazing solution for managing storage, network shares, and backups.
 
+> [!NOTE]
+> I've recently switched to using Unraid on a seperate machine for my shares and primary file storage; however, this guide still works great for a all-Proxmox solution. I will make chages to this page in the next few weeks to reflect additional storage options and the best ways to mount nfs shares in Proxmox.
+
 ## Video Guides
 This readme is a companion to my official walkthrough guide!
 
