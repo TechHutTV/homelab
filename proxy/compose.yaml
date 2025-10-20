@@ -28,18 +28,18 @@ services:
       - IP6_PROVIDER=none
 
   netbird:
-      container_name: netbird
-      hostname: proxy-stack
-      cap_add:
-          - NET_ADMIN
-          - SYS_ADMIN
-          - SYS_RESOURCE
-      network_mode: host
-      environment:
-          - NB_SETUP_KEY=key
-      volumes:
-          - netbird-client:/var/lib/netbird
-      image: netbirdio/netbird:latest
+    container_name: netbird
+    hostname: proxy-stack
+    cap_add:
+        - NET_ADMIN
+        - SYS_ADMIN
+        - SYS_RESOURCE
+    network_mode: host
+    environment:
+        - NB_SETUP_KEY=key
+    volumes:
+        - netbird-client:/var/lib/netbird
+    image: netbirdio/netbird:latest
 
 # For testing the proxy
   helloworld:
