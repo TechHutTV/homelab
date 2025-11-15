@@ -17,30 +17,22 @@ networks:
         - subnet: 172.39.0.0/24
 
 services:
-  # airvpn recommended (referral url: https://airvpn.org/?referred_by=673908)
+  # Network bridge container (VPN removed - previously gluetun VPN client)
+  # This container provides a shared network namespace for qbittorrent, nzbget, and prowlarr
   gluetun:
-    image: qmcgaw/gluetun
+    image: alpine:latest
     container_name: gluetun
-    cap_add:
-      - NET_ADMIN
-    devices:
-      - /dev/net/tun:/dev/net/tun # If running on an LXC see readme for more info.
+    command: sleep infinity
     networks:
       servarrnetwork:
         ipv4_address: 172.39.0.2
     ports:
-      - ${FIREWALL_VPN_INPUT_PORTS}:${FIREWALL_VPN_INPUT_PORTS} # airvpn forwarded port, pulled from .env
       - 8080:8080 # qbittorrent web interface
       - 6881:6881 # qbittorrent torrent port
       - 6789:6789 # nzbget
       - 9696:9696 # prowlarr
-    volumes:
-      - ./gluetun:/gluetun
-    # Make a '.env' file in the same directory.
-    env_file:
-      - .env
     healthcheck:
-      test: ping -c 1 www.google.com || exit 1
+      test: ping -c 1 127.0.0.1 || exit 1
       interval: 20s
       timeout: 10s
       retries: 5
@@ -57,7 +49,7 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
       - WEBUI_PORT=8080 # must match "qbittorrent web interface" port number in gluetun's service above
-      - TORRENTING_PORT=${FIREWALL_VPN_INPUT_PORTS} # airvpn forwarded port, pulled from .env
+      - TORRENTING_PORT=6881 # torrent port (no VPN port forwarding)
     volumes:
       - ./qbittorrent:/config
       - /data:/data
