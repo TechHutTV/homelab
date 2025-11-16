@@ -2,7 +2,7 @@
 
 This is going to be an overview of my setup for connecting to specific services through a proxy and DDNS combo, local top-level domain names, and how I connect to the internal home network remotely with Twingate.
 
-This is done on Proxmox with an LXC running Ubuntu 22.04 and Docker. However, these steps will work with any Docker installation. If you want details on installing Docker and a brief overview of all the basics you need to know to get started checkout our [7 Docker Basics for Beginners](https://techhut.tv/7-docker-basics-for-beginner).
+This is done on Proxmox with an LXC running Ubuntu 22.04 and Docker. However, these steps will work with any Docker installation. If you want details on installing Docker and a brief overview of all the basics you need to know to get started checkout our [7 Docker Basics for Beginners](https://techhut.tv/7-docker-basics-for-beginners).
 
 ## Navigation
 * [Apps](https://github.com/TechHutTV/homelab/tree/main/apps) - List of all the apps and services.
