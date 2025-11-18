@@ -3,6 +3,7 @@ Homelab stacks, templates, and more fun resources! This is a *work in progress*.
 
 ## Navigation
 * [Apps](https://github.com/TechHutTV/homelab/tree/main/apps) - List of all the apps and services.
+* [Automations](https://github.com/TechHutTV/homelab/tree/main/automations) - Making my life easier.
 * [Home Assistant](https://github.com/TechHutTV/homelab/tree/main/homeassistant) - Smart home services and automation.
 * [Media Server](https://github.com/TechHutTV/homelab/tree/main/media) - Plex, Jellyfin, *arr stack, and more.
 * [Server Monitoring](https://github.com/TechHutTV/homelab/tree/main/monitoring) - Graphs and Visualizations for Unraid, Proxmox, and more.
