@@ -1,0 +1,97 @@
+services:
+  n8n:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: n8n-custom
+    container_name: n8n
+    restart: always
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_HOST=10.173.10.176
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - WEBHOOK_URL=https://n8n.hopki.net/
+      - GENERIC_TIMEZONE=America/Los_Angeles
+      - N8N_FORMDATA_FILE_SIZE_MAX=50000
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
+    volumes:
+      - ./n8n_data:/home/node/.n8n
+      - ./local-files:/files
+    depends_on:
+      ollama-init:
+        condition: service_completed_successfully
+    networks:
+      - n8n-network
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    restart: always
+    ports:
+      - "11434:11434"
+    volumes:
+      - ./ollama_data:/root/.ollama
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    networks:
+      - n8n-network
+    healthcheck:
+      test: ["CMD-SHELL", "ollama --version || exit 0"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
+
+  ollama-init:
+    image: ollama/ollama:latest
+    container_name: ollama-init
+    volumes:
+      - ./ollama_data:/root/.ollama
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        echo "Waiting for Ollama to be ready..."
+        sleep 15
+        export OLLAMA_HOST=http://ollama:11434
+        echo "Pulling models..."
+        ollama pull qwen3-vl:8b
+        ollama pull qwen3-coder:latest
+        ollama pull gpt-oss:lates
+        echo "All models ready!"
+    depends_on:
+      ollama:
+        condition: service_healthy
+    networks:
+      - n8n-network
+  openai-whisper-asr-webservice:
+    container_name: whisper
+    restart: always
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities:
+                - gpu
+    ports:
+      - 9000:9000
+    environment:
+      - ASR_MODEL=large
+      - ASR_ENGINE=openai_whisper
+    image: onerahmet/openai-whisper-asr-webservice:latest-gpu
+    networks:
+      - n8n-network
+
+networks:
+  n8n-network:
+    driver: bridge
