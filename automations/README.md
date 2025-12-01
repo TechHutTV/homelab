@@ -75,11 +75,10 @@ module.exports = {
     script: 'n8n',
     env: {
       NODE_ENV: 'production',
+      N8N_RELEASE_TYPE: 'stable',
       N8N_HOST: '0.0.0.0',
       N8N_PORT: '5678',
       WEBHOOK_URL: 'https://your-domain.com/',
-      GENERIC_TIMEZONE: 'America/Los_Angeles',
-      TZ: 'America/Los_Angeles'
     }
   }]
 };
