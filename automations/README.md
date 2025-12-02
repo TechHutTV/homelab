@@ -17,17 +17,24 @@ PM2 is a production-ready process manager for Node.js applications. Running n8n 
 
 ### Prerequisites
 
-Ensure Node.js (v18.17+) is installed:
+Install Node.js, npm, and nvm. Visit the [official download page](https://nodejs.org/en/download) for an updated command and different platforms.
 
-```bash
-node -v
 ```
+# Download and install nvm:
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
 
-If not installed, add the NodeSource repository and install:
+# in lieu of restarting the shell
+\. "$HOME/.nvm/nvm.sh"
 
-```bash
-curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-sudo apt install -y nodejs
+# Download and install Node.js:
+nvm install 24
+
+# Verify the Node.js version:
+node -v # Should print "v24.11.1".
+
+# Verify npm version:
+npm -v # Should print "11.6.2".
+
 ```
 
 ### Step 1: Install or Update n8n
