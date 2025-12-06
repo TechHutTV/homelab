@@ -65,6 +65,6 @@ I've had no issues with these. Great for the Reolink ecosystem and using 3rd par
 #### x3 UVC-G6-Turret-W
 These are running hooked up to the Dream Machine Pro Max. I like it enough I will be slowly switching to Unifi stuff as I can afford it.
 
-## temp
+## Stars
 
-[![Star History Chart](https://api.star-history.com/svg?repos=netbirdio/netbird&type=date&legend=top-left)](https://www.star-history.com/#netbirdio/netbird&type=date&legend=top-left)
+![Star History Chart](https://api.star-history.com/svg?repos=TechHutTV/homelab&type=date&legend=top-left)
