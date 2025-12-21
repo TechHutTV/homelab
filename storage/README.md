@@ -138,6 +138,7 @@ In our new LXC we first need to run some general updates and user creation.
    This is my configuration (see [issue 51](https://github.com/TechHutTV/homelab/issues/51) for more info on subnets.) 
    ```
    [global]
+      vfs objects = catia fruit streams_xattr #Add this line to give write access to apple Iphone 
       server string = Servarr
       workgroup = WORKGROUP
       security = user
