@@ -192,7 +192,7 @@ docker exec -it container_name bash
 wget -qO- https://ipinfo.io
 ```
 ### Passing Through Containers
-When containers are in the same docker compose they all you need to add is a `network_mode: service:container_name` and open the ports through the the gluetun container. See example with a different torrent client below.
+When containers are in the same docker compose then all you need to add is a `network_mode: service:container_name` and open the ports through the the gluetun container. See example with a different torrent client below.
 ```yaml
 services:
   gluetun:
