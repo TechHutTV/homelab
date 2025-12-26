@@ -95,7 +95,7 @@ Now that our container is created I want to add some storage and mount the data 
 In our new LXC we first need to run some general updates and user creation.
 
 > [!IMPORTANT]
-> Throughout this section, replace `brandon` with your own username.
+> Throughout this section, replace `youruser` with your own username.
 
 1. Update your system
    ```bash
@@ -141,7 +141,6 @@ In our new LXC we first need to run some general updates and user creation.
 
    ```
    [global]
-      vfs objects = catia fruit streams_xattr #Add this line to give write access to apple Iphone 
       server string = Servarr
       workgroup = WORKGROUP
       security = user
@@ -213,6 +212,37 @@ In our new LXC we first need to run some general updates and user creation.
     sudo ufw enable
     ```
 
+### macOS Compatibility (Optional)
+If you're connecting from macOS or iOS devices, add the `vfs_fruit` module for better compatibility. This handles Apple-specific features like resource forks, Finder metadata, and fixes common issues with `.DS_Store` files and slow browsing.
+
+Add these lines to the `[global]` section of your `smb.conf`:
+
+```
+[global]
+   # ... existing config above ...
+   
+   # macOS/iOS compatibility
+   vfs objects = catia fruit streams_xattr
+   fruit:nfs_aces = no
+   fruit:zero_file_id = yes
+   fruit:metadata = stream
+   fruit:model = MacSamba
+```
+
+**What each option does:**
+- `vfs objects = catia fruit streams_xattr` - Enables Apple SMB extensions and character translation
+- `fruit:nfs_aces = no` - Disables NFS ACLs which can cause permission issues
+- `fruit:zero_file_id = yes` - Fixes issues with Time Machine and some apps
+- `fruit:metadata = stream` - Stores Apple metadata in streams instead of separate files
+- `fruit:model = MacSamba` - Sets the icon shown in Finder
+
+After editing, restart Samba:
+```bash
+sudo systemctl restart smbd
+```
+
+For more options, see the [vfs_fruit documentation](https://www.samba.org/samba/docs/current/man-html/vfs_fruit.8.html).
+
 ## Connecting to Shares
 
 ### From Windows
@@ -228,6 +258,15 @@ Since `guest ok = no` is set in the config, Windows requires explicit credential
 **Quick Access**
 
 Press `Win + R`, type `\\SERVER-IP\data`, and press Enter. Enter credentials when prompted.
+
+### From macOS
+1. Open Finder
+2. Press `Cmd + K` or go to _Go > Connect to Server_
+3. Enter `smb://SERVER-IP/data` (e.g., `smb://192.168.1.100/data`)
+4. Click Connect
+5. Select "Registered User" and enter your Samba username and password
+
+To auto-mount on login, add the share to _System Preferences > Users & Groups > Login Items_.
 
 ### From Linux
 You can mount SMB shares temporarily or permanently on Linux clients.
@@ -268,6 +307,16 @@ sudo mount -t cifs //SERVER-IP/data /mnt/data -o username=youruser
    ```bash
    sudo mount -a
    ```
+
+### From iOS
+1. Open the Files app
+2. Tap the three dots (...) in the top right → "Connect to Server"
+3. Enter `smb://SERVER-IP` (e.g., `smb://192.168.1.100`)
+4. Select "Registered User" and enter your Samba credentials
+5. Your shares will appear under "Shared" in the Files app
+
+> [!TIP]
+> For best iOS compatibility, make sure you've added the [macOS compatibility options](#macos-compatibility-optional) to your Samba config.
 
 ## Troubleshooting Samba
 
