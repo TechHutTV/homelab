@@ -244,6 +244,15 @@ You can do this by adding the following to your docker `compose.yaml` file under
 ```
 This may not be an issue as [DNS over HTTPS in Go to replace Unbound](https://github.com/qdm12/gluetun/issues/137) is implemented, but it's worth the mention.
 
+### Gluetun Container Unhealthy
+
+If you see `dependency failed to start: container gluetun is unhealthy`, follow these steps:
+
+1. **Check the logs**: `docker logs gluetun`
+2. **Verify .env file**: Ensure ALL placeholder values (key, port, country, city) are replaced with your actual VPN configuration
+3. **Verify /dev/net/tun exists**: Run `ls -la /dev/net/tun`
+4. **For LXC users**: Enable TUN device passthrough in your container config
+
 ## Download Clients
 
 ### NZBGet
