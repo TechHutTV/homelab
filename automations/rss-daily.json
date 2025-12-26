@@ -1,0 +1,643 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 7,
+              "triggerAtMinute": 30
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -10528,
+        8224
+      ],
+      "id": "05bbb077-3d0b-4d0f-9feb-92fa0718dc60",
+      "name": "Run every day at 7AM"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "box",
+              "cssSelector": "div.Box",
+              "returnValue": "html"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ceebea54-6b9d-4af5-a43d-a711255c7f28",
+      "name": "Extract Box",
+      "type": "n8n-nodes-base.html",
+      "position": [
+        -10064,
+        8080
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "url": "https://github.com/trending?since=daily",
+        "options": {}
+      },
+      "id": "b3c02617-f5ac-4444-9a92-2531f1e39514",
+      "name": "Request to Github Trend",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -10240,
+        8080
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "repositories",
+        "options": {}
+      },
+      "id": "8cfbd378-a5a6-432e-ab1b-4fe79d04be52",
+      "name": "Turn to a list",
+      "type": "n8n-nodes-base.splitOut",
+      "position": [
+        -9680,
+        8080
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a0e76646-60d7-44a6-af77-33f27fb465cb",
+              "name": "author",
+              "type": "string",
+              "value": "={{ $json.repository.split('/')[0].trim() }}"
+            },
+            {
+              "id": "a2bd790a-784e-4d72-9a4e-92be22edea8f",
+              "name": "title",
+              "type": "string",
+              "value": "={{ $json.repository.split('/')[1].trim() }}"
+            },
+            {
+              "id": "22f1518a-7081-4417-ab9d-88f26a7b5cfe",
+              "name": "repository",
+              "type": "string",
+              "value": "={{ $json.repository }}"
+            },
+            {
+              "id": "baff9a9f-020a-4968-bb80-a4a91a94144a",
+              "name": "url",
+              "type": "string",
+              "value": "=https://github.com/{{ $json.repository.replaceAll(' ','') }}"
+            },
+            {
+              "id": "f5c48a02-b55d-4167-a823-53ac1d851ee5",
+              "name": "created_at",
+              "type": "string",
+              "value": "={{$now}}"
+            },
+            {
+              "id": "27a44ce9-4b5b-44b2-94d9-eb5b2ae81dcd",
+              "name": "description",
+              "type": "string",
+              "value": "={{ $json.description }}"
+            },
+            {
+              "id": "b1c2d3e4-f5g6-7h8i-9j0k-l1m2n3o4p5q6",
+              "name": "language",
+              "type": "string",
+              "value": "={{ $json.language }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6d426736-d8fa-4c45-be44-4550d459facf",
+      "name": "Set Result Variables",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        -9232,
+        8080
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "dataPropertyName": "repositories",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "repository",
+              "cssSelector": "a.Link"
+            },
+            {
+              "key": "language",
+              "cssSelector": "span[itemprop='programmingLanguage']"
+            },
+            {
+              "key": "description",
+              "cssSelector": "p"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b5284725-3441-4169-a13a-c5452dc40b79",
+      "name": "Extract repository data",
+      "type": "n8n-nodes-base.html",
+      "position": [
+        -9456,
+        8080
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "dataPropertyName": "box",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "repositories",
+              "cssSelector": "article.Box-row",
+              "returnValue": "html",
+              "returnArray": true
+            }
+          ]
+        },
+        "options": {
+          "trimValues": true,
+          "cleanUpText": true
+        }
+      },
+      "id": "dc6f5980-8ecd-4327-9235-e82e64778f33",
+      "name": "Extract all repositories",
+      "type": "n8n-nodes-base.html",
+      "position": [
+        -9888,
+        8080
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "maxItems": 10
+      },
+      "id": "73f75aa1-e202-43c1-a109-2a00b3dc3ff6",
+      "name": "Limit to Top 10",
+      "type": "n8n-nodes-base.limit",
+      "position": [
+        -9008,
+        8080
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "jsCode": "// Format GitHub repos to match news article structure\nreturn $input.all().map(item => ({\n  json: {\n    category: 'GitHub Trending',\n    url: item.json.url,\n    title: `${item.json.author}/${item.json.title}`,\n    summary: item.json.description || 'No description available.',\n    language: item.json.language || null\n  }\n}));"
+      },
+      "id": "9219b825-990a-4f5b-9c92-cb16201e21c8",
+      "name": "Format GitHub Items",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -8784,
+        8080
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "f4ea39cf-888d-4235-ab99-b0fc3977ac03",
+      "name": "Merge News and GitHub",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        -9568,
+        8320
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Fetch and parse all RSS feeds with categories\nconst feeds = [\n  { url: 'https://arstechnica.com/feed/', category: 'Tech News' },\n  { url: 'https://noted.lol/rss', category: 'Homelab' },\n  { url: 'https://omgubuntu.co.uk/feed', category: 'Linux' },\n  { url: 'https://9to5linux.com/feed', category: 'Linux' },\n  { url: 'https://www.cyberciti.com/atom/atom.xml', category: 'Linux' }\n];\n\n// Date filter: previous calendar day only\nconst now = new Date();\nconst yesterdayStart = new Date(now);\nyesterdayStart.setDate(yesterdayStart.getDate() - 1);\nyesterdayStart.setHours(0, 0, 0, 0);\n\nconst yesterdayEnd = new Date(now);\nyesterdayEnd.setDate(yesterdayEnd.getDate() - 1);\nyesterdayEnd.setHours(23, 59, 59, 999);\n\nconst allArticles = [];\n\nfor (const feed of feeds) {\n  try {\n    const response = await this.helpers.httpRequest({\n      method: 'GET',\n      url: feed.url,\n      returnFullResponse: false\n    });\n    \n    const xmlData = typeof response === 'string' ? response : (response.data || response.body || '');\n    \n    if (!xmlData) continue;\n    \n    // Detect Atom vs RSS\n    const isAtom = xmlData.includes('<feed') && xmlData.includes('<entry');\n    \n    if (isAtom) {\n      // Parse Atom\n      const entryRegex = /<entry[^>]*>([\\s\\S]*?)<\\/entry>/gi;\n      let match;\n      let count = 0;\n      \n      while ((match = entryRegex.exec(xmlData)) !== null && count < 3) {\n        const entryXml = match[1];\n        \n        const linkMatch = entryXml.match(/<link[^>]*href=[\"']([^\"']+)[\"']/i);\n        const link = linkMatch ? linkMatch[1] : '';\n        \n        const titleMatch = entryXml.match(/<title[^>]*><!\\[CDATA\\[([\\s\\S]*?)\\]\\]><\\/title>/i) ||\n                          entryXml.match(/<title[^>]*>([\\s\\S]*?)<\\/title>/i);\n        const title = titleMatch ? titleMatch[1].replace(/<[^>]+>/g, '').trim() : 'No title';\n        \n        const dateMatch = entryXml.match(/<published>([^<]+)<\\/published>/i) ||\n                         entryXml.match(/<updated>([^<]+)<\\/updated>/i);\n        const pubDate = dateMatch ? new Date(dateMatch[1]) : null;\n        \n        if (link && pubDate && pubDate >= yesterdayStart && pubDate <= yesterdayEnd) {\n          allArticles.push({ title, url: link, category: feed.category, pubDate: pubDate.toISOString() });\n          count++;\n        }\n      }\n    } else {\n      // Parse RSS\n      const itemRegex = /<item[^>]*>([\\s\\S]*?)<\\/item>/gi;\n      let match;\n      let count = 0;\n      \n      while ((match = itemRegex.exec(xmlData)) !== null && count < 3) {\n        const itemXml = match[1];\n        \n        const getTag = (tag) => {\n          const regex = new RegExp(`<${tag}[^>]*><!\\\\[CDATA\\\\[([\\\\s\\\\S]*?)\\\\]\\\\]><\\/${tag}>|<${tag}[^>]*>([\\\\s\\\\S]*?)<\\/${tag}>`, 'i');\n          const m = itemXml.match(regex);\n          return m ? (m[1] || m[2] || '').trim() : '';\n        };\n        \n        const title = getTag('title') || 'No title';\n        const link = getTag('link');\n        const pubDateStr = getTag('pubDate');\n        const pubDate = pubDateStr ? new Date(pubDateStr) : null;\n        \n        if (link && pubDate && pubDate >= yesterdayStart && pubDate <= yesterdayEnd) {\n          allArticles.push({ title, url: link, category: feed.category, pubDate: pubDate.toISOString() });\n          count++;\n        }\n      }\n    }\n  } catch (error) {\n    continue;\n  }\n}\n\nif (allArticles.length === 0) {\n  return [{ json: { empty: true, message: 'No recent articles found' } }];\n}\n\nreturn allArticles.map(a => ({ json: a }));"
+      },
+      "id": "ee1260a8-0ddb-4250-9046-243f0a2c7a01",
+      "name": "Fetch & Parse All Feeds1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -10192,
+        8512
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "7f9f6861-5338-4d55-b95c-329ac1d2096e",
+      "name": "Loop Over Articles1",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -9984,
+        8512
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "scrape",
+        "url": "={{ $json.url }}",
+        "requestOptions": {}
+      },
+      "type": "@mendable/n8n-nodes-firecrawl.firecrawl",
+      "typeVersion": 1,
+      "position": [
+        -9760,
+        8528
+      ],
+      "id": "a8984d75-001f-469d-93ab-d7b42d58da92",
+      "name": "Scrape URL1",
+      "credentials": {
+        "firecrawlApi": {
+          "id": "lHuwZRufpqRJspb3",
+          "name": "Firecrawl account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Combine scraped content with original metadata\nconst scraped = $('Scrape URL1').first().json;\nconst original = $('Loop Over Articles1').first().json;\n\nif (!scraped || scraped.error) {\n  return [{\n    json: {\n      title: original.title || 'No title',\n      url: original.url,\n      category: original.category,\n      content: 'Content could not be scraped.'\n    }\n  }];\n}\n\nconst data = scraped.data || scraped;\n\nreturn [{\n  json: {\n    title: data.metadata?.title || original.title || 'No title',\n    url: original.url,\n    category: original.category,\n    content: data.markdown || data.content || 'No content available'\n  }\n}];"
+      },
+      "id": "194ca97c-b759-41ae-b68b-4b9fec6fcaac",
+      "name": "Format Content1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -9584,
+        8528
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Summarize this news article:\n\n**Title:** {{ $json.title }}\n**Category:** {{ $json.category }}\n**URL:** {{ $json.url }}\n\n**Content:**\n{{ $json.content }}\n\n---\n\nProvide your summary in EXACTLY this format:\n\n**TLDR:** [One to two sentences summarizing the article]\n\n**Key Points:**\n- [First key point]\n- [Second key point]\n- [Third key point]\n\nIMPORTANT: List exactly 3 key points. No more, no less. Stop after the third point. These should be with - and not numbers.",
+        "options": {
+          "systemMessage": "You are a concise news summarization assistant. Output ONLY the formatted summary, nothing else."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -9392,
+        8528
+      ],
+      "id": "c0848758-33f1-46f8-9e47-1f0f0585494b",
+      "name": "AI Summary Agent1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const summary = $json.output || '';\nconst original = $('Format Content1').first().json;\n\nreturn [{\n  json: {\n    category: original.category,\n    url: original.url,\n    title: original.title,\n    summary: summary\n  }\n}];"
+      },
+      "id": "30e40b50-49e5-4e03-bc12-5297f9443291",
+      "name": "Store Summary1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -9104,
+        8528
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "ffd49720-a0b0-4524-86e1-f9687393b419",
+      "name": "Wait 3 Seconds1",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -8912,
+        8624
+      ],
+      "webhookId": "rate-limit-delay"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Aggregate all summaries into final report\nconst items = $input.all();\n\nconst categories = [\n  { key: 'Tech News', emoji: '💻' },\n  { key: 'Homelab', emoji: '🖥️' },\n  { key: 'Linux', emoji: '🐧' },\n  { key: 'GitHub Trending', emoji: '⭐' }\n];\n\nconst today = new Date();\nconst dateFormatted = today.toLocaleDateString('en-US', { \n  weekday: 'long', \n  year: 'numeric', \n  month: 'long', \n  day: 'numeric' \n});\n\nlet report = `# Daily News Summary\\n`;\nreport += `*Generated on ${dateFormatted}*\\n\\n`;\n\nlet hasContent = false;\nfor (const cat of categories) {\n  const catItems = items.filter(i => i.json.category === cat.key);\n  if (catItems.length > 0) {\n    hasContent = true;\n    report += `## ${cat.emoji} ${cat.key}\\n\\n`;\n    \n    if (cat.key === 'GitHub Trending') {\n      // Special formatting for GitHub repos\n      for (const item of catItems) {\n        const title = item.json.title || 'Repository';\n        const lang = item.json.language ? ` (${item.json.language})` : '';\n        report += `### [${title}](${item.json.url})${lang}\\n\\n`;\n        report += item.json.summary + '\\n\\n---\\n';\n      }\n    } else {\n      // Standard news article formatting\n      for (const item of catItems) {\n        const title = item.json.title || 'Article';\n        report += `### [${title}](${item.json.url})\\n\\n`;\n        report += item.json.summary + '\\n\\n---\\n';\n      }\n    }\n    report += '\\n';\n  }\n}\n\nif (!hasContent) {\n  report += 'No articles were found.\\n';\n}\n\nreturn [{ json: { output: report } }];"
+      },
+      "id": "b1f9ee72-569a-4df3-ad69-a38d04866019",
+      "name": "Aggregate Summaries1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -9344,
+        8320
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Convert markdown to clean HTML for email\nconst markdown = $json.output || '';\n\nlet html = markdown\n  // Convert markdown links [text](url) to HTML\n  .replace(/\\[([^\\]]+)\\]\\(([^)]+)\\)/g, '<a href=\"$2\" style=\"color: #1a73e8; text-decoration: none;\">$1</a>')\n  // Headers\n  .replace(/^### (.+)$/gm, '<h3 style=\"font-weight: 600; font-size: 15px; margin: 12px 0 4px 0;\">📄 $1</h3>')\n  .replace(/^# Daily News Summary$/gm, '<h1 style=\"font-weight: 600; font-size: 24px; margin: 0 0 2px 0;\">📰 Daily News Summary</h1>')\n  .replace(/^## (💻|🖥️|🐧|⭐) (.+)$/gm, '<h2 style=\"font-weight: 600; font-size: 17px; margin: 20px 0 8px 0;\">$1 $2</h2>')\n  .replace(/^# (.+)$/gm, '<h1 style=\"font-weight: 600; font-size: 24px; margin: 0 0 2px 0;\">$1</h1>')\n  .replace(/^## (.+)$/gm, '<h2 style=\\\"font-weight: 600; font-size: 17px; margin: 20px 0 8px 0;\\\">$1</h2>')\n  // Content formatting\n  .replace(/\\*\\*TLDR:\\*\\*/g, '<p><strong>💡 TLDR:</strong>')\n  .replace(/\\*\\*Key Points:\\*\\*/g, '</p><p><strong>🔑 Key Points:</strong></p>')\n  .replace(/\\*\\*(.+?)\\*\\*/g, '<strong>$1</strong>')\n  // List items\n  .replace(/^- (.+)$/gm, '<li style=\"margin: 1px 0;\">$1</li>')\n  .replace(/^\\* (.+)$/gm, '<li style=\"margin: 1px 0;\">$1</li>')\n  .replace(/^\\d+\\.\\s+(.+)$/gm, '<li style=\"margin: 1px 0;\">$1</li>')\n  .replace(/---/g, '<hr style=\"border: none; border-top: 1px solid #eee; margin: 10px 0;\">')\n  .replace(/\\n/g, '');\n\nhtml = html.replace(/(<li[^>]*>.*?<\\/li>)+/g, '<ul style=\"padding-left: 18px; margin: 2px 0;\">$&</ul>');\n\nconst emailHtml = `<!DOCTYPE html><html><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"></head><body style=\"font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; line-height: 1.5; color: #333; max-width: 640px; margin: 0 auto; padding: 24px 16px;\">${html}<p style=\"color: #999; font-size: 11px; margin-top: 20px; padding-top: 10px; border-top: 1px solid #eee;\">✨ Generated automatically</p></body></html>`;\n\nreturn [{ json: { output: $json.output, htmlOutput: emailHtml } }];"
+      },
+      "id": "f6f2a900-1c3c-40bd-9309-ecef32db3009",
+      "name": "Convert to HTML1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -9120,
+        8320
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "example@email.com",
+        "subject": "=📰 Daily News Summary - {{ $now.format('EEEE, MMMM d, yyyy') }}",
+        "message": "={{ $json.htmlOutput }}",
+        "options": {}
+      },
+      "id": "4ca266e0-89aa-49ba-a629-a767cf0a7591",
+      "name": "Send Email Report1",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -8896,
+        8320
+      ],
+      "webhookId": "985124f6-5ca1-4528-aa98-07c10f7f2b44",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "zlY2UnH7ZVxIAwUl",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "mistral:latest",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        -9392,
+        8688
+      ],
+      "id": "13ed917d-0feb-4f88-8006-baa0ee78245b",
+      "name": "Ollama Chat Model1",
+      "credentials": {
+        "ollamaApi": {
+          "id": "4e1PObbMDR6sPyk3",
+          "name": "Ollama account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Run every day at 7AM": {
+      "main": [
+        [
+          {
+            "node": "Fetch & Parse All Feeds1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Request to Github Trend",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Box": {
+      "main": [
+        [
+          {
+            "node": "Extract all repositories",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Request to Github Trend": {
+      "main": [
+        [
+          {
+            "node": "Extract Box",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Turn to a list": {
+      "main": [
+        [
+          {
+            "node": "Extract repository data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Result Variables": {
+      "main": [
+        [
+          {
+            "node": "Limit to Top 10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract repository data": {
+      "main": [
+        [
+          {
+            "node": "Set Result Variables",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract all repositories": {
+      "main": [
+        [
+          {
+            "node": "Turn to a list",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit to Top 10": {
+      "main": [
+        [
+          {
+            "node": "Format GitHub Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format GitHub Items": {
+      "main": [
+        [
+          {
+            "node": "Merge News and GitHub",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge News and GitHub": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Summaries1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch & Parse All Feeds1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Articles1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Articles1": {
+      "main": [
+        [
+          {
+            "node": "Merge News and GitHub",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Scrape URL1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scrape URL1": {
+      "main": [
+        [
+          {
+            "node": "Format Content1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Content1": {
+      "main": [
+        [
+          {
+            "node": "AI Summary Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Summary Agent1": {
+      "main": [
+        [
+          {
+            "node": "Store Summary1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Summary1": {
+      "main": [
+        [
+          {
+            "node": "Wait 3 Seconds1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 3 Seconds1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Articles1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Summaries1": {
+      "main": [
+        [
+          {
+            "node": "Convert to HTML1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to HTML1": {
+      "main": [
+        [
+          {
+            "node": "Send Email Report1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Summary Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d8b287e188198e1c04cec28991d5d4f2b0b4a137cea86741c5b7e3e7b210d79d"
+  }
+}
