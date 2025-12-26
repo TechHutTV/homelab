@@ -141,6 +141,7 @@ In our new LXC we first need to run some general updates and user creation.
 
    ```
    [global]
+      vfs objects = catia fruit streams_xattr #Add this line to give write access to apple Iphone 
       server string = Servarr
       workgroup = WORKGROUP
       security = user
