@@ -23,6 +23,19 @@ networks:
       config:
         - subnet: 172.39.0.0/24
 
+# a default env config to inherit
+x-environment: &default-env
+  PUID=: ${PUID}
+  PGID: ${PGID}
+  TZ: ${TZ}
+
+# a default serivce config to inherit
+x-default-service-config: &default-service-config
+  restart: unless-stopped
+  extra_hosts: *hosts-list
+  environment:
+    <<: *default-env
+
 services:
   # airvpn recommended (referral url: https://airvpn.org/?referred_by=673908)
   gluetun:
@@ -54,21 +67,18 @@ services:
     restart: unless-stopped
 
   qbittorrent:
+    <<: *default-service-config # inherit the default service config
     image: lscr.io/linuxserver/qbittorrent:latest
     container_name: qbittorrent
-    restart: unless-stopped
     labels:
       - deunhealth.restart.on.unhealthy=true
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-      - WEBUI_PORT=8080 # must match "qbittorrent web interface" port number in gluetun's service above
-      - TORRENTING_PORT=${FIREWALL_VPN_INPUT_PORTS} # airvpn forwarded port, pulled from .env
+      <<: *default-env # manually inherit the env config to add fields
+      WEBUI_PORT=: 8080 # must match "qbittorrent web interface" port number in gluetun's service above
+      TORRENTING_PORT=: ${FIREWALL_VPN_INPUT_PORTS} # airvpn forwarded port, pulled from .env
     volumes:
       - ./qbittorrent:/config
       - /data:/data
-    extra_hosts: *hosts-list
     depends_on:
       gluetun:
         condition: service_healthy
@@ -95,36 +105,26 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
 
   nzbget:
+    <<: *default-service-config
     image: lscr.io/linuxserver/nzbget:latest
     container_name: nzbget
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./nzbget:/config
       - /data:/data
-    extra_hosts: *hosts-list
     depends_on:
       gluetun:
         condition: service_healthy
         restart: true
-    restart: unless-stopped
     network_mode: service:gluetun
 
   prowlarr:
+    <<: *default-service-config
     image: lscr.io/linuxserver/prowlarr:latest
     container_name: prowlarr
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./prowlarr:/config
-    restart: unless-stopped
-    extra_hosts: *hosts-list
     depends_on:
       gluetun:
         condition: service_healthy
@@ -132,18 +132,13 @@ services:
     network_mode: service:gluetun
 
   sonarr:
+    <<: *default-service-config
     image: lscr.io/linuxserver/sonarr:latest
     container_name: sonarr
-    restart: unless-stopped
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./sonarr:/config
       - /data:/data
-    extra_hosts: *hosts-list
     ports:
       - 8989:8989
     networks:
@@ -151,18 +146,13 @@ services:
         ipv4_address: ${SET_IP_SONARR}
 
   radarr:
+    <<: *default-service-config
     image: lscr.io/linuxserver/radarr:latest
     container_name: radarr
-    restart: unless-stopped
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./radarr:/config
       - /data:/data
-    extra_hosts: *hosts-list
     ports:
       - 7878:7878
     networks:
@@ -170,18 +160,13 @@ services:
         ipv4_address: ${SET_IP_RADARR}
 
   lidarr:
+    <<: *default-service-config
     container_name: lidarr
     image: lscr.io/linuxserver/lidarr:latest
-    restart: unless-stopped
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./lidarr:/config
       - /data:/data
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-    extra_hosts: *hosts-list
     ports:
       - 8686:8686
     networks:
@@ -189,18 +174,13 @@ services:
         ipv4_address: ${SET_IP_LIDARR}
 
   bazarr:
+    <<: *default-service-config
     image: lscr.io/linuxserver/bazarr:latest
     container_name: bazarr
-    restart: unless-stopped
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./bazarr:/config
       - /data:/data
-    extra_hosts: *hosts-list
     ports:
       - 6767:6767
     networks:
