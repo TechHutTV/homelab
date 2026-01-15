@@ -1,6 +1,6 @@
 # Self-Hosted Media Server and Aggregation
 
-Make sure to review everything here and if you have any issues please submit it as an issue. Also, we are more than open to any suggests or edits. Also, checkout the [Servarr Docker Setup](https://wiki.servarr.com/docker-guide) for more details on installing the stack.
+Make sure to review everything here and if you have any issues please submit it as an issue. Also, we are more than open to any suggestions or edits. Also, checkout the [Servarr Docker Setup](https://wiki.servarr.com/docker-guide) for more details on installing the stack.
 
 > [!CAUTION]
 > Some MAJOR Updates! Moved the VPN configuration and some of the env variables to a `.env` file. If you're watching the current live video it's a huge change. Will be uploading a new one in the next few days.
