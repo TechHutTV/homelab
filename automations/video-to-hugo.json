@@ -1,0 +1,1376 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "url": "=https://www.googleapis.com/youtube/v3/captions/{{ $json.caption.id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "youTubeOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "tfmt",
+              "value": "sbv"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "89c84dfa-6f58-46af-863b-499f8fac7e1e",
+      "name": "Download caption",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [
+        -640,
+        400
+      ],
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "i1TBdKjnIO8JzNBN",
+          "name": "YouTube account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "output",
+        "binaryPropertyName": "article",
+        "options": {
+          "fileName": "={{ $json.filename }}"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        944,
+        496
+      ],
+      "id": "95a08272-9b09-4012-ae40-f29f65224134",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Video Metadata').first().json.snippet.thumbnails.maxres.url }}",
+        "responseFormat": "file",
+        "dataPropertyName": "cover",
+        "options": {}
+      },
+      "name": "Download Thumbnail",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        1088,
+        496
+      ],
+      "id": "037a1990-258d-44d6-81c2-cee6fefa45a9"
+    },
+    {
+      "parameters": {
+        "model": "gpt-oss:latest",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        816
+      ],
+      "id": "9ec8d5bd-db1e-406c-b96c-84c7d818bc1a",
+      "name": "Ollama Chat Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "i0hV7XlhpPtqfXay",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1600,
+        816
+      ],
+      "id": "d595ed80-e602-458f-9667-c2caecdf410d",
+      "name": "Execute"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "86d84cf2-b739-4dcc-b7b1-d2489044cacb",
+              "name": "videoID",
+              "value": "4R6v5wYW0S8",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1312,
+        624
+      ],
+      "id": "0a30db5e-bcac-4bf4-992a-ccac92eeb652",
+      "name": "videoID"
+    },
+    {
+      "parameters": {
+        "url": "https://www.googleapis.com/youtube/v3/captions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "youTubeOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "videoId",
+              "value": "={{ $json.videoID }}"
+            },
+            {
+              "name": "part",
+              "value": "snippet"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6ee73c3b-6212-472d-b7e7-655f019b62d5",
+      "name": "Grab Captions",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [
+        -992,
+        400
+      ],
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "i1TBdKjnIO8JzNBN",
+          "name": "YouTube account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "string": [
+            {
+              "name": "caption",
+              "value": "={{ $jmespath( $json.items, \"[?snippet.language == 'en'] | [0]\" ) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "39d703b6-5e9b-42e7-9e80-9fa6b1015239",
+      "name": "Find ID by Language",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [
+        -816,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "setAllData": false,
+        "destinationKey": "content",
+        "options": {}
+      },
+      "id": "83b7fe53-5011-4830-be7c-073f7de6b3a4",
+      "name": "Move Data",
+      "type": "n8n-nodes-base.moveBinaryData",
+      "typeVersion": 1,
+      "position": [
+        -464,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "string": [
+            {
+              "name": "content",
+              "value": "={{ $json.content.replace(/\\d+:\\d{2}:\\d{2}\\.\\d{3},\\d+:\\d{2}:\\d{2}\\.\\d{3}/gm, '').replace(/\\n+/gm, ' ').trim() }}"
+            },
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "id": "196a9d32-ad0d-497b-8e7f-c63367fbb751",
+      "name": "Remove Timecodes",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [
+        -304,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "get",
+        "videoId": "={{ $json.videoID }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.youTube",
+      "typeVersion": 1,
+      "position": [
+        -992,
+        624
+      ],
+      "id": "a8f5837a-bb69-4588-9cca-89f06f965ec3",
+      "name": "Video Metadata",
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "i1TBdKjnIO8JzNBN",
+          "name": "YouTube account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -640,
+        752
+      ],
+      "id": "57f9be6c-f070-4ac3-8d5d-dccc9c85abfe",
+      "name": "Multi URLs"
+    },
+    {
+      "parameters": {
+        "operation": "scrape",
+        "url": "={{ $('Extract URLs').item.json.url }}",
+        "scrapeOptions": {
+          "options": {
+            "formats": {
+              "format": [
+                {}
+              ]
+            },
+            "headers": {}
+          }
+        },
+        "requestOptions": {}
+      },
+      "type": "@mendable/n8n-nodes-firecrawl.firecrawl",
+      "typeVersion": 1,
+      "position": [
+        -464,
+        896
+      ],
+      "id": "a6f0b503-784b-4a42-907f-0f33b5c80486",
+      "name": "Scrape",
+      "credentials": {
+        "firecrawlApi": {
+          "id": "flOrhV1jb4S3OBRu",
+          "name": "Firecrawl account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst text = $input.first().json.snippet.description;\n\n// Extract text between \"📖 RESOURCES\" and \"🏆 FOLOW TECHHUT\"\nconst resourcesMatch = text.match(/📖 RESOURCES([\\s\\S]*?)🏆 FOLOW TECHHUT/i);\n\n// If no match found, return empty\nif (!resourcesMatch) {\n  return [{ json: { url: null, noUrls: true } }];\n}\n\nconst resourcesText = resourcesMatch[1];\n\n// Extract all URLs from the resources section\nconst urlRegex = /(https?:\\/\\/[^\\s<>\"{}|\\\\^`[\\]]+)/g;\nconst urls = resourcesText.match(urlRegex) || [];\n\n// Return empty if no URLs found\nif (urls.length === 0) {\n  return [{ json: { url: null, noUrls: true } }];\n}\n\nreturn urls.map(url => ({ json: { url } }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -800,
+        624
+      ],
+      "id": "060c4efc-5e34-4387-a328-6c2bd968c377",
+      "name": "Extract URLs"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -304,
+        608
+      ],
+      "id": "9b495319-17d4-40e2-b67d-d7988732b5b0",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are writing a technical article for TechHut.tv based on a YouTube video transcript and supplementary resources.\n\n## Voice & Style Guide (Brandon Hopkins / TechHut)\n- Conversational and approachable - like explaining tech to a friend over coffee\n- Use \"we\" and \"you\" to create a collaborative feel (\"we'll walk through...\", \"you'll want to...\")\n- Direct and practical - get to the point, no fluff\n- Genuinely enthusiastic about open-source and self-hosting without being preachy\n- Include personal context where natural (\"In my setup...\", \"I typically use...\")\n- Light humor when appropriate (\"Initially, I reacted with shock and horror...\")\n- Honest about trade-offs and alternatives\n\n## Structure Requirements\n- Start with a hook without a heading under the title that establishes context and why this matters\n- Use clear H2/H3 headers to break up sections\n- Mix explanations with hands-on commands/steps\n- Include code blocks with proper syntax highlighting for commands\n- Add relevant hyperlinks inline (not dumped at the end)\n- Close with a brief conclusion and next steps or resources\n\n## Formatting\n- Output as clean markdown\n- Use code blocks (```) for terminal commands\n- Bold key terms on first introduction\n- Keep paragraphs short and scannable\n- No bullet-point lists for main content - write in prose with natural flow\n\n## Source Material\n\n**Video Title:** {{ $json.snippet.title }}\n\n**Video Transcript:**\n{{ $json.content }}\n\n**Supplementary Resources (crawled from video description links):**\n{{ $json.combinedMarkdown }}\n\nTarget article length: {{ $json.targetWordCount }} words\n\n## Instructions\nTransform the video transcript into a polished written article. Use the supplementary resources to add context, official documentation links, and technical details that enhance the article. Don't post direct downloads links, only to source material. Don't just transcribe - restructure and expand where needed for a better reading experience. The article should stand alone without needing to watch the video.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        -160,
+        608
+      ],
+      "id": "f38888f4-cfe7-4b27-9edb-31e96ed9eb26",
+      "name": "Writer"
+    },
+    {
+      "parameters": {
+        "url": "https://raw.githubusercontent.com/TechHutTV/techhut.tv/refs/heads/main/template.md",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.3,
+      "position": [
+        320,
+        832
+      ],
+      "id": "df3cf53b-cb8d-4ecb-90d1-818a6db3095d",
+      "name": ".md Template"
+    },
+    {
+      "parameters": {
+        "model": "qwen3-coder:latest",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        176,
+        832
+      ],
+      "id": "10e7ebfb-ff1a-48fa-97dc-af38f10ff68e",
+      "name": "qwen3-coder",
+      "credentials": {
+        "ollamaApi": {
+          "id": "i0hV7XlhpPtqfXay",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a technical editor finalizing article metadata for TechHut.tv. Your job is to take a completed article and format it with proper Hugo/markdown frontmatter.\n\n## Your Tasks\n\n### 1. Title (SEO-Optimized)\nTransform the YouTube video title into a more informational, SEO-friendly title:\n- Make it descriptive and searchable\n- Remove clickbait elements, ALL CAPS, and excessive punctuation\n- Keep it under 60 characters if possible\n- Focus on what the reader will learn or accomplish\n\n### 2. URL Slug\nCreate a clean URL based on the title:\n- Lowercase only\n- Replace spaces with hyphens\n- Remove filler words (a, an, the, to, for, with, on, in, and, or, but, is, it, my, your, how, what, why)\n- Remove special characters and punctuation\n- Keep it concise (3-6 words ideal)\n\n### 3. Date\nUse upload date: {{ $json.uploadDate }}\n\n### 4. Categories\nSelect EXACTLY ONE category from this list that best fits the article:\n- Benchmarking\n- Essay\n- Guides\n- Hardware\n- News\n- Software\n\nDo NOT create new categories. Pick only one.\n\n### 5. Tags\nSelect 3-6 relevant tags from this list ONLY:\n- AI, Apps, Arch, Archive, Benchmarking, COSMIC, Customization, DaVinci Resolve, Desktop Environments, Distros, Docker, Essay, Fedora, Git, Gnome, Guides, Hardware, Homelab, KDE, Khadas, Linux, Manjaro, Mobile, News, OpenSUSE, Pine64, Proxmox, RaspberryPi, Red Hat, Self-Host, Single Board Computers, Windows\n\nDo NOT create new tags. Only use tags from the list above that are directly relevant to the article content. Don't use \"---\" within the content area as it can conflict with the Hugo platform.\n\n## Input\n\n**Original Video Title:** {{ $json.snippet.localized.title }}\n\n**Article Content:**\n{{ $json.output }}\n\n## Output Format\n\nReturn ONLY the complete markdown file with frontmatter and content. No explanations or commentary.\n\n---\ntitle: 'Your SEO Title Here'\ndate: {{ $now.format('YYYY-MM-DD') }}\nurl: your-url-slug-here\ndraft: true\nauthors:\n  - \"Brandon Hopkins\"\ncategories:\n  - \"SelectedCategory\"\ntags:\n  - \"RelevantTag1\"\n  - \"RelevantTag2\"\n  - \"RelevantTag3\"\n---\n\n[Full article content here]",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        176,
+        608
+      ],
+      "id": "25aa570e-ae2b-4d01-a4ed-ae1092128321",
+      "name": "Format"
+    },
+    {
+      "parameters": {
+        "jsCode": "const allItems = $input.all();\nconst videoMetadata = $('Video Metadata').first().json;\n\n// Parse video duration\nconst duration = videoMetadata.contentDetails.duration;\nconst match = duration.match(/PT(?:(\\d+)H)?(?:(\\d+)M)?(?:(\\d+)S)?/);\nconst hours = parseInt(match[1] || 0);\nconst minutes = parseInt(match[2] || 0);\nconst seconds = parseInt(match[3] || 0);\nconst totalMinutes = hours * 60 + minutes + seconds / 60;\nconst targetWords = Math.round(totalMinutes * 175);\nconst wordRange = `${targetWords - 250} - ${targetWords + 250}`;\n\n// Get upload date formatted as YYYY-MM-DD\nconst uploadDate = videoMetadata.snippet.publishedAt.split('T')[0];\n\n// Build combined markdown from scraped resources\nlet combinedMarkdown = \"\";\nfor (const item of allItems) {\n  const data = item.json.data || {};\n  const metadata = data.metadata || {};\n  \n  const title = metadata.title || \"Untitled\";\n  const markdown = data.markdown || \"\";\n  const sourceUrl = metadata.sourceURL || metadata.url || \"\";\n  \n  combinedMarkdown += \"## \" + title + \"\\n\";\n  combinedMarkdown += \"Source: \" + sourceUrl + \"\\n\\n\";\n  combinedMarkdown += markdown + \"\\n\\n\";\n  combinedMarkdown += \"---\\n\\n\";\n}\n\nreturn [{\n  json: {\n    combinedMarkdown: combinedMarkdown.trim(),\n    sourceCount: allItems.length,\n    snippet: videoMetadata.snippet,\n    targetWordCount: wordRange,\n    videoDurationMinutes: Math.round(totalMinutes),\n    uploadDate: uploadDate\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -480,
+        624
+      ],
+      "id": "47b10454-c63d-451c-8c5d-80f71c15181d",
+      "name": "Context and Metadata"
+    },
+    {
+      "parameters": {
+        "jsCode": "const output = $input.first().json.output;\nconst uploadDate = $('Video Metadata').first().json.snippet.publishedAt;\n\n// Remove markdown code block ticks if present\nlet cleanOutput = output\n  .replace(/^```(?:markdown|md)?\\n?/i, '')\n  .replace(/\\n?```$/, '')\n  .trim();\n\n// Fix common frontmatter issues\n// Ensure proper YAML formatting - escape single quotes in title\ncleanOutput = cleanOutput.replace(/^(title:\\s*)'([^']*)'(.*)$/m, (match, prefix, title, suffix) => {\n  // Escape any single quotes within the title\n  const escapedTitle = title.replace(/'/g, \"''\");\n  return `${prefix}'${escapedTitle}'${suffix}`;\n});\n\n// Extract URL slug from frontmatter\nconst urlMatch = cleanOutput.match(/^url:\\s*['\"]?([^'\"\\n]+)['\"]?$/m);\nlet urlSlug = urlMatch ? urlMatch[1].trim() : 'article';\nurlSlug = urlSlug.replace(/[`'\"]/g, '').replace(/\\s+/g, '-').toLowerCase();\n\n// Parse upload date for folder structure\nconst date = new Date(uploadDate);\nconst year = date.getFullYear();\nconst month = String(date.getMonth() + 1).padStart(2, '0');\n\n// Build paths\nconst folderPath = `content/${year}/${month}/${urlSlug}`;\nconst markdownPath = `${folderPath}/index.md`;\nconst coverPath = `${folderPath}/cover.jpg`;\n\nreturn [{\n  json: {\n    output: cleanOutput,\n    filename: 'index.md',\n    urlSlug: urlSlug,\n    year: year,\n    month: month,\n    folderPath: folderPath,\n    markdownPath: markdownPath,\n    coverPath: coverPath,\n    commitMessage: `Add article: ${urlSlug}`\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        608
+      ],
+      "id": "b65923ea-c494-4927-a9ee-c5810f297a66",
+      "name": "index.md Rename"
+    },
+    {
+      "parameters": {
+        "command": "=yt-dlp -f \"bestvideo[height<=720][ext=mp4]+bestaudio[ext=m4a]/best[height<=720]\" -o \"/tmp/{{ $json.videoID }}.mp4\" \"https://www.youtube.com/watch?v={{ $json.videoID }}\" --force-overwrites && echo \"SUCCESS\""
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        -1072,
+        16
+      ],
+      "id": "6a99c052-68e8-43d0-a13d-01d8aa79a421",
+      "name": "Download Video"
+    },
+    {
+      "parameters": {
+        "command": "=ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 \"/tmp/{{ $('videoID').item.json.videoID }}.mp4\""
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        -896,
+        16
+      ],
+      "id": "21e6d154-5c51-437e-adb0-7f7b2e59cd7e",
+      "name": "Get Video Duration"
+    },
+    {
+      "parameters": {
+        "jsCode": "const videoID = $('videoID').first().json.videoID;\nconst duration = parseInt($input.first().json.stdout);\n\nreturn [{\n  json: {\n    videoID: videoID,\n    videoPath: `/tmp/${videoID}.mp4`,\n    duration: duration\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -992,
+        256
+      ],
+      "id": "84793d6f-c693-4e5b-9cc0-c290dbaac9d3",
+      "name": "Store Video Info"
+    },
+    {
+      "parameters": {
+        "command": "=rm -rf /tmp/frames_{{ $json.videoID }} && mkdir -p /tmp/frames_{{ $json.videoID }} && ffmpeg -i \"{{ $json.videoPath }}\" -vf \"fps=1/10\" -q:v 2 \"/tmp/frames_{{ $json.videoID }}/frame_%04d.jpg\" -y && ls /tmp/frames_{{ $json.videoID }}/*.jpg"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        -816,
+        256
+      ],
+      "id": "5399683a-2ea5-439c-a721-83d95b0e8c3d",
+      "name": "Extract Frames"
+    },
+    {
+      "parameters": {
+        "jsCode": "const videoID = $('Store Video Info').first().json.videoID;\nconst frameDir = `/tmp/frames_${videoID}`;\nconst stdout = $input.first().json.stdout;\n\nconst files = stdout.trim().split('\\n').filter(f => f.endsWith('.jpg'));\n\nconst frames = files.map((filePath, index) => ({\n  path: filePath,\n  filename: filePath.split('/').pop(),\n  timestamp: index * 10,\n  timestampFormatted: `${Math.floor((index * 10) / 60)}:${String((index * 10) % 60).padStart(2, '0')}`\n}));\n\nreturn frames.map(frame => ({\n  json: {\n    videoID: videoID,\n    frameDir: frameDir,\n    framePath: frame.path,\n    filename: frame.filename,\n    timestamp: frame.timestamp,\n    timestampFormatted: frame.timestampFormatted\n  }\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -640,
+        256
+      ],
+      "id": "dfada130-a368-4195-afd4-19085a36e2a7",
+      "name": "Parse Frame List"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -256,
+        144
+      ],
+      "id": "f7b24eb8-7e8c-48e8-8ee7-30c4f9b1bb8c",
+      "name": "Loop Frames"
+    },
+    {
+      "parameters": {
+        "command": "=base64 -w 0 \"{{ $json.framePath }}\""
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        0,
+        160
+      ],
+      "id": "56badc46-e7f3-4ce6-a4e3-67065253bff5",
+      "name": "Read Frame as Base64"
+    },
+    {
+      "parameters": {
+        "jsCode": "const prevData = $('Loop Frames').item.json;\nconst base64 = $input.first().json.stdout;\n\nreturn [{\n  json: {\n    ...prevData,\n    frameBase64: base64\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        160
+      ],
+      "id": "51d80274-58e6-430d-9e0a-1bba291764c3",
+      "name": "Prepare for Analysis"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://10.173.10.176:11434/api/generate",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"qwen3-vl:8b\",\n  \"prompt\": \"Analyze this frame from a tech tutorial video. Rate it 1-10 for how good it would be as an article screenshot. HIGH value (7-10): UI/dashboard, terminal/code, diagrams, configuration screens. LOW value (1-4): talking head/webcam only, blurry, transitional, intro/outro graphics. Respond with ONLY valid JSON: {\\\"score\\\": 7, \\\"reason\\\": \\\"Brief description\\\", \\\"type\\\": \\\"ui/terminal/diagram/webcam/other\\\"}\",\n  \"images\": [\"{{ $json.frameBase64 }}\"],\n  \"stream\": false,\n  \"options\": {\n    \"temperature\": 0.1\n  }\n}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        448,
+        160
+      ],
+      "id": "87349a18-1c42-42c4-aa38-250d530bd69b",
+      "name": "Analyze Frame"
+    },
+    {
+      "parameters": {
+        "jsCode": "const prevData = $('Prepare for Analysis').item.json;\nconst responseText = $input.first().json.response || '';\n\nlet analysis;\ntry {\n  const jsonMatch = responseText.match(/\\{[\\s\\S]*\\}/);\n  if (jsonMatch) {\n    analysis = JSON.parse(jsonMatch[0]);\n  } else {\n    analysis = { score: 0, reason: 'Could not parse response', type: 'unknown' };\n  }\n} catch (e) {\n  analysis = { score: 0, reason: 'Parse error: ' + e.message, type: 'unknown' };\n}\n\nreturn [{\n  json: {\n    framePath: prevData.framePath,\n    filename: prevData.filename,\n    timestamp: prevData.timestamp,\n    timestampFormatted: prevData.timestampFormatted,\n    score: analysis.score || 0,\n    reason: analysis.reason || 'No reason provided',\n    type: analysis.type || 'unknown'\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        160
+      ],
+      "id": "690349c3-afd0-4248-a85b-1093033c6665",
+      "name": "Parse Analysis"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "allResults",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "0cfd613b-bdaa-406a-94f5-0321e91edcd0",
+      "name": "Collect All Results"
+    },
+    {
+      "parameters": {
+        "jsCode": "const allFrames = $input.first().json.allResults;\n\nconst sorted = allFrames.sort((a, b) => b.score - a.score);\n\nconst bestFrames = sorted\n  .filter(f => f.score >= 5)\n  .slice(0, 5);\n\nconst finalFrames = bestFrames.length >= 3 \n  ? bestFrames \n  : sorted.slice(0, 3);\n\nreturn finalFrames.map(frame => ({\n  json: frame\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "9a53e5eb-2018-4af5-a2d4-18c216187a12",
+      "name": "Filter Best Frames"
+    },
+    {
+      "parameters": {
+        "command": "=base64 -w 0 \"{{ $json.framePath }}\""
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        448,
+        0
+      ],
+      "id": "1e5f8019-1de6-4297-9584-660e730586c6",
+      "name": "Read Best Screenshots"
+    },
+    {
+      "parameters": {
+        "jsCode": "const frameData = $('Filter Best Frames').item.json;\nconst base64Data = $input.first().json.stdout;\n\nreturn [{\n  json: {\n    ...frameData,\n    base64Data: base64Data\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        0
+      ],
+      "id": "4c0e3d36-25f8-48a9-8d25-9af030b78879",
+      "name": "Format Output"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "screenshots",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        848,
+        0
+      ],
+      "id": "e2a9d386-c70b-40bc-a141-d47ffa10448f",
+      "name": "Aggregate Screenshots"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1248,
+        352
+      ],
+      "id": "866e6df5-0803-4e92-b995-309b1c99b729",
+      "name": "Merge All Files"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Collect all the pieces\nconst pathData = $('index.md Rename').first().json;\nconst articleBinary = $('Convert to File').first().binary.article;\nconst coverBinary = $('Download Thumbnail').first().binary.cover;\nconst screenshotData = $('Aggregate Screenshots').first().json.screenshots || [];\n\n// Build the files array for GitHub\nconst files = [];\n\n// 1. Article (index.md)\nfiles.push({\n  path: pathData.markdownPath,\n  content: articleBinary.data,\n  encoding: 'base64',\n  type: 'article'\n});\n\n// 2. Cover image\nfiles.push({\n  path: pathData.coverPath,\n  content: coverBinary.data,\n  encoding: 'base64',\n  type: 'cover'\n});\n\n// 3. Screenshots\nfor (const screenshot of screenshotData) {\n  const imagePath = `${pathData.folderPath}/images/${screenshot.filename}`;\n  files.push({\n    path: imagePath,\n    content: screenshot.base64Data,\n    encoding: 'base64',\n    type: 'screenshot',\n    timestamp: screenshot.timestampFormatted,\n    score: screenshot.score\n  });\n}\n\nreturn [{\n  json: {\n    files: files,\n    fileCount: files.length,\n    branchName: `article/${pathData.urlSlug}`,\n    urlSlug: pathData.urlSlug,\n    folderPath: pathData.folderPath,\n    commitMessage: `Add article: ${pathData.urlSlug}`,\n    prTitle: `Add article: ${pathData.urlSlug}`,\n    prBody: `## Automated Article Creation\\n\\nThis PR adds a new article generated from a YouTube video.\\n\\n**Files included:**\\n- index.md (article content)\\n- cover.jpg (thumbnail)\\n- ${screenshotData.length} screenshots\\n\\n**Folder:** \\`${pathData.folderPath}\\``\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1424,
+        352
+      ],
+      "id": "7e6d6f8c-b08e-4eeb-bf80-21faf589b85d",
+      "name": "Prepare All Files for PR"
+    },
+    {
+      "parameters": {
+        "url": "https://api.github.com/repos/TechHutTV/techhut.tv/git/ref/heads/main",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "githubApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1600,
+        352
+      ],
+      "id": "d68c75af-fbae-434c-823a-46797b575210",
+      "name": "Get Main Branch SHA",
+      "credentials": {
+        "githubApi": {
+          "id": "jSYrMRIluEDfrHLC",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.github.com/repos/TechHutTV/techhut.tv/git/refs",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "githubApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"ref\": \"refs/heads/{{ $('Prepare All Files for PR').first().json.branchName }}\",\n  \"sha\": \"{{ $json.object.sha }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1776,
+        352
+      ],
+      "id": "9d7a7032-4003-4c40-9f80-0ec4867726a2",
+      "name": "Create Branch",
+      "credentials": {
+        "githubApi": {
+          "id": "jSYrMRIluEDfrHLC",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const files = $('Prepare All Files for PR').first().json.files;\nconst mainSha = $('Get Main Branch SHA').first().json.object.sha;\nconst prData = $('Prepare All Files for PR').first().json;\n\n// Output each file as a separate item for blob creation\nreturn files.map((file, index) => ({\n  json: {\n    ...file,\n    index: index,\n    totalFiles: files.length,\n    mainSha: mainSha,\n    branchName: prData.branchName,\n    commitMessage: prData.commitMessage,\n    prTitle: prData.prTitle,\n    prBody: prData.prBody\n  }\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1952,
+        352
+      ],
+      "id": "f396b072-921e-47aa-a8ea-9aa15e82df7e",
+      "name": "Split Files for Blobs"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.github.com/repos/TechHutTV/techhut.tv/git/blobs",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "githubApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"content\": \"{{ $json.content }}\",\n  \"encoding\": \"base64\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2128,
+        352
+      ],
+      "id": "bdd9d8c2-7d2f-47e5-863c-3b11ea7b7a3b",
+      "name": "Create Blobs",
+      "credentials": {
+        "githubApi": {
+          "id": "jSYrMRIluEDfrHLC",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst splitItems = $('Split Files for Blobs').all();\n\n// Build tree entries from blob responses\nconst treeEntries = items.map((item, index) => {\n  const fileInfo = splitItems[index].json;\n  const blobSha = item.json.sha;\n  \n  // Determine file mode (100644 for files)\n  const mode = '100644';\n  \n  return {\n    path: fileInfo.path,\n    mode: mode,\n    type: 'blob',\n    sha: blobSha\n  };\n});\n\n// Get metadata from first item\nconst firstItem = splitItems[0].json;\n\nreturn [{\n  json: {\n    tree: treeEntries,\n    mainSha: firstItem.mainSha,\n    branchName: firstItem.branchName,\n    commitMessage: firstItem.commitMessage,\n    prTitle: firstItem.prTitle,\n    prBody: firstItem.prBody\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2304,
+        352
+      ],
+      "id": "23ab4c87-cc3c-40e4-a677-5089fbacef01",
+      "name": "Aggregate Blob SHAs"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.github.com/repos/TechHutTV/techhut.tv/git/trees",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "githubApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"base_tree\": \"{{ $json.mainSha }}\",\n  \"tree\": {{ JSON.stringify($json.tree) }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2480,
+        352
+      ],
+      "id": "6c24e367-74a1-4d93-81f6-5c8b8f643d45",
+      "name": "Create Tree",
+      "credentials": {
+        "githubApi": {
+          "id": "jSYrMRIluEDfrHLC",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.github.com/repos/TechHutTV/techhut.tv/git/commits",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "githubApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"message\": \"{{ $('Aggregate Blob SHAs').first().json.commitMessage }}\",\n  \"tree\": \"{{ $json.sha }}\",\n  \"parents\": [\"{{ $('Aggregate Blob SHAs').first().json.mainSha }}\"]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2656,
+        352
+      ],
+      "id": "bb20965b-8e98-495f-b752-26877450ddf6",
+      "name": "Create Commit",
+      "credentials": {
+        "githubApi": {
+          "id": "jSYrMRIluEDfrHLC",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://api.github.com/repos/TechHutTV/techhut.tv/git/refs/heads/{{ $('Aggregate Blob SHAs').first().json.branchName }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "githubApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"sha\": \"{{ $json.sha }}\",\n  \"force\": true\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2832,
+        352
+      ],
+      "id": "7611605b-b0cb-4e70-a062-545674942ef2",
+      "name": "Update Branch Ref",
+      "credentials": {
+        "githubApi": {
+          "id": "jSYrMRIluEDfrHLC",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.github.com/repos/TechHutTV/techhut.tv/pulls",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "githubApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"title\": \"{{ $('Aggregate Blob SHAs').first().json.prTitle }}\",\n  \"body\": {{ JSON.stringify($('Aggregate Blob SHAs').first().json.prBody) }},\n  \"head\": \"{{ $('Aggregate Blob SHAs').first().json.branchName }}\",\n  \"base\": \"main\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3008,
+        352
+      ],
+      "id": "a2ee1a2f-dabe-473f-958a-9de0455d7087",
+      "name": "Create Pull Request",
+      "credentials": {
+        "githubApi": {
+          "id": "jSYrMRIluEDfrHLC",
+          "name": "GitHub account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Download caption": {
+      "main": [
+        [
+          {
+            "node": "Move Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Download Thumbnail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Thumbnail": {
+      "main": [
+        [
+          {
+            "node": "Merge All Files",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Writer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute": {
+      "main": [
+        [
+          {
+            "node": "videoID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "videoID": {
+      "main": [
+        [
+          {
+            "node": "Grab Captions",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Video Metadata",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Download Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Grab Captions": {
+      "main": [
+        [
+          {
+            "node": "Find ID by Language",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find ID by Language": {
+      "main": [
+        [
+          {
+            "node": "Download caption",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Move Data": {
+      "main": [
+        [
+          {
+            "node": "Remove Timecodes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remove Timecodes": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Video Metadata": {
+      "main": [
+        [
+          {
+            "node": "Extract URLs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Multi URLs": {
+      "main": [
+        [
+          {
+            "node": "Context and Metadata",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Scrape",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scrape": {
+      "main": [
+        [
+          {
+            "node": "Multi URLs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract URLs": {
+      "main": [
+        [
+          {
+            "node": "Multi URLs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Writer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Writer": {
+      "main": [
+        [
+          {
+            "node": "Format",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    ".md Template": {
+      "ai_tool": [
+        [
+          {
+            "node": "Format",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "qwen3-coder": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Format",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format": {
+      "main": [
+        [
+          {
+            "node": "index.md Rename",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Context and Metadata": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "index.md Rename": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Video": {
+      "main": [
+        [
+          {
+            "node": "Get Video Duration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Video Duration": {
+      "main": [
+        [
+          {
+            "node": "Store Video Info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Video Info": {
+      "main": [
+        [
+          {
+            "node": "Extract Frames",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Frames": {
+      "main": [
+        [
+          {
+            "node": "Parse Frame List",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Frame List": {
+      "main": [
+        [
+          {
+            "node": "Loop Frames",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Frames": {
+      "main": [
+        [
+          {
+            "node": "Collect All Results",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Read Frame as Base64",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Frame as Base64": {
+      "main": [
+        [
+          {
+            "node": "Prepare for Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare for Analysis": {
+      "main": [
+        [
+          {
+            "node": "Analyze Frame",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Frame": {
+      "main": [
+        [
+          {
+            "node": "Parse Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Analysis": {
+      "main": [
+        [
+          {
+            "node": "Loop Frames",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Collect All Results": {
+      "main": [
+        [
+          {
+            "node": "Filter Best Frames",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Best Frames": {
+      "main": [
+        [
+          {
+            "node": "Read Best Screenshots",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Best Screenshots": {
+      "main": [
+        [
+          {
+            "node": "Format Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Output": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Screenshots",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Screenshots": {
+      "main": [
+        [
+          {
+            "node": "Merge All Files",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge All Files": {
+      "main": [
+        [
+          {
+            "node": "Prepare All Files for PR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare All Files for PR": {
+      "main": [
+        [
+          {
+            "node": "Get Main Branch SHA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Main Branch SHA": {
+      "main": [
+        [
+          {
+            "node": "Create Branch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Branch": {
+      "main": [
+        [
+          {
+            "node": "Split Files for Blobs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Files for Blobs": {
+      "main": [
+        [
+          {
+            "node": "Create Blobs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Blobs": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Blob SHAs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Blob SHAs": {
+      "main": [
+        [
+          {
+            "node": "Create Tree",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Tree": {
+      "main": [
+        [
+          {
+            "node": "Create Commit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Commit": {
+      "main": [
+        [
+          {
+            "node": "Update Branch Ref",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Branch Ref": {
+      "main": [
+        [
+          {
+            "node": "Create Pull Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "instanceId": "123246b8a224cc898013683fa38840683cebf5bc560d7e8702e952edbdca5e99"
+  }
+}
