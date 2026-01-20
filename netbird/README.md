@@ -254,13 +254,7 @@ curl -fsSL https://pkgs.netbird.io/install.sh | sh
 4. Connect using the setup key:
 
 ```bash
-sudo netbird up --setup-key <YOUR_SETUP_KEY>
-```
-
-Alternatively, you can use the interactive login flow:
-
-```bash
-sudo netbird up --management-url https://netbird.example.com
+sudo netbird up --management-url https://netbird.example.com --setup-key <YOUR_SETUP_KEY>
 ```
 
 Your device should now appear in the Peers list with a NetBird IP assigned.
