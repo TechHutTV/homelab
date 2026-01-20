@@ -229,11 +229,53 @@ location /management.ManagementService/ {
 
 Once configured, spin the NetBird stack back up:
 
-### Onboading/Local User
+### Onboarding/Local User
+
+When you first access the NetBird dashboard at `https://netbird.example.com`, you'll be prompted to create an initial admin account. This uses NetBird's built-in identity provider which is perfect for getting started quickly.
+
+1. Click "Create Account" and enter your email and a strong password
+2. Verify your email if prompted
+3. You'll be logged into the NetBird dashboard
+
+This local user method works great for personal setups or small teams. Later in this guide, we'll configure PocketID as an external identity provider for more robust authentication with passkey support.
 
 ### Adding a Peer
 
+To connect a device to your NetBird network:
+
+1. In the dashboard, navigate to Peers > Add Peer
+2. Copy the setup key or use the one-liner install command provided
+3. On your device, install the NetBird client:
+
+```bash
+curl -fsSL https://pkgs.netbird.io/install.sh | sh
+```
+
+4. Connect using the setup key:
+
+```bash
+sudo netbird up --setup-key <YOUR_SETUP_KEY>
+```
+
+Alternatively, you can use the interactive login flow:
+
+```bash
+sudo netbird up --management-url https://netbird.example.com
+```
+
+Your device should now appear in the Peers list with a NetBird IP assigned.
+
 ### Creating a Network
+
+Networks in NetBird allow you to expose resources to your peers without installing the NetBird client on every machine.
+
+1. Navigate to Networks > Add Network
+2. Give it a descriptive name (e.g., "Home Lab")
+3. Add a network resource by specifying the IP range or specific hosts you want to expose (e.g., `192.168.1.0/24` for your home network)
+4. Assign a routing peer - this is a device that has access to the target network and will route traffic for other peers
+5. Create a policy to control which peers can access this network
+
+This is incredibly useful for accessing your entire home network through a single peer running NetBird.
 
 ## Pocket ID
 
