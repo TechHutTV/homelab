@@ -105,13 +105,20 @@ docker compose up -d
 
 ### NPM Setup and TLS
 
-Now navigate to your admin dashboard from the browser `http://your.public.ip.address:81`and create your admin account with a strong password.
+Now navigate to your admin dashboard from the browser `http://your.public.ip.address:81`and create your admin account with a strong password. The default credentials are:
+
+Email: admin@example.com
+Password: changeme
+
+You'll be prompted to change these immediately after logging in.
 
 #### Generate Let's Encrypt Certificates
 
 Navigate to SSL Certificates > Add SSL Certifcate. Type in your root domain name (example.com) click add then input the wildcare domain (*.example.com) and then enable 'Use a DNS Challenge'. Select your registar and paste in the API we saved from eariler. If you run into error make sure that your API key is correct, whitelist your public IP with you registar if needed, or try increasing the Propagation Seconds to 120 seconds.
 
 ### Proxy NetBird
+
+Back in Nginx Proxy Manager, we need to create proxy host entries for NetBird. You'll need to create three separate proxy hosts:
 
 ## NetBird Setup
 
