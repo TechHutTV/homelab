@@ -27,45 +27,6 @@ sudo usermod -aG docker $USER
 newgrp docker
 ```
 
-## NetBird Setup
-
-First in our home directory we can make a new folder for the NetBird services:
-
-```bash
-cd ~
-mkdir netbird
-cd netbird
-```
-
-
-Download and run the installation script:
-
-```bash
-curl -fsSL https://github.com/netbirdio/netbird/releases/latest/download/getting-started.sh | bash
-```
-
-
-
-The script will prompt you to enter your domain name for NetBird. You'll type something like `https://netbird.example.com` then select a reverse proxy option:
-
-```
-Which reverse proxy will you use?
-  [0] Built-in Caddy (recommended - automatic TLS)
-  [1] Traefik (labels added to containers)
-  [2] Nginx (generates config template)
-  [3] Nginx Proxy Manager (generates config + instructions)
-  [4] External Caddy (generates Caddyfile snippet)
-  [5] Other/Manual (displays setup documentation)
-
-Enter choice [0-5] (default: 0):
-```
-
-For this guide, select option `[3]` to setup Nginx Proxy Manager. If you're using another service select it or select `[0]` Built-in Caddy if you want the script to handle all of that for you including automatice TSL certifications. Once the option is selected it will set everything up and spin up our containers. Since we have more to do we can spin down the stack for now.
-
-```bash
-docker compose down
-```
-
 ## Nginx Proxy Manager (NPM)
 
 I like to use Nginx Proxy Manager as its has a wonderful GUI and it's easy to use. I will spin this up in a seperate stack to keep the services indepentant from NetBird. Back up to your home directory and make a new directory. 
@@ -93,9 +54,16 @@ services:
       - '80:80'
       - '81:81'
       - '443:443'
+    networks:
+      - proxy
     volumes:
       - ./data:/data
       - ./letsencrypt:/etc/letsencrypt
+
+networks:
+  proxy:
+    name: proxy
+    driver: bridge
 ```
 Use `CTRL-O` to save the file and `CTRL-X` to back out of nano. Then spin up the service will the following command.
 
@@ -116,13 +84,57 @@ You'll be prompted to change these immediately after logging in.
 
 Navigate to SSL Certificates > Add SSL Certifcate. Type in your root domain name (example.com) click add then input the wildcare domain (*.example.com) and then enable 'Use a DNS Challenge'. Select your registar and paste in the API we saved from eariler. If you run into error make sure that your API key is correct, whitelist your public IP with you registar if needed, or try increasing the Propagation Seconds to 120 seconds.
 
-### Proxy NetBird
-
-Back in Nginx Proxy Manager, we need to create proxy host entries for NetBird. You'll need to create three separate proxy hosts:
-
 ## NetBird Setup
 
+First in our home directory we can make a new folder for the NetBird services:
+
+```bash
+cd ~
+mkdir netbird
+cd netbird
+```
+
+Download and run the installation script:
+
+```bash
+curl -fsSL https://github.com/netbirdio/netbird/releases/latest/download/getting-started.sh | bash
+```
+
+The script will prompt you to enter your domain name for NetBird. You'll type something like `https://netbird.example.com` then select a reverse proxy option:
+
+```
+Which reverse proxy will you use?
+  [0] Built-in Caddy (recommended - automatic TLS)
+  [1] Traefik (labels added to containers)
+  [2] Nginx (generates config template)
+  [3] Nginx Proxy Manager (generates config + instructions)
+  [4] External Caddy (generates Caddyfile snippet)
+  [5] Other/Manual (displays setup documentation)
+
+Enter choice [0-5] (default: 0):
+```
+
+For this guide, select option `[3]` to setup Nginx Proxy Manager. If you're using another service select it or select `[0]` Built-in Caddy if you want the script to handle all of that for you including automatice TSL certifications. 
+
+```bash
+Should container ports be bound to localhost only (127.0.0.1)?
+Choose 'yes' if your reverse proxy runs on the same host (more secure).
+Bind to localhost only? [Y/n]: 
+
+Is Nginx Proxy Manager running in Docker?
+If yes, enter the Docker network Nginx Proxy Manager is on (NetBird will join it).
+Docker network (leave empty if not in Docker):
+```
+
+In the next options set ports bound to localhost and input the docker network for NGINX. Once the options are selected it will set everything up and spin up our containers. Since we have more to do we can spin down the stack for now.
+
+```bash
+docker compose down
+```
+
 ### Onboading/Local User
+
+
 
 ### Adding a Peer
 
@@ -175,6 +187,14 @@ PGID=1000
 ### Add Pocket ID to NetBird
 
 ## Remove NetBird Local User
+
+Once PocketID is configured and working, you may want to disable the local user authentication to enforce all logins through your IdP.
+
+1. Log into NetBird using your PocketID credentials to verify it works
+2. In the NetBird dashboard, go to Users and change ownership to the Pocket ID user
+3. Remove any local user accounts that were created during initial setup
+
+Note: Make sure you can successfully authenticate via PocketID before disabling local users, or you may lock yourself out of the dashboard.
 
 
 
