@@ -66,8 +66,67 @@ For this guide, select option `[3]` to setup Nginx Proxy Manager. If you're usin
 docker compose down
 ```
 
-## Custom Proxy and IdP
+## Nginx Proxy Manager (NPM)
 
-I like to use my own proxy and identiy provider. I will spin these up in a seperate stack to keep the services indepentant from NetBird. Back up to your home directory and make a new directory. 
+I like to use Nginx Proxy Manager as its has a wonderful GUI and it's easy to use. I will spin this up in a seperate stack to keep the services indepentant from NetBird. Back up to your home directory and make a new directory. 
+
+```bash
+cd ~
+mkdir proxy
+cd proxy
+```
+
+### Running NPM
+
+Now we can create a new `compose.yaml and paste in the following.
+
+```bash
+nano compose.yaml
+```
+
+```yaml
+services:
+  app:
+    image: 'docker.io/jc21/nginx-proxy-manager:latest'
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '81:81'
+      - '443:443'
+    volumes:
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
+```
+Use `CTRL-O` to save the file and `CTRL-X` to back out of nano. Then spin up the service will the following command.
+
+```bash
+docker compose up -d
+```
+
+### NPM Setup and TLS
+
+Now navigate to your admin dashboard from the browser `http://your.public.ip.address:81`and create your admin account with a strong password.
+
+### Proxy NetBird
+
+## NetBird Setup
+
+### Onboading/Local User
+
+### Adding a Peer
+
+### Creating a Network
+
+## Pocket ID
+
+### Running Pocket ID
+
+### Proxy Pocker ID with NPM
+
+### Add Pocket ID to NetBird
+
+## Remove NetBird Local User
+
+
 
 
