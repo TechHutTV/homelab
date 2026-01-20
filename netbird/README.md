@@ -131,10 +131,105 @@ In the next options set ports bound to localhost and input the docker network fo
 ```bash
 docker compose down
 ```
+### NetBird NPM Setup
+
+Back in Nginx Proxy Manager, we need to create a proxy host entry for NetBird. The installation script generates an npm-advanced-config.txt file in your netbird directory with the configuration you'll need.
+
+Back in Nginx Proxy Manager, we need to create a proxy host entry for NetBird. The installation script generates an `npm-advanced-config.txt` file in your netbird directory with the configuration you'll need.
+
+1. Go to Hosts > Proxy Hosts > Add Proxy Host
+2. Enter your NetBird domain (e.g., `netbird.example.com`)
+3. Set Forward Hostname/IP to `127.0.0.1` and Forward Port to `80`
+4. Under the SSL tab:
+   - Select your wildcard certificate
+   - Enable "Force SSL"
+   - Enable "HTTP/2 Support" (required for gRPC)
+5. Under the Advanced tab, paste the following configuration:
+
+```nginx
+# Required for long-lived connections (gRPC and WebSocket)
+client_header_timeout 1d;
+client_body_timeout 1d;
+
+# Relay WebSocket
+location /relay {
+    proxy_pass http://netbird-relay:80;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_read_timeout 1d;
+}
+
+# Signal WebSocket
+location /ws-proxy/signal {
+    proxy_pass http://netbird-signal:80;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_read_timeout 1d;
+}
+
+# Management WebSocket
+location /ws-proxy/management {
+    proxy_pass http://netbird-management:80;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_read_timeout 1d;
+}
+
+# API routes
+location /api/ {
+    proxy_pass http://netbird-management:80;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
+
+# OAuth2/IdP routes
+location /oauth2/ {
+    proxy_pass http://netbird-management:80;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
+
+# gRPC for Signal service
+location /signalexchange.SignalExchange/ {
+    grpc_pass grpc://netbird-signal:10000;
+    grpc_read_timeout 1d;
+    grpc_send_timeout 1d;
+    grpc_socket_keepalive on;
+}
+
+# gRPC for Management service
+location /management.ManagementService/ {
+    grpc_pass grpc://netbird-management:80;
+    grpc_read_timeout 1d;
+    grpc_send_timeout 1d;
+    grpc_socket_keepalive on;
+}
+```
+
+> **Important:** For this configuration to work, NPM needs to be on the same Docker network as the NetBird containers. You can either run NPM in host mode or add it to the NetBird network.
+
+Once configured, spin the NetBird stack back up:
 
 ### Onboading/Local User
-
-
 
 ### Adding a Peer
 
