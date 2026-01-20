@@ -142,14 +142,14 @@ services:
 
 ---
 
-# Local Top-Level Domains and Twingate
+# Local Top-Level Domains and NetBird
 
-Within this section we will use our NGINX Proxy Manager setup and our domain registrar directly to create a proxy host scheme for local access only. This will also allow us to use letsencrypt to generate SSL certificates for our local network. This will eliminate that horrible _this site is not secure_ message on our services! Also, we will be setting up Twingate (a channel sponsor) to enable a zero trust network for remote access to those services we don't want to expose publically.
+Within this section we will use our NGINX Proxy Manager setup and our domain registrar directly to create a proxy host scheme for local access only. This will also allow us to use letsencrypt to generate SSL certificates for our local network. This will eliminate that horrible _this site is not secure_ message on our services! Also, we will be setting up NetBird (my employer) to enable a zero trust network for remote access to those services we don't want to expose publically.
 
 ## Setup a Top-Level Domain for Local Use
 
 ### Local IP on Registar
-Assign a local IP scheme in the domain registration website. The local IP you will use is the same as the machine running NGINX Proxy Manager. (ie. 10.0.0.60). You'll want to assign this to the A-Record for the main domain and create a CNAME Record as a wildcard (*) pointing to the main domain name. Due note, this may take some time, it took about 15 minutes for the record to update for me. If you're using Cloudflare make sure you disable their proxy service.
+Assign a local IP scheme in the domain registration website. The local IP you will use is the same as the machine running NGINX Proxy Manager. (ie. 173.10.0.102). You'll want to assign this to the A-Record for the main domain and create a CNAME Record as a wildcard (*) pointing to the main domain name. Due note, this may take some time, it took about 15 minutes for the record to update for me. If you're using Cloudflare make sure you disable their proxy service.
 
 ![Record for Local Top-Level Domain](https://github.com/TechHutTV/homelab/blob/main/proxy/images/local-ip-wildcard.png)
 
@@ -178,52 +178,10 @@ With the helloworld container still running, head over to _Proxy Hosts_ and edit
 #### Known Issues and Tips
 * **Namecheap API Whitelist:** Namecheap isn't really the best for this if you have a Dynamic IP. Whenever I want to update my certificates I need to whitelist my public IP so it can use their API. I will be switching to using Cloudflare for this going forward.
 
-## Setup Twingate for remote connections
-**Notice: Twingate is a channel sponsor, thus this is a bias disclosure.** Twingate uses cloud based software for managing networks, resources, and users. Some users prefer to self-host every aspect of this, if that's you look into something like [Netbird](https://github.com/netbirdio/netbird). For myself, Twingate has been awesome; easy to use and [others rate it well](https://www.reddit.com/r/twingate/comments/1awg76l/how_safe_is_twingate/).
+## Setup NetBird for remote connections
+**Notice: I work for NetBird, thus this is a bias disclosure.** With NetBird you can self-host everything or use their cloud based software for managing networks, resources, and users. Some users perfer services that are cloud-based like Tailscale and Twingate, while they're good services, I recommened open source. They will work fine for local top level domains.
 
-After [creating an account on Twingate](https://bit.ly/feb24-twingate) and setting up [your first network](https://www.twingate.com/docs/quick-start) we need to set up a connector. Within my docker compose file I have the twingate-connector service ready to deploy with the entire stack. Here is what this service looks like.
-
-```
-services:
-  twingate_connector:
-    container_name: twingate_connector
-    restart: always
-    image: "twingate/connector:latest"
-    environment:
-      - TWINGATE_NETWORK=<TENANT NAME>
-      - TWINGATE_ACCESS_TOKEN=<ACCESS TOKEN>
-      - TWINGATE_REFRESH_TOKEN=<REFRESH TOKEN>
-```
-When you create your connector in the Twingate dashboard you'll generate some tokens. Enter them in the environmental variables and launch the stack. Verify a connection under networks in Twingate.
-
-Next, create a new resource with the IP of your proxy manager and add the local root domain as an alias. Once created you should be able to have access to the local domain we created earlier including sub-domains. See the image before for an example.
-
-![Adding an Alias in Twingate](https://github.com/TechHutTV/homelab/blob/main/proxy/images/twingate-alias.jpeg)
-
-# Additional Resources
-
-| Additional Security Steps | Twingate Guide |
-| ------------- | ------------- |
-| [![Twingate Guide](https://github.com/TechHutTV/homelab/blob/main/proxy/images/technotim-security-guide.jpg)](https://www.youtube.com/watch?v=Cs8yOmTJNYQ "DITCH your VPN! - How I Access my Home Server from ANYWHERE @TechHut")  | [![Additional Security Steps](https://github.com/TechHutTV/homelab/blob/main/proxy/images/twingate-techhut.jpg)](https://youtu.be/yaw2A3DG664 "Self-Hosting Security Guide for your HomeLab @TechnoTim")  |
-
-
-## Setup Netbird for remote connections (work in progress)
-NetBird is an open source platform responsible for handling peer-to-peer connections, tunneling, authentication, and network management. While Netbird has a wonderful option to [fully self host](https://docs.netbird.io/selfhosted/self-hosted-vs-cloud-netbird), I opt for their free teir so I don't need to worry about having my own instance in my home or in a VPS. NetBird uses WireGuard’s lightweight encryption to establish direct, encrypted tunnels between devices or “peers" automatically. It eliminates manual configuration by handling tasks like IP assignment, NAT traversal, and firewall negotiation through built-in signaling servers. Plus you can setup various single sign on services and multi-factor authentication for added security. If you're interested in learning more about the technology used and how it works checkout [their docs](https://docs.netbird.io/about-netbird/how-netbird-works).
-
-(image here)
-
-### Self Hosting Netbird Managment (skip if using their platform)
-wip
-
-### Mangment Setup
-If you're not using the self-hosted instance
-Obtain your [security key](https://docs.netbird.io/how-to/register-machines-using-setup-keys). 
-
-### Setup
-
-There are two ways you can go about setting this up. First is a Full Peer-to-Peer (P2P) Mesh Network. For this, NetBird is installed on every device. It enables a full mesh network, allowing direct, secure connections between all peers. Or you can enable Remote Network Access because sometimes, it’s not feasible or necessary to install NetBird on every device. You probably can’t install Netbird on all your printers and IoT devices. This is what I'm going to do for my main network, you can set up a NetBird-enabled connector on something like a Raspberry Pi, Proxmox LXC, or whatever you’d like. This acts as a bridge, allowing other devices in the network to securely access devices on your network that you allow it to.
-
-#### Installing on Linux
+### Installing on Linux
 Installing on Linux is simple with a single line command. You can install this directly on any Linux system such as the Proxmox host system, an LXC container, and so on.
 ```
 curl -fsSL https://pkgs.netbird.io/install.sh | sh
@@ -234,28 +192,29 @@ netbird up --setup-key <SETUP KEY>
 ```
 If you're self hosting you will need to specificy the URL that your instance is hosted on, for example, `netbird up --setup-key <SETUP KEY> --management-url http://10.0.0.102:33073`.
 
-#### Install on Docker
-If you want to spin up a docker container or run Netbird in a docker stack checkout the following docker compose.yaml.
+
+After setting up your own NetBird instance or [creating an account](https://app.netbird.io) and setting up your [first peer](https://docs.netbird.io/manage/peers/add-machines-to-your-network) create [your first network](https://docs.netbird.io/manage/networks) and set your peer as the routing peer. Within my docker compose file I have the netbird client service ready to deploy with the entire stack. Here is what this service looks like.
+
 ```
-#Untested
 services:
-    netbird:
-        container_name: netbird-client
-        hostname: PEER_NAM
-        cap_add:
-            - NET_ADMIN
-            - SYS_ADMIN
-            - SYS_RESOURCE
-        network_mode: host
-        privileged: true
-        environment:
-            # - NB_SETUP_KEY=SETUP
-            # - NB_FOREGROUND_MODE=true
-            # - NB_MANAGEMENT_URL=netbird.mydomain.net # Needed if self-hosting
-        volumes:
-            - netbird-client:/etc/netbird
-        image: netbirdio/netbird:lastest
+  netbird:
+      container_name: netbird
+      hostname: <HOSTNAME>
+      cap_add:
+          - NET_ADMIN
+          - SYS_ADMIN
+          - SYS_RESOURCE
+      network_mode: host
+      environment:
+          - NB_SETUP_KEY=<SETUP KEY>
+      volumes:
+          - netbird-client:/var/lib/netbird
+      image: netbirdio/netbird:latest
 volumes:
-    netbird-client:
-        name: netbird-client
+  netbird-client:
+      name: netbird-client
 ```
+
+Next, create a new resource with the IP of your proxy manager and add the local root domain as an alias. Once created you should be able to have access to the local domain we created earlier including sub-domains. See the image before for an example.
+
+![Adding an Alias in Twingate](https://github.com/TechHutTV/homelab/blob/main/proxy/images/twingate-alias.jpeg)
