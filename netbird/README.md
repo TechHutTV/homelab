@@ -107,6 +107,10 @@ docker compose up -d
 
 Now navigate to your admin dashboard from the browser `http://your.public.ip.address:81`and create your admin account with a strong password.
 
+#### Generate Let's Encrypt Certificates
+
+Navigate to SSL Certificates > Add SSL Certifcate. Type in your root domain name (example.com) click add then input the wildcare domain (*.example.com) and then enable 'Use a DNS Challenge'. Select your registar and paste in the API we saved from eariler. If you run into error make sure that your API key is correct, whitelist your public IP with you registar if needed, or try increasing the Propagation Seconds to 120 seconds.
+
 ### Proxy NetBird
 
 ## NetBird Setup
@@ -120,6 +124,44 @@ Now navigate to your admin dashboard from the browser `http://your.public.ip.add
 ## Pocket ID
 
 ### Running Pocket ID
+
+compose.yaml
+```yaml
+services:
+  pocket-id:
+    image: ghcr.io/pocket-id/pocket-id:v2
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - 1411:1411
+    volumes:
+      - "./data:/app/data"
+      - "./key:/key"
+    # Optional healthcheck
+    healthcheck:
+      test: [ "CMD", "/app/pocket-id", "healthcheck" ]
+      interval: 1m30s
+      timeout: 5s
+      retries: 2
+      start_period: 10s
+```
+ .env
+```yaml
+# See the documentation for more information: https://pocket-id.org/docs/configuration/environment-variables
+
+# These variables must be configured for your deployment:
+APP_URL=https://your-pocket-id-domain.com
+
+# Method 2: File-based key
+# Put the base64 key in a file and point to it here.
+ENCRYPTION_KEY_FILE=/key/encryption_key
+
+# These variables are optional but recommended to review:
+TRUST_PROXY=true
+# MAXMIND_LICENSE_KEY=
+PUID=1000
+PGID=1000
+```
 
 ### Proxy Pocker ID with NPM
 
