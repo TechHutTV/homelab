@@ -1,24 +1,20 @@
 # Self Hosting NetBird with NPM and PocketID
 
-work in progress
-
-see [this guide](https://docs.netbird.io/selfhosted/selfhosted-quickstart) for now.
-
----
-
-NetBird is an Open Source Zero Trust Networking platform that allows you to create secure private networks to connect directly to your home servers using the WireGuard protocol. Recently NetBird has improved the ease of self-hosting making it do a single script handles a majority of the configuration effort. This includes automatically setting up Caddy as a revserve proxy and allowing you to use local users. For my setup I like to use my own proxy and a IdP for added security. While I could self-host this on my own hardware at home I perfer to use a VPS in the cloud. That way I don't need to open any ports at home and if my home internet goes down (happens quite a bit) I don't lose access to other resources that are not hosted in my home servers.
+NetBird is an Open Source Zero Trust Networking platform that allows you to create secure private networks to connect directly to your home servers using the WireGuard protocol. Recently NetBird has improved the ease of self-hosting making it so a single script handles a majority of the configuration effort. This includes automatically setting up Caddy as a reverse proxy and allowing you to use local users. For my setup I like to use my own proxy and an IdP for added security. While I could self-host this on my own hardware at home I prefer to use a VPS in the cloud. That way I don't need to open any ports at home and if my home internet goes down (happens quite a bit) I don't lose access to other resources that are not hosted on my home servers.
 
 ## Prerequisites 
+
 Most VPS services will work great, I'm currently using [Hostinger with their KVM 2](https://www.hostinger.com/cart?product=vps%3Avps_kvm_2&period=12&referral_type=cart_link&REFERRALCODE=TQRTECHHU4RG&referral_id=019bdcad-8f2c-71c7-b117-b48c2f17b265) _referral link*_ as they have been a sponsor in the past and it's a good value. This needs to be a Linux VM with at least 1CPU and 2GB of memory that is publicly accessible on TCP ports 80 and 443, and UDP port 3478.
 
-Next you'll need a public domain prointing to the VPS IP address you'll be installing NetBird on. For this instance I will be running 3 different services. I use Cloudflare to manage my domains. To learn more checkout [our guide](https://github.com/TechHutTV/homelab/tree/main/proxy) on setting up a proxy for external access and local top-level domains.
-| A Record    | IP Address |
-| -------- | ------- |
-| netbird  | your.public.ip.address    |
-| proxy | your.public.ip.address      |
-| auth    | your.public.ip.address     |
+Next you'll need a public domain pointing to the VPS IP address you'll be installing NetBird on. For this instance I will be running 3 different services. I use Cloudflare to manage my domains. To learn more checkout [our guide](https://github.com/TechHutTV/homelab/tree/main/proxy) on setting up a proxy for external access and local top-level domains.
 
-On the VPS create a local user with sudo privlages `adduser brandon` then `adduser brandon sudo` replacing _brandon_ with you name and switch to that user with `su brandon`. Additionally, you will need to make sure you have a few packages and docker setup. Update your system then install `curl` and `jq`. Then use the commands below to setup docker on your system.
+| A Record | IP Address               |
+| -------- | ------------------------ |
+| netbird  | your.public.ip.address   |
+| proxy    | your.public.ip.address   |
+| auth     | your.public.ip.address   |
+
+On the VPS create a local user with sudo privileges `adduser brandon` then `adduser brandon sudo` replacing _brandon_ with your name and switch to that user with `su brandon`. Additionally, you will need to make sure you have a few packages and docker setup. Update your system then install `curl` and `jq`. Then use the commands below to setup docker on your system.
 
 ```bash
 curl -fsSL https://get.docker.com -o get-docker.sh
@@ -29,7 +25,7 @@ newgrp docker
 
 ## Nginx Proxy Manager (NPM)
 
-I like to use Nginx Proxy Manager as its has a wonderful GUI and it's easy to use. I will spin this up in a seperate stack to keep the services indepentant from NetBird. Back up to your home directory and make a new directory. 
+I like to use Nginx Proxy Manager as it has a wonderful GUI and it's easy to use. I will spin this up in a separate stack to keep the services independent from NetBird. Back up to your home directory and make a new directory. 
 
 ```bash
 cd ~
@@ -39,7 +35,7 @@ cd proxy
 
 ### Running NPM
 
-Now we can create a new `compose.yaml and paste in the following.
+Now we can create a new `compose.yaml` and paste in the following.
 
 ```bash
 nano compose.yaml
@@ -65,7 +61,8 @@ networks:
     name: proxy
     driver: bridge
 ```
-Use `CTRL-O` to save the file and `CTRL-X` to back out of nano. Then spin up the service will the following command.
+
+Use `CTRL-O` to save the file and `CTRL-X` to back out of nano. Then spin up the service with the following command.
 
 ```bash
 docker compose up -d
@@ -73,16 +70,18 @@ docker compose up -d
 
 ### NPM Setup and TLS
 
-Now navigate to your admin dashboard from the browser `http://your.public.ip.address:81`and create your admin account with a strong password. The default credentials are:
+Now navigate to your admin dashboard from the browser `http://your.public.ip.address:81` and create your admin account with a strong password. The default credentials are:
 
 Email: admin@example.com
 Password: changeme
 
 You'll be prompted to change these immediately after logging in.
 
+> **Security Note:** After completing setup, consider blocking port 81 from external access using a firewall (e.g., `ufw deny 81`) and accessing the admin panel through a proxy host or SSH tunnel instead.
+
 #### Generate Let's Encrypt Certificates
 
-Navigate to SSL Certificates > Add SSL Certifcate. Type in your root domain name (example.com) click add then input the wildcare domain (*.example.com) and then enable 'Use a DNS Challenge'. Select your registar and paste in the API we saved from eariler. If you run into error make sure that your API key is correct, whitelist your public IP with you registar if needed, or try increasing the Propagation Seconds to 120 seconds.
+Navigate to SSL Certificates > Add SSL Certificate. Type in your root domain name (example.com) click add then input the wildcard domain (*.example.com) and then enable 'Use a DNS Challenge'. Select your registrar and paste in the API key we saved from earlier. If you run into errors make sure that your API key is correct, whitelist your public IP with your registrar if needed, or try increasing the Propagation Seconds to 120 seconds.
 
 ## NetBird Setup
 
@@ -114,7 +113,7 @@ Which reverse proxy will you use?
 Enter choice [0-5] (default: 0):
 ```
 
-For this guide, select option `[3]` to setup Nginx Proxy Manager. If you're using another service select it or select `[0]` Built-in Caddy if you want the script to handle all of that for you including automatice TSL certifications. 
+For this guide, select option `[3]` to setup Nginx Proxy Manager. If you're using another service select it or select `[0]` Built-in Caddy if you want the script to handle all of that for you including automatic TLS certificates. 
 
 ```bash
 Should container ports be bound to localhost only (127.0.0.1)?
@@ -131,15 +130,14 @@ In the next options set ports bound to localhost and input the docker network fo
 ```bash
 docker compose down
 ```
-### NetBird NPM Setup
 
-Back in Nginx Proxy Manager, we need to create a proxy host entry for NetBird. The installation script generates an npm-advanced-config.txt file in your netbird directory with the configuration you'll need.
+### NetBird NPM Setup
 
 Back in Nginx Proxy Manager, we need to create a proxy host entry for NetBird. The installation script generates an `npm-advanced-config.txt` file in your netbird directory with the configuration you'll need.
 
 1. Go to Hosts > Proxy Hosts > Add Proxy Host
 2. Enter your NetBird domain (e.g., `netbird.example.com`)
-3. Set Forward Hostname/IP to `netbird-management` and Forward Port to `80`
+3. Set Forward Hostname/IP to `netbird-managment` and Forward Port to `80`
 4. Under the SSL tab:
    - Select your wildcard certificate
    - Enable "Force SSL"
@@ -229,6 +227,10 @@ location /management.ManagementService/ {
 
 Once configured, spin the NetBird stack back up:
 
+```bash
+docker compose up -d
+```
+
 ### Onboarding/Local User
 
 When you first access the NetBird dashboard at `https://netbird.example.com`, you'll be prompted to create an initial admin account. This uses NetBird's built-in identity provider which is perfect for getting started quickly.
@@ -236,40 +238,6 @@ When you first access the NetBird dashboard at `https://netbird.example.com`, yo
 1. Click "Create Account" and enter your email and a strong password
 2. Verify your email if prompted
 3. You'll be logged into the NetBird dashboard
-
-This local user method works great for personal setups or small teams. Later in this guide, we'll configure PocketID as an external identity provider for more robust authentication with passkey support.
-
-### Adding a Peer
-
-To connect a device to your NetBird network:
-
-1. In the dashboard, navigate to Peers > Add Peer
-2. Copy the setup key or use the one-liner install command provided
-3. On your device, install the NetBird client:
-
-```bash
-curl -fsSL https://pkgs.netbird.io/install.sh | sh
-```
-
-4. Connect using the setup key:
-
-```bash
-sudo netbird up --management-url https://netbird.example.com --setup-key <YOUR_SETUP_KEY>
-```
-
-Your device should now appear in the Peers list with a NetBird IP assigned.
-
-### Creating a Network
-
-Networks in NetBird allow you to expose resources to your peers without installing the NetBird client on every machine.
-
-1. Navigate to Networks > Add Network
-2. Give it a descriptive name (e.g., "Home Lab")
-3. Add a network resource by specifying the IP range or specific hosts you want to expose (e.g., `192.168.1.0/24` for your home network)
-4. Assign a routing peer - this is a device that has access to the target network and will route traffic for other peers
-5. Create a policy to control which peers can access this network
-
-This is incredibly useful for accessing your entire home network through a single peer running NetBird.
 
 ## Pocket ID
 
@@ -359,9 +327,12 @@ proxy_busy_buffers_size 256k;
 Save and verify you can access `https://auth.example.com`. Complete the initial PocketID setup by creating your admin account and registering a passkey.
 
 ### Add Pocket ID to NetBird
+
 The [NetBird documentation](https://docs.netbird.io/selfhosted/identity-providers/pocketid) does a great job of walking through these steps.
 
-## Remove NetBird Local User
+## NetBird Continued 
+
+### Remove NetBird Local User
 
 Once PocketID is configured and working, you may want to disable the local user authentication to enforce all logins through your IdP.
 
@@ -369,8 +340,40 @@ Once PocketID is configured and working, you may want to disable the local user 
 2. In the NetBird dashboard, go to Users and change ownership to the Pocket ID user
 3. Remove any local user accounts that were created during initial setup
 
-Note: Make sure you can successfully authenticate via PocketID before disabling local users, or you may lock yourself out of the dashboard.
+> **Warning:** Make sure you can successfully authenticate via PocketID before disabling local users, or you may lock yourself out of the dashboard.
 
+### Adding a Peer
 
+To connect a device to your NetBird network:
 
+1. In the dashboard, navigate to Peers > Add Peer
+2. Copy the setup key or use the one-liner install command provided
+3. On your device, install the NetBird client:
 
+```bash
+curl -fsSL https://pkgs.netbird.io/install.sh | sh
+```
+
+4. Connect using the setup key:
+
+```bash
+sudo netbird up --management-url https://netbird.example.com --setup-key <YOUR_SETUP_KEY>
+```
+
+Your device should now appear in the Peers list with a NetBird IP assigned.
+
+### Creating a Network
+
+Networks in NetBird allow you to expose resources to your peers without installing the NetBird client on every machine.
+
+1. Navigate to Networks > Add Network
+2. Give it a descriptive name (e.g., "Home Lab")
+3. Add a network resource by specifying the IP range or specific hosts you want to expose (e.g., `192.168.1.0/24` for your home network)
+4. Assign a routing peer - this is a device that has access to the target network and will route traffic for other peers
+5. Create a policy to control which peers can access this network
+
+This is incredibly useful for accessing your entire home network through a single peer running NetBird.
+
+## Conclusion
+
+You now have a fully self-hosted NetBird setup with Nginx Proxy Manager handling TLS termination and PocketID providing passwordless authentication. This gives you a secure, zero-trust network that doesn't require opening any ports on your home network while maintaining full control over your infrastructure and identity management.
