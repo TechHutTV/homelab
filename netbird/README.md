@@ -273,47 +273,90 @@ This is incredibly useful for accessing your entire home network through a singl
 
 ## Pocket ID
 
+PocketID is a lightweight, self-hosted OpenID Connect (OIDC) identity provider with passkey support. It's perfect for securing your NetBird installation with modern passwordless authentication.
+
+First, create a directory for PocketID:
+
+```bash
+cd ~
+mkdir pocketid
+cd pocketid
+```
+
+### Generate Encryption Key
+
+PocketID requires an encryption key to secure sensitive data. Generate one and store it in a file:
+
+```bash
+mkdir key
+openssl rand -base64 32 > key/encryption_key
+chmod 600 key/encryption_key
+```
+
 ### Running Pocket ID
 
-compose.yaml
+Create the compose file:
+
+```bash
+nano compose.yaml
+```
+
 ```yaml
 services:
   pocket-id:
     image: ghcr.io/pocket-id/pocket-id:v2
     restart: unless-stopped
-    env_file: .env
     ports:
-      - 1411:1411
+      - 127.0.0.1:1411:1411
+    networks:
+      - proxy
+    environment:
+      - APP_URL=https://auth.example.com
+      - ENCRYPTION_KEY_FILE=/key/encryption_key
+      - TRUST_PROXY=true
+      - PUID=1000
+      - PGID=1000
     volumes:
       - "./data:/app/data"
       - "./key:/key"
-    # Optional healthcheck
     healthcheck:
       test: [ "CMD", "/app/pocket-id", "healthcheck" ]
       interval: 1m30s
       timeout: 5s
       retries: 2
       start_period: 10s
+
+networks:
+  proxy:
+    external: true
 ```
- .env
-```yaml
-# See the documentation for more information: https://pocket-id.org/docs/configuration/environment-variables
 
-# These variables must be configured for your deployment:
-APP_URL=https://your-pocket-id-domain.com
+Start PocketID:
 
-# Method 2: File-based key
-# Put the base64 key in a file and point to it here.
-ENCRYPTION_KEY_FILE=/key/encryption_key
-
-# These variables are optional but recommended to review:
-TRUST_PROXY=true
-# MAXMIND_LICENSE_KEY=
-PUID=1000
-PGID=1000
+```bash
+docker compose up -d
 ```
 
 ### Proxy Pocket ID with NPM
+
+Back in Nginx Proxy Manager, create a proxy host for PocketID:
+
+1. Go to Hosts > Proxy Hosts > Add Proxy Host
+2. Enter your auth domain (e.g., `auth.example.com`)
+3. Set Forward Hostname/IP to `pocket-id` and Forward Port to `1411`
+4. Under the SSL tab:
+   - Select your wildcard certificate
+   - Enable "Force SSL"
+   - Enable "HTTP/2 Support"
+5. Under the Advanced tab, add:
+
+```nginx
+proxy_buffer_size 128k;
+proxy_buffers 4 256k;
+proxy_busy_buffers_size 256k;
+```
+
+Save and verify you can access `https://auth.example.com`. Complete the initial PocketID setup by creating your admin account and registering a passkey.
 
 ### Add Pocket ID to NetBird
 The [NetBird documentation](https://docs.netbird.io/selfhosted/identity-providers/pocketid) does a great job of walking through these steps.
