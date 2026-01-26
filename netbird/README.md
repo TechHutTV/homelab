@@ -139,7 +139,7 @@ Back in Nginx Proxy Manager, we need to create a proxy host entry for NetBird. T
 
 1. Go to Hosts > Proxy Hosts > Add Proxy Host
 2. Enter your NetBird domain (e.g., `netbird.example.com`)
-3. Set Forward Hostname/IP to `127.0.0.1` and Forward Port to `80`
+3. Set Forward Hostname/IP to `netbird-management` and Forward Port to `80`
 4. Under the SSL tab:
    - Select your wildcard certificate
    - Enable "Force SSL"
