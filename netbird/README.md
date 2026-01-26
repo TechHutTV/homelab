@@ -313,9 +313,10 @@ PUID=1000
 PGID=1000
 ```
 
-### Proxy Pocker ID with NPM
+### Proxy Pocket ID with NPM
 
 ### Add Pocket ID to NetBird
+The [NetBird documentation](https://docs.netbird.io/selfhosted/identity-providers/pocketid) does a great job of walking through these steps.
 
 ## Remove NetBird Local User
 
