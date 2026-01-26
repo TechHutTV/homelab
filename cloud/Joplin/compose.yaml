@@ -17,8 +17,8 @@
 
 networks:
     app-network:
-    transcribe-network:
     shared-network:
+#    transcribe-network:
 
 services:
     db:
