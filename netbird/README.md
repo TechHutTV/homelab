@@ -45,6 +45,7 @@ nano compose.yaml
 services:
   app:
     image: 'docker.io/jc21/nginx-proxy-manager:latest'
+    container_name: npm
     restart: unless-stopped
     ports:
       - '80:80'
@@ -81,7 +82,7 @@ You'll be prompted to change these immediately after logging in.
 
 #### Generate Let's Encrypt Certificates
 
-Navigate to SSL Certificates > Add SSL Certificate. Type in your root domain name (example.com) click add then input the wildcard domain (*.example.com) and then enable 'Use a DNS Challenge'. Select your registrar and paste in the API key we saved from earlier. If you run into errors make sure that your API key is correct, whitelist your public IP with your registrar if needed, or try increasing the Propagation Seconds to 120 seconds.
+Navigate to SSL Certificates > Add SSL Certificate > DNS. Type in your root domain name (example.com) click add then input the wildcard domain (*.example.com) and then enable 'Use a DNS Challenge'. Select your registrar and paste in the API key we saved from earlier. If you run into errors make sure that your API key is correct, whitelist your public IP with your registrar if needed, or try increasing the Propagation Seconds to 120 seconds.
 
 ## NetBird Setup
 
@@ -122,10 +123,10 @@ Bind to localhost only? [Y/n]:
 
 Is Nginx Proxy Manager running in Docker?
 If yes, enter the Docker network Nginx Proxy Manager is on (NetBird will join it).
-Docker network (leave empty if not in Docker):
+Docker network (leave empty if not in Docker): proxy
 ```
 
-In the next options set ports bound to localhost and input the docker network for NGINX. Once the options are selected it will set everything up and spin up our containers. Since we have more to do we can spin down the stack for now.
+In the next options set ports bound to localhost and input the docker network for NGINX. Once the options are selected it will set everything up and spin up our containers. Since we have more to do we can spin down the stack for now. If you used the compose file above the Docker network name will be `proxy`. After the setup is complete we can take down the compose stack.
 
 ```bash
 docker compose down
@@ -135,14 +136,19 @@ docker compose down
 
 Back in Nginx Proxy Manager, we need to create a proxy host entry for NetBird. The installation script generates an `npm-advanced-config.txt` file in your netbird directory with the configuration you'll need.
 
+```
+cat npm-advanced-config.txt
+```
+
 1. Go to Hosts > Proxy Hosts > Add Proxy Host
 2. Enter your NetBird domain (e.g., `netbird.example.com`)
-3. Set Forward Hostname/IP to `netbird-managment` and Forward Port to `80`
-4. Under the SSL tab:
+3. Set Forward Hostname/IP to `netbird-dashboard` and Forward Port to `80`
+4. Enable "Websocket Support" and any other options as needed
+5. Under the SSL tab:
    - Select your wildcard certificate
    - Enable "Force SSL"
    - Enable "HTTP/2 Support" (required for gRPC)
-5. Under the Advanced tab, paste the following configuration:
+6. Under the Advanced tab, paste the following configuration:
 
 ```nginx
 # Required for long-lived connections (gRPC and WebSocket)
@@ -258,7 +264,7 @@ PocketID requires an encryption key to secure sensitive data. Generate one and s
 ```bash
 mkdir key
 openssl rand -base64 32 > key/encryption_key
-chmod 600 key/encryption_key
+chmod 644 key/encryption_key
 ```
 
 ### Running Pocket ID
@@ -268,11 +274,12 @@ Create the compose file:
 ```bash
 nano compose.yaml
 ```
-
+Paste in the following:
 ```yaml
 services:
   pocket-id:
     image: ghcr.io/pocket-id/pocket-id:v2
+    container_name: pocket-id
     restart: unless-stopped
     ports:
       - 127.0.0.1:1411:1411
@@ -324,7 +331,7 @@ proxy_buffers 4 256k;
 proxy_busy_buffers_size 256k;
 ```
 
-Save and verify you can access `https://auth.example.com`. Complete the initial PocketID setup by creating your admin account and registering a passkey.
+Save and verify you can access `https://auth.example.com/setup`. Complete the initial PocketID setup by creating your admin account and registering a passkey.
 
 ### Add Pocket ID to NetBird
 
