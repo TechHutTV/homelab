@@ -141,7 +141,7 @@ services:
       - "./key:/key"
     networks:
       services:
-        ipv4_address: 172.30.0.10
+        ipv4_address: 172.28.10.10
     healthcheck:
       test: ["CMD", "/app/pocket-id", "healthcheck"]
       interval: 1m30s
@@ -165,7 +165,7 @@ services:
       - ./netbird:/etc/netbird
     networks:
       services:
-        ipv4_address: 172.30.0.2
+        ipv4_address: 172.28.10.2
 
 networks:
   services:
@@ -173,11 +173,11 @@ networks:
     driver: bridge
     ipam:
       config:
-        - subnet: 172.30.0.0/24
-          gateway: 172.30.0.1
+        - subnet: 172.28.10.0/24
+          gateway: 172.28.10.1
 ```
 
-Replace `<YOUR_SETUP_KEY>` with the setup key you created in the NetBird dashboard and update the domains to match your setup. PocketID sits at `172.30.0.10` and the NetBird client at `172.30.0.2` on the `172.30.0.0/24` subnet. If you add more services later, just assign them an IP in this same range (like `172.30.0.11`, `172.30.0.12`, so on and so forth).
+Replace `<YOUR_SETUP_KEY>` with the setup key you created in the NetBird dashboard and update the domains to match your setup. PocketID sits at `172.28.10.10` and the NetBird client at `172.28.10.2` on the `172.28.10.0/24` subnet. If you add more services later, just assign them an IP in this same range (like `172.28.10.11`, `172.28.10.12`, so on and so forth).
 
 Use `CTRL-O` to save the file and `CTRL-X` to back out of nano. Then spin up the service:
 
@@ -193,11 +193,11 @@ Now we need to tell NetBird that the `vps-services` peer can route traffic to th
 
 1. In the NetBird dashboard, navigate to **Networks** > **Add Network**
 2. Give it a name like "VPS Docker Services"
-3. Add a network resource with the Docker subnet `172.30.0.0/24`
+3. Add a network resource with the Docker subnet `172.28.10.0/24`
 4. Assign the **vps-services** peer as the routing peer
 5. Create or update a policy to allow traffic to this network
 
-Once that's saved, any service on the `172.30.0.0/24` subnet is reachable through the NetBird network via the routing peer. This is the foundation that makes the reverse proxy work for PocketID, and for anything else you add to this Docker network later.
+Once that's saved, any service on the `172.28.10.0/24` subnet is reachable through the NetBird network via the routing peer. This is the foundation that makes the reverse proxy work for PocketID, and for anything else you add to this Docker network later.
 
 ### Expose PocketID with NetBird Reverse Proxy
 
@@ -205,7 +205,7 @@ Now here's the really nice part. Instead of setting up a whole separate reverse 
 
 1. In the NetBird dashboard, navigate to **Reverse Proxy** > **Services** and click **Add Service**
 2. Enter a subdomain like `auth` and select your proxy domain (`proxy.example.com`), so the full URL will be `auth.proxy.example.com`
-3. Click **Add Target**, select the network resource for the Docker subnet, enter PocketID's static IP `172.30.0.10`, set the protocol to **HTTP** and the port to **1411** (PocketID's default port)
+3. Click **Add Target**, select the network resource for the Docker subnet, enter PocketID's static IP `172.28.10.10`, set the protocol to **HTTP** and the port to **1411** (PocketID's default port)
 4. Under the **Authentication** tab, leave all methods disabled since PocketID handles its own authentication
 5. Click **Add Service**
 
@@ -215,7 +215,7 @@ NetBird will provision a TLS certificate and establish the tunnel. Wait for the 
 
 Complete the initial PocketID setup by navigating to `https://auth.proxy.example.com/setup`, creating your admin account, and registering a passkey.
 
-> **Adding more services later:** Because the NetBird client is a routing peer for the entire `172.30.0.0/24` subnet, you can add any other containerized service to this same Docker network with a static IP and immediately expose it through the reverse proxy. Just add another target in the dashboard pointing to the new container's IP and port. One NetBird client, one network, as many services as you need.
+> **Adding more services later:** Because the NetBird client is a routing peer for the entire `172.28.10.0/24` subnet, you can add any other containerized service to this same Docker network with a static IP and immediately expose it through the reverse proxy. Just add another target in the dashboard pointing to the new container's IP and port. One NetBird client, one network, as many services as you need.
 
 ### Add Pocket ID to NetBird
 
