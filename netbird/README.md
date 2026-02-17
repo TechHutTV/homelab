@@ -134,8 +134,6 @@ services:
       - APP_URL=https://auth.proxy.example.com
       - ENCRYPTION_KEY_FILE=/key/encryption_key
       - TRUST_PROXY=true
-      - PUID=1000
-      - PGID=1000
     volumes:
       - "./data:/app/data"
       - "./key:/key"
@@ -162,7 +160,7 @@ services:
       - NB_MANAGEMENT_URL=https://netbird.example.com
       - NB_HOSTNAME=vps-services
     volumes:
-      - ./netbird:/etc/netbird
+      - ./netbird:/var/lib/netbird
     networks:
       services:
         ipv4_address: 172.28.10.2
