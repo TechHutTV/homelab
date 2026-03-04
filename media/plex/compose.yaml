@@ -19,20 +19,6 @@ services:
       - /data:/data
     restart: unless-stopped
 
-  overseerr:
-    image: lscr.io/linuxserver/overseerr:latest
-    container_name: overseerr
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Los_Angeles
-    volumes:
-      - ./overseer/config:/config
-      - /data:/data
-    ports:
-      - 5055:5055
-    restart: unless-stopped
-
   tautulli:
     image: lscr.io/linuxserver/tautulli:latest
     container_name: tautulli
