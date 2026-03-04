@@ -212,9 +212,6 @@ Now to expand the functionality of Jellyfin I recommend these 3rd party tools th
 ### Jellystat
 Find it [here](https://github.com/CyferShepard/Jellystat)
 
-### Jellyseerr
-Find it [here](https://github.com/fallenbagel/jellyseerr)
-
 ## DVR and Live TV
 
 ### Live TV
