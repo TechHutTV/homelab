@@ -211,7 +211,7 @@ services:
       - ./seerr:/app/config
     ports:
       - 5055:5055
+
     networks:
       servarrnetwork:
         ipv4_address: 172.39.0.7
-    restart: unless-stopped
