@@ -195,6 +195,7 @@ In our new LXC we first need to run some general updates and user creation.
     sudo systemctl enable wsdd
     sudo systemctl start wsdd
     ```
+> For certain linux distributions (mainly Ubuntu 24+ and Debian), install the wsdd-server package instead as wsdd doesn't include the service in those anymore.
 
 11. Allow services on firewall if you run into any issues.
     ```bash
