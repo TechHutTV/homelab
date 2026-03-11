@@ -191,9 +191,9 @@ In our new LXC we first need to run some general updates and user creation.
 
 10. Install wsdd for Windows network discovery
     ```bash
-    sudo apt install wsdd
-    sudo systemctl enable wsdd
-    sudo systemctl start wsdd
+    sudo apt install wsdd-server
+    sudo systemctl enable wsdd-server
+    sudo systemctl start wsdd-server
     ```
 > For certain linux distributions (mainly Ubuntu 24+ and Debian), install the wsdd-server package instead as wsdd doesn't include the service in those anymore.
 
