@@ -8,17 +8,14 @@ While I could self-host this on my own hardware at home I prefer to use a VPS in
 
 Most VPS services will work great, I'm currently using [Hostinger with their KVM 2](https://www.hostinger.com/cart?product=vps%3Avps_kvm_2&period=12&referral_type=cart_link&REFERRALCODE=TQRTECHHU4RG&referral_id=019bdcad-8f2c-71c7-b117-b48c2f17b265) _referral link*_ as they have been a sponsor in the past and it's a good value. This needs to be a Linux VM with at least 1CPU and 2GB of memory that is publicly accessible on TCP ports 80 and 443, and UDP port 3478.
 
-Next you'll need a public domain pointing to the VPS IP address you'll be installing NetBird on. We need three DNS entries for this setup. I use Cloudflare to manage my domains. Do note that all of these need to be set to "DNS only" in Cloudflare, not proxied. To learn more checkout [our guide](https://github.com/TechHutTV/homelab/tree/main/proxy) on setting up a proxy for external access and local top-level domains.
+Next you'll need a public domain pointing to the VPS IP address you'll be installing NetBird on. We need two DNS entries for this setup. I use Cloudflare to manage my domains. Do note that all of these need to be set to "DNS only" in Cloudflare, not proxied. To learn more checkout [our guide](https://github.com/TechHutTV/homelab/tree/main/proxy) on setting up a proxy for external access and local top-level domains.
 
 | Type | Name | Content | Proxy Status |
 | ---- | ---- | ------- | ------------ |
 | A | `netbird` | `YOUR.SERVER.IP.ADDRESS` | DNS only |
-| CNAME | `proxy` | `netbird.example.com` | DNS only |
-| CNAME | `*.proxy` | `netbird.example.com` | DNS only |
+| CNAME | `*.netbird` | `netbird.example.com` | DNS only |
 
-The A record is for the NetBird management dashboard. The two CNAME records point to the same server through the management domain, one for the proxy base domain and one as a wildcard so any subdomain under `proxy.example.com` resolves correctly. This is what the built-in reverse proxy feature uses to expose services like PocketID.
-
-> **Important:** The proxy domain must NOT be a subdomain of the NetBird management domain. So don't use `proxy.netbird.example.com`. Use a separate subdomain like `proxy.example.com` instead, or even a totally different domain. This avoids TLS certificate conflicts.
+The A record is for the NetBird management dashboard. The wildcard CNAME record ensures that all service subdomains (e.g., `auth.netbird.example.com`) resolve to your server. This is what the built-in reverse proxy feature uses to expose services like PocketID.
 
 On the VPS create a local user with sudo privileges `adduser brandon` then `adduser brandon sudo` replacing _brandon_ with your name and switch to that user with `su brandon`. Additionally, you will need to make sure you have a few packages and Docker setup. Update your system then install `curl` and `jq`. Then use the commands below to setup Docker on your system.
 
@@ -68,13 +65,7 @@ Enable proxy? [y/N]: y
 
 Go ahead and type `y` here. This is the new built-in reverse proxy feature that we're going to use to expose PocketID (and anything else you want to make publicly accessible through your NetBird network).
 
-It'll then ask for a proxy domain:
-
-```
-Enter the domain for the NetBird Proxy (e.g. proxy.my-domain.com): proxy.example.com
-```
-
-Enter the proxy domain you set up in DNS earlier (the one with the wildcard record). The script will automatically generate a proxy access token, create the config, and start all the containers.
+The script will automatically generate a proxy access token, create a `proxy.env` configuration file, and start all the containers. It uses your management domain with the wildcard DNS record (e.g., `*.netbird.example.com`) so service subdomains resolve correctly.
 
 And there we go. NetBird is up and running with Traefik handling TLS and the reverse proxy feature ready to go.
 
@@ -131,7 +122,7 @@ services:
     container_name: pocket-id
     restart: unless-stopped
     environment:
-      - APP_URL=https://auth.proxy.example.com
+      - APP_URL=https://auth.netbird.example.com
       - ENCRYPTION_KEY_FILE=/key/encryption_key
       - TRUST_PROXY=true
     volumes:
@@ -202,16 +193,16 @@ Once that's saved, any service on the `172.28.10.0/24` subnet is reachable throu
 Now here's the really nice part. Instead of setting up a whole separate reverse proxy stack to make PocketID accessible from the internet, we're going to use NetBird's built-in reverse proxy feature. Since we already have a routing peer that can reach PocketID's static IP, we just point the reverse proxy at it.
 
 1. In the NetBird dashboard, navigate to **Reverse Proxy** > **Services** and click **Add Service**
-2. Enter a subdomain like `auth` and select your proxy domain (`proxy.example.com`), so the full URL will be `auth.proxy.example.com`
+2. Enter a subdomain like `auth` and select your domain (`netbird.example.com`), so the full URL will be `auth.netbird.example.com`
 3. Click **Add Target**, select the network resource for the Docker subnet, enter PocketID's static IP `172.28.10.10`, set the protocol to **HTTP** and the port to **1411** (PocketID's default port)
 4. Under the **Authentication** tab, leave all methods disabled since PocketID handles its own authentication
 5. Click **Add Service**
 
-NetBird will provision a TLS certificate and establish the tunnel. Wait for the status to show "active" and then navigate to `https://auth.proxy.example.com`. And just like that, PocketID is publicly accessible with TLS, traffic flows through an encrypted WireGuard tunnel to the routing peer, which forwards it to PocketID on the Docker network. No Nginx, no Caddy, no separate proxy stack. Would you look at that.
+NetBird will provision a TLS certificate and establish the tunnel. Wait for the status to show "active" and then navigate to `https://auth.netbird.example.com`. And just like that, PocketID is publicly accessible with TLS, traffic flows through an encrypted WireGuard tunnel to the routing peer, which forwards it to PocketID on the Docker network. No Nginx, no Caddy, no separate proxy stack. Would you look at that.
 
 > **Note:** If you want to use a custom domain like `auth.example.com` instead, you can set that up under the Custom Domains section. Just add a CNAME record pointing to your proxy cluster and NetBird handles the rest. Check out the [custom domains documentation](https://docs.netbird.io/manage/reverse-proxy/custom-domains) for details.
 
-Complete the initial PocketID setup by navigating to `https://auth.proxy.example.com/setup`, creating your admin account, and registering a passkey.
+Complete the initial PocketID setup by navigating to `https://auth.netbird.example.com/setup`, creating your admin account, and registering a passkey.
 
 > **Adding more services later:** Because the NetBird client is a routing peer for the entire `172.28.10.0/24` subnet, you can add any other containerized service to this same Docker network with a static IP and immediately expose it through the reverse proxy. Just add another target in the dashboard pointing to the new container's IP and port. One NetBird client, one network, as many services as you need.
 
@@ -223,7 +214,7 @@ The [NetBird documentation](https://docs.netbird.io/selfhosted/identity-provider
 2. Set the name to "NetBird", keep Public Client and PKCE off, and save
 3. Note the **Client ID** and **Client Secret**
 4. In the NetBird dashboard, go to **Settings** > **Identity Providers** > **Add Identity Provider**
-5. Select PocketID as the type, paste in your Client ID, Client Secret, and set the Issuer to `https://auth.proxy.example.com` (no trailing slash)
+5. Select PocketID as the type, paste in your Client ID, Client Secret, and set the Issuer to `https://auth.netbird.example.com` (no trailing slash)
 6. Save, then copy the **Redirect URL** that NetBird gives you
 7. Back in PocketID, edit your NetBird OIDC client and add the redirect URL to **Callback URLs**
 8. Create a **User Group** called "NetBird" in PocketID, add your users to it, and assign the group to the OIDC client
