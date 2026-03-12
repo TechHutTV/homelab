@@ -1,7 +1,7 @@
 # Server Monitoring Stack
-Docker compose featuring Grafana, Prometheus, Influxdb2, and Telegraf. Tested and working with the lastest version of Docker compose. This repository is a companion to the offical guide on our website. That is currently a work in progress. This is designed to be envolving repo as I add services and figure out better way to do this. 
+Docker compose featuring Grafana, Prometheus, Influxdb2, and Telegraf. Tested and working with the latest version of Docker compose. This repository is a companion to the official guide on our website. That is currently a work in progress. This is designed to be an evolving repo as I add services and figure out better ways to do this. 
 
-**Note:** This is not a secure way to do this. ONLY use this in closed off, private testing enviorments. Eventually, we will add steps for SSL and other security features.
+**Note:** This is not a secure way to do this. ONLY use this in closed off, private testing environments. Eventually, we will add steps for SSL and other security features.
 
 **System Specific Guides and Files:** [Unraid](https://github.com/TechHutTV/homelab/tree/main/monitoring/unraid) | Proxmox (wip)
 
@@ -67,7 +67,7 @@ nano telegraf/telegraf.conf
 ```
 ### Launch the Stack
 
-In our project director we can launch the stack using the compose up command.
+In our project directory we can launch the stack using the compose up command.
 ```
 docker compose up -d
 ```
@@ -75,7 +75,7 @@ If you run into any issues the logs are you best friend. Heck, check em anyway.
 ```
 docker compose logs
 ```
-To make configuration changes, simple save the edits you make and restart the stack.
+To make configuration changes, simply save the edits you make and restart the stack.
 ```
 docker compose restart
 ```
@@ -91,7 +91,7 @@ While apt should start and enable the systemd service for the node exporter auto
 
 ## Recommended Dashboards
 
-The entire point of this is to have some pretty dashboards. These are the ones I found to work best with this setup. If needed I added the preferred language of the dashboards. as InfluxBD has multiple options when adding a new data connection.
+The entire point of this is to have some pretty dashboards. These are the ones I found to work best with this setup. If needed I added the preferred language of the dashboards, as InfluxDB has multiple options when adding a new data connection.
 
 [Docker Monitoring](https://grafana.com/grafana/dashboards/18389-influxdb-2-x-telegraf-docker-dashboard/) (Flux) - 18389
 
@@ -106,4 +106,4 @@ The entire point of this is to have some pretty dashboards. These are the ones I
 https://github.com/charlie-haley/omada_exporter
 
 #### Work in Progress
-Feel free to send any feedback or rise any issues. This is a new repo and I'm organizing everything and trying to get it to be as good as I can.
+Feel free to send any feedback or raise any issues. This is a new repo and I'm organizing everything and trying to get it to be as good as I can.

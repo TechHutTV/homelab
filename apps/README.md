@@ -40,7 +40,7 @@ I’m not using this one at the moment, but it’s currently a VERY CLOSE second
 
 ![](https://github.com/TechHutTV/homelab/blob/main/apps/images/02_file-browser.png)
 
-This is another new addition, while not great for moving or copying large amounts of data, it has helped me significantly jumping though my rather large media server. Features rather simple and straight forward file management features, as described on their official website; “File Browser is a **create-your-own-cloud-kind** of software where you can install it on a server, direct it to a path and then access your files through a nice web interface. You have many available features!”
+This is another new addition, while not great for moving or copying large amounts of data, it has helped me significantly jumping through my rather large media server. Features rather simple and straight forward file management features, as described on their official website; “File Browser is a **create-your-own-cloud-kind** of software where you can install it on a server, direct it to a path and then access your files through a nice web interface. You have many available features!”
 
 **Resources:** [Github](https://github.com/filebrowser/filebrowser) | [Website](https://filebrowser.org/)
 
@@ -218,7 +218,7 @@ This is a new addition and it’s actually how I’m initially drafting this ent
 
 ![](https://github.com/TechHutTV/homelab/blob/main/apps/images/21_home-assistant-smart.png)
 
-Home Assistant is a great tool that allows the connection of many devices in your smart home and integrate them together with a variety blueprints, automatons, and more. You can create custom dashboards, use their mobile app, and so much more I can’t even properly describe here how much this tool is capable of.
+Home Assistant is a great tool that allows the connection of many devices in your smart home and integrate them together with a variety of blueprints, automations, and more. You can create custom dashboards, use their mobile app, and so much more I can’t even properly describe here how much this tool is capable of.
 
 https://www.home-assistant.io/
 **Resources:** [Video](https://www.youtube.com/watch?v=Y8xY4keybnw) | [Github](https://github.com/plexinc) | [Website](https://www.plex.tv/)
@@ -227,7 +227,7 @@ https://www.home-assistant.io/
 
 ![](https://github.com/TechHutTV/homelab/blob/main/apps/images/22_frigate-nvr.png)
 
-Frigate is the best open source, self-hosted NVR option that I can find. For a while I was using Blue Iris, but I HATE that you have to use Windows. This tool shines with you hook it up with a Coral TPU for AI object detection. The interface is wonderful and it supports most of what you’d expect of an NVR. Granted depending on your cameras it may be difficult to configure and use all the features a camera may support, for example, two way audio.
+Frigate is the best open source, self-hosted NVR option that I can find. For a while I was using Blue Iris, but I HATE that you have to use Windows. This tool shines when you hook it up with a Coral TPU for AI object detection. The interface is wonderful and it supports most of what you’d expect of an NVR. Granted depending on your cameras it may be difficult to configure and use all the features a camera may support, for example, two way audio.
 
 **Resources:** [Video](https://youtu.be/NzbghOfRx3k?si=HY7aHdCbqz1X5ONe) | [Github](https://github.com/blakeblackshear/frigate) | [Website](https://frigate.video/)
 
@@ -245,7 +245,7 @@ I was originally using this with Home Assistant as an add-on, but I’ve noticed
 
 ![](https://github.com/TechHutTV/homelab/blob/main/apps/images/24_pi-hole-dns-sinkhole.png)
 
-By far the most popular “DNS Sinkhole” a Domain Name Service that blocks certain DNS inquiries. In the case of Pi-Hole it uses black lists full of domains associated with advertisements and tracking. For example, one of the most blocked domain on my server is [s2s.mparticle.com](https://www.mparticle.com/about-us/) a data collection firm. And with Pi-Hole I can investigate and figure out why this data collection company is being reached out to so much. This is in addition to the main use case of simple ad blocking. Pi-Hole has many other features I’ve yet to dive into, but it’s a wonderful tool that is worth trying out of anyone.
+By far the most popular “DNS Sinkhole” a Domain Name Service that blocks certain DNS inquiries. In the case of Pi-Hole it uses black lists full of domains associated with advertisements and tracking. For example, one of the most blocked domain on my server is [s2s.mparticle.com](https://www.mparticle.com/about-us/) a data collection firm. And with Pi-Hole I can investigate and figure out why this data collection company is being reached out to so much. This is in addition to the main use case of simple ad blocking. Pi-Hole has many other features I’ve yet to dive into, but it’s a wonderful tool that is worth trying out for anyone.
 
 **Resources:** [Video](https://www.youtube.com/watch?v=xtMFcVx3cHU) | [Github](https://github.com/pi-hole/pi-hole) | [Website](https://pi-hole.net/)
 
@@ -299,9 +299,9 @@ InfluxDB is described as; “Purpose-built database for all types of time series
 
 ### Prometheus (with Node Exporter)
 
-![](https://github.com/TechHutTV/homelab/blob/main/apps/images/30_proetheus-query-execute.png)
+![](https://github.com/TechHutTV/homelab/blob/main/apps/images/30_prometheus-query-execute.png)
 
-Like InfluxDB this is a data collection tool for monitoring and data analytics. This one this the most popular of what I’m using so there are a ton of different integrations and dashboards to pick from. The most popular and probably the easiest to setup is the Node Exporter, I have this installed and two Raspberry Pi systems for monitoring.
+Like InfluxDB this is a data collection tool for monitoring and data analytics. This one is the most popular of what I’m using so there are a ton of different integrations and dashboards to pick from. The most popular and probably the easiest to setup is the Node Exporter, I have this installed and two Raspberry Pi systems for monitoring.
 
 **Resources:** [Video](https://www.youtube.com/watch?v=vffhtqK3ZU) | [Github](https://github.com/prometheus/prometheus) | [Website](https://prometheus.io/)
 

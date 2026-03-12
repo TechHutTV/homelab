@@ -1,6 +1,6 @@
 # Frigate NVR in Proxmox with Coral TPU
 
-This is something I am still trying to learn on figure out. My configuration is far from perfect as many of the features I want are not working or set up yet.
+This is something I am still trying to learn and figure out. My configuration is far from perfect as many of the features I want are not working or set up yet.
 
 ## To-Do
 * Stream audio from cameras in live view

@@ -8,10 +8,10 @@ This is done on Proxmox with an LXC running Ubuntu 22.04 and Docker. However, th
 * [Apps](https://github.com/TechHutTV/homelab/tree/main/apps) - List of all the apps and services.
 * [Home Assistant](https://github.com/TechHutTV/homelab/tree/main/homeassistant) - Smart home services and automation.
 * [Media Server](https://github.com/TechHutTV/homelab/tree/main/media) - Plex, Jellyfin, *arr stack, and more.
-* [Server Monitoring](https://github.com/TechHutTV/homelab/tree/main/monitoring) - Graphs and Visualizations for Unriad, Proxmox, and more.
+* [Server Monitoring](https://github.com/TechHutTV/homelab/tree/main/monitoring) - Graphs and Visualizations for Unraid, Proxmox, and more.
 * [Surveillance System](https://github.com/TechHutTV/homelab/tree/main/surveillance) - Frigate NVR Solution with Coral TPU.
 * [Storage](https://github.com/TechHutTV/homelab/tree/main/storage) - Current Storage and Backup Solution.
-* [__Proxy Managment__](https://github.com/TechHutTV/homelab/tree/main/proxy) - NGINX Proxy Manager, DDNS with Cloudflare, Local Domains, and more.
+* [__Proxy Management__](https://github.com/TechHutTV/homelab/tree/main/proxy) - NGINX Proxy Manager, DDNS with Cloudflare, Local Domains, and more.
 
 
 ## Installing NGINX Proxy Manager
@@ -60,7 +60,7 @@ services:
       - ./letsencrypt:/etc/letsencrypt
 ```
 
-Due note, as seen in my docker compose you'll need to either need to set the network mode to [host](https://stackoverflow.com/questions/42438381/docker-nginx-proxy-to-host#:~:text=Use%20network_mode%3A%20host%2C%20this%20will%20bind%20your%20nginx,every%20exposed%20port%20is%20binded%20to%20host%27s%20interface.) or [expose the specific ports](https://www.reddit.com/r/homelab/comments/1c38ize/nginx_proxy_manager_cant_route_to_different_port/#:~:text=Nginx%20Proxy%20Manager%20is%20in%20a%20docker%20container.) if running on bridge mode for servers that are running on your home network from a different machine. Also, be sure to check out their [Advanced Configuration](https://nginxproxymanager.com/advanced-config/) documents.
+Do note, as seen in my docker compose you'll need to either need to set the network mode to [host](https://stackoverflow.com/questions/42438381/docker-nginx-proxy-to-host#:~:text=Use%20network_mode%3A%20host%2C%20this%20will%20bind%20your%20nginx,every%20exposed%20port%20is%20binded%20to%20host%27s%20interface.) or [expose the specific ports](https://www.reddit.com/r/homelab/comments/1c38ize/nginx_proxy_manager_cant_route_to_different_port/#:~:text=Nginx%20Proxy%20Manager%20is%20in%20a%20docker%20container.) if running on bridge mode for servers that are running on your home network from a different machine. Also, be sure to check out their [Advanced Configuration](https://nginxproxymanager.com/advanced-config/) documents.
 
 #### If using bridge mode see the example below
 ```
@@ -76,7 +76,7 @@ Due note, as seen in my docker compose you'll need to either need to set the net
 ```
 
 
-## Setup DDNS for and Cloudflare for Public Access
+## Setup DDNS and Cloudflare for Public Access
 
 ### Cloudflare Setup
 1. Sign up for a Cloudflare account and use it to manage your domain using [this guide](https://developers.cloudflare.com/fundamentals/setup/manage-domains/add-site/).
@@ -97,7 +97,7 @@ This is the port on the device that is initiating the communication. For example
 This is the port on the device that will receive the communication. For example, when you're connecting to a web server. The destination port is fixed for the service you're trying to reach and tells the receiving device what service or application should handle the incoming data.
 </details>
 
-![Omada Port Forwarding](https://github.com/TechHutTV/homelab/blob/main/proxy/images/odama-port-forwarding-443.jpeg)
+![Omada Port Forwarding](https://github.com/TechHutTV/homelab/blob/main/proxy/images/omada-port-forwarding-443.jpeg)
 
 If using bridge mode with custom ports, for example 5080 and 5443 as shown in the example. I'd set the destination port to 5443 and the source port to 443 for https.
 
@@ -126,7 +126,7 @@ services:
 ```
 
 ### Generate SSL Certificates and Add Hosts
-1. Now head over to NGINX Proxy Manager and create your SSL certificates. You navigate to _SSL Certificates > Add SSL Certifcate_. Type in your domain name and then enable 'Use a DNS Challenge'. Select Cloudflare and paste in the API we saved from earlier. 
+1. Now head over to NGINX Proxy Manager and create your SSL certificates. You navigate to _SSL Certificates > Add SSL Certificate_. Type in your domain name and then enable 'Use a DNS Challenge'. Select Cloudflare and paste in the API we saved from earlier. 
 2. Now in NGINX Proxy Manager navigate to _Hosts > Add Proxy Host_. Add the domain name for the service (ie. nextcloud.example.com) and select http (this may vary on if the service is running on https locally) then add the local IP and port for the service you want forwarded to the domain.
 * Depending on the service you may need to enable _Websockets Support_, but I always select _Block Common Exploits_.
 * Navigate the the SSL tab and select your SSL Certificate and enable _Force SSL_. **See known issues below.**
@@ -144,16 +144,16 @@ services:
 
 # Local Top-Level Domains and NetBird
 
-Within this section we will use our NGINX Proxy Manager setup and our domain registrar directly to create a proxy host scheme for local access only. This will also allow us to use letsencrypt to generate SSL certificates for our local network. This will eliminate that horrible _this site is not secure_ message on our services! Also, we will be setting up NetBird (my employer) to enable a zero trust network for remote access to those services we don't want to expose publically.
+Within this section we will use our NGINX Proxy Manager setup and our domain registrar directly to create a proxy host scheme for local access only. This will also allow us to use letsencrypt to generate SSL certificates for our local network. This will eliminate that horrible _this site is not secure_ message on our services! Also, we will be setting up NetBird (my employer) to enable a zero trust network for remote access to those services we don't want to expose publicly.
 
 ## Setup a Top-Level Domain for Local Use
 
-### Local IP on Registar
-Assign a local IP scheme in the domain registration website. The local IP you will use is the same as the machine running NGINX Proxy Manager. (ie. 173.10.0.102). You'll want to assign this to the A-Record for the main domain and create a CNAME Record as a wildcard (*) pointing to the main domain name. Due note, this may take some time, it took about 15 minutes for the record to update for me. If you're using Cloudflare make sure you disable their proxy service.
+### Local IP on Registrar
+Assign a local IP scheme in the domain registration website. The local IP you will use is the same as the machine running NGINX Proxy Manager. (ie. 173.10.0.102). You'll want to assign this to the A-Record for the main domain and create a CNAME Record as a wildcard (*) pointing to the main domain name. Do note, this may take some time, it took about 15 minutes for the record to update for me. If you're using Cloudflare make sure you disable their proxy service.
 
 ![Record for Local Top-Level Domain](https://github.com/TechHutTV/homelab/blob/main/proxy/images/local-ip-wildcard.png)
 
-While you're on Cloudflare or the registar find your API key. You'll need this for generating SSL certificates in the DNS challenges option. Many providers are supported and you can see a [full list here](https://community.letsencrypt.org/t/dns-providers-who-easily-integrate-with-lets-encrypt-dns-validation/86438).
+While you're on Cloudflare or the registrar find your API key. You'll need this for generating SSL certificates in the DNS challenges option. Many providers are supported and you can see a [full list here](https://community.letsencrypt.org/t/dns-providers-who-easily-integrate-with-lets-encrypt-dns-validation/86438).
 
 ### Adding Proxy Hosts
 This will mirror the steps above, with some slight differences. In NGINX Proxy Manager navigate to _Hosts > Add Proxy Host_. Add the domain name for the service (ie. example.com) and select http (this may vary depending on if the service is running on https locally) then add the local IP and port for the service you want forwarded to that domain. If you want to test everything check below.
@@ -170,7 +170,7 @@ Add a subdomain (hello.example.com) in proxy hosts with the IP running this hell
 2. Navigate to hello.example.com to test if the reverse proxy is working.
 
 ### Generate Let's Encrypt Certificates
-Navigate to _SSL Certificates > Add SSL Certifcate_. Type in your root domain name (example.com) click add then input the wildcare domain (*.example.com) and then enable 'Use a DNS Challenge'. Select your registar and paste in the API we saved from eariler. If you run into error make sure that your API key is correct, whitelist your public IP with you registar if needed, or try increasing the _Propagation Seconds_ to 120 seconds.
+Navigate to _SSL Certificates > Add SSL Certificate_. Type in your root domain name (example.com) click add then input the wildcard domain (*.example.com) and then enable 'Use a DNS Challenge'. Select your registrar and paste in the API we saved from earlier. If you run into errors make sure that your API key is correct, whitelist your public IP with your registrar if needed, or try increasing the _Propagation Seconds_ to 120 seconds.
 
 #### Testing
 With the helloworld container still running, head over to _Proxy Hosts_ and edit the hello.example.com host. In the SSL tab add _*.example.com_ under the SSL Certificate and enable _Force SSL_. Navigate to hello.example.com to ensure that the connection is automatically redirected to https.
@@ -179,14 +179,14 @@ With the helloworld container still running, head over to _Proxy Hosts_ and edit
 * **Namecheap API Whitelist:** Namecheap isn't really the best for this if you have a Dynamic IP. Whenever I want to update my certificates I need to whitelist my public IP so it can use their API. I will be switching to using Cloudflare for this going forward.
 
 ## Setup NetBird for remote connections
-**Notice: I work for NetBird, thus this is a bias disclosure.** With NetBird you can self-host everything or use their cloud based software for managing networks, resources, and users. Some users perfer services that are cloud-based like Tailscale and Twingate, while they're good services, I recommened open source. They will work fine for local top level domains.
+**Notice: I work for NetBird, thus this is a bias disclosure.** With NetBird you can self-host everything or use their cloud based software for managing networks, resources, and users. Some users prefer services that are cloud-based like Tailscale and Twingate, while they're good services, I recommend open source. They will work fine for local top level domains.
 
 ### Installing on Linux
 Installing on Linux is simple with a single line command. You can install this directly on any Linux system such as the Proxmox host system, an LXC container, and so on.
 ```
 curl -fsSL https://pkgs.netbird.io/install.sh | sh
 ```
-Now connect it using the setup key from the managment dashboard.
+Now connect it using the setup key from the management dashboard.
 ```
 netbird up --setup-key <SETUP KEY>
 ```
@@ -215,6 +215,6 @@ volumes:
       name: netbird-client
 ```
 
-Next, create a new resource with the IP of your proxy manager and add the local root domain as an alias. Once created you should be able to have access to the local domain we created earlier including sub-domains. See the image before for an example.
+Next, create a new resource with the IP of your proxy manager and add the local root domain as an alias. Once created you should be able to have access to the local domain we created earlier including sub-domains. See the image below for an example.
 
 ![Adding an Alias in Twingate](https://github.com/TechHutTV/homelab/blob/main/proxy/images/twingate-alias.jpeg)

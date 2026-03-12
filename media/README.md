@@ -77,7 +77,7 @@ data
 ├── shows
 └── youtube
 ```
-Here is a easy command to create the download directory scheme. Run within the `/data` directory.
+Here is an easy command to create the download directory scheme. Run within the `/data` directory.
 ```bash
 mkdir -p downloads/qbittorrent/{completed,incomplete,torrents} && mkdir -p downloads/nzbget/{completed,intermediate,nzb,queue,tmp}
 ```
@@ -152,7 +152,7 @@ Now, in the same directory as your docker `compose.yaml` file create a `.env` fi
 nano .env
 ```
 ```bash
-# General UID/GIU and Timezone
+# General UID/GID and Timezone
 TZ=America/Los_Angeles
 PUID=1000
 PGID=1000
@@ -174,7 +174,7 @@ WIREGUARD_ADDRESSES=ipv4
 SERVER_COUNTRIES=country
 SERVER_CITIES=city 
 
-# Heath check duration
+# Health check duration
 HEALTH_VPN_DURATION_INITIAL=120s
 ```
 
@@ -261,7 +261,7 @@ If you see `dependency failed to start: container gluetun is unhealthy`, follow 
 The default credentials for NZBGet are a username of `nzbget` and a password of `tegbzn6789`. It's strongly recommended to change these default credentials for security reasons. This can be done under _Settings > SECURITY_, then change the ControlUsername and ControlPassword.
 
 #### NZBGet Download Directories
-If following the `/data:/data` directory scheme and used the command to setup the download directories open the qBittorent Web UI and do under _Settings > PATHS_ and change the paths.
+If following the `/data:/data` directory scheme and used the command to setup the download directories open the qBittorrent Web UI and do under _Settings > PATHS_ and change the paths.
 
 _MainDir:_ `/data/downloads/nzbget`
 
@@ -284,7 +284,7 @@ docker container logs qbittorrent
 Now, go to your settings and setup a new username and password under _WebUI > Authentication_.
 
 #### Qbittorrent Download Directories
-If following the `/data:/data` directory scheme and used the command to setup the download directories open the qBittorent Web UI and do under _Settings > Downloads_ and change the paths.
+If following the `/data:/data` directory scheme and used the command to setup the download directories open the qBittorrent Web UI and do under _Settings > Downloads_ and change the paths.
 
 _Default Save Path:_ `/data/downloads/qbittorrent/completed`
 

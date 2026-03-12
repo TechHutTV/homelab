@@ -196,7 +196,7 @@ n8n --version
 ```
 
 # n8n compose.yml (switching away from)
-This is running without ssl behind NetBird. Considering setting up ssl if not useing wireguard.
+This is running without ssl behind NetBird. Considering setting up ssl if not using wireguard.
 ```
 services:
     n8n:

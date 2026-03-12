@@ -4,7 +4,7 @@ Work in progress. Dedicated Plex Stuff
 ```
 sudo systemctl stop plexmediaserver
 ```
-Stop the Plex service. `sudo systemctl plexmediaserver stop` Edit the Plex service configuration to reflext your user. `sudo systemctl edit plexmediaserver` Now add the user and group to your main user. You can run the `id` command if you're unsure.
+Stop the Plex service. `sudo systemctl plexmediaserver stop` Edit the Plex service configuration to reflect your user. `sudo systemctl edit plexmediaserver` Now add the user and group to your main user. You can run the `id` command if you're unsure.
 ```
 [Service]
 User=user

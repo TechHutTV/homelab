@@ -13,12 +13,12 @@ First, download the [telegraf.conf](https://github.com/TechHutTV/homelab/blob/ma
   bucket = "unraidbucket"
 ```
 
-In your appdata directory on Unraid make a new folder called telegraf. Within your telegraf folder, upload the edited telegraf.conf file. The file path will look like this if you are following the default Unriad setup. ```/mnt/user/appdata/telegraf/telegraf.conf ```
+In your appdata directory on Unraid make a new folder called telegraf. Within your telegraf folder, upload the edited telegraf.conf file. The file path will look like this if you are following the default Unraid setup. ```/mnt/user/appdata/telegraf/telegraf.conf ```
 
 
-## Setting up the conatiner
+## Setting up the container
 
-Use the official Telegraf container from the Applications page. We will be using the [golift/telegraf](https://hub.docker.com/golift/telegraf) in place of the office image as it includes some packages needed for full monitoring of the hardware.
+Use the official Telegraf container from the Applications page. We will be using the [golift/telegraf](https://hub.docker.com/golift/telegraf) in place of the official image as it includes some packages needed for full monitoring of the hardware.
 ### Change the following:
 
 Repository: ```golift/telegraf```
@@ -37,11 +37,11 @@ Extra Argument: ```--user telegraf:$(stat -c '%g' /var/run/docker.sock)```
 
 Other than these adjustments, everything can be left as is included in the template. Check over everything and click Apply. Go to your Docker page in Unraid and check to see if the container is running. Check the log files to ensure there are no issues and that all the plugins are properly active.
 
-If there are no issues, we check to see if the data is being properly exported to InfluxDB 2. Head over to your dashboard and open the bucket you created for Unraid. It should look like the picture below. Go through the data and make sure nothing is missing. In my installation, I have 7 tags for Docker data under the _messurements ID and another tag for every plugin I have enabled.
+If there are no issues, we check to see if the data is being properly exported to InfluxDB 2. Head over to your dashboard and open the bucket you created for Unraid. It should look like the picture below. Go through the data and make sure nothing is missing. In my installation, I have 7 tags for Docker data under the _measurements ID and another tag for every plugin I have enabled.
 
 ![Unraid data preview in InfluxDB 2](https://github.com/TechHutTV/homelab/blob/main/monitoring/unraid/unraid-data-preview.png?raw=true)
 
-## Nivida Support
+## Nvidia Support
 
 I have not been able to test this, but feel free to. The plugin for this is commented out in telegraf.conf. If you want to use a NVidia card, you must first [install the drivers](https://forums.unraid.net/topic/98978-plugin-nvidia-driver/) thanks to [@ich777](https://forums.unraid.net/profile/72388-ich777/).
 

@@ -4,7 +4,7 @@
   - [LocalTuya](https://github.com/TechHutTV/homelab/tree/main/homeassistant/localtuya)
   - [Zigbee](https://github.com/TechHutTV/homelab/tree/main/homeassistant/zigbee)
 
-Custom card compents used; [bubble card](https://github.com/Clooos/Bubble-Card), [mini graph card](https://github.com/kalkih/mini-graph-card).
+Custom card components used; [bubble card](https://github.com/Clooos/Bubble-Card), [mini graph card](https://github.com/kalkih/mini-graph-card).
 
 ## Pi-Hole
 

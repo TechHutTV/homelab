@@ -3,18 +3,18 @@
   - [Dashboard](https://github.com/TechHutTV/homelab/tree/main/homeassistant/dashboard)
   - [LocalTuya](https://github.com/TechHutTV/homelab/tree/main/homeassistant/localtuya)
   - [__Zigbee__](https://github.com/TechHutTV/homelab/tree/main/homeassistant/zigbee)
-    - [Seperate ZigbeeMQTT from Home Assistant in Proxmox](https://github.com/TechHutTV/homelab/tree/main/homeassistant/zigbee#seperate-zigbeemqtt-from-home-assistant-in-proxmox)
+    - [Separate ZigbeeMQTT from Home Assistant in Proxmox](https://github.com/TechHutTV/homelab/tree/main/homeassistant/zigbee#separate-zigbeemqtt-from-home-assistant-in-proxmox)
       - [Sonoff Zigbee 3.0 USB Dongle Plus V2 model "ZBDongle-E version"](https://github.com/TechHutTV/homelab/tree/main/homeassistant/zigbee#sonoff-zigbee-30-usb-dongle-plus-v2-model-zbdongle-e-version)
       - [ZigbeeMQTT and Mosquitto](https://github.com/TechHutTV/homelab/tree/main/homeassistant/zigbee#zigbeemqtt-and-mosquitto)
         - [Mosquitto MQTT Broker](https://github.com/TechHutTV/homelab/tree/main/homeassistant/zigbee#mosquitto-mqtt-broker)
         - [ZigbeeMQTT Configuration](https://github.com/TechHutTV/homelab/tree/main/homeassistant/zigbee#zigbeemqtt-configuration)
 
-# Seperate ZigbeeMQTT from Home Assistant in Proxmox
-Within Proxmox VE I have my ZigbeeMQTT and MQTT broker servers seperated from my Home Assistant virtual machine. I found I get slightly better preformance out of my Zigbee devices doing it this way, plus it's easier to backup and feed all my Zigbee devices to a new Home Assistant server if needed.
+# Separate ZigbeeMQTT from Home Assistant in Proxmox
+Within Proxmox VE I have my ZigbeeMQTT and MQTT broker servers separated from my Home Assistant virtual machine. I found I get slightly better performance out of my Zigbee devices doing it this way, plus it's easier to backup and feed all my Zigbee devices to a new Home Assistant server if needed.
 
 ## Sonoff Zigbee 3.0 USB Dongle Plus V2 model "ZBDongle-E version"
 
-This setup is centered around the Zigbee dongle that I purchased. I bought it due to it having decent reviews and it was on sale at the time of purchase. I have not tried anything else so I can't say if anything is better. __Due note__, it comes with outdated firmware that is not supported with current version of ZigbeeMQTT so you will need to update. Luckly, it's a fairly easy process.
+This setup is centered around the Zigbee dongle that I purchased. I bought it due to it having decent reviews and it was on sale at the time of purchase. I have not tried anything else so I can't say if anything is better. __Do note__, it comes with outdated firmware that is not supported with current version of ZigbeeMQTT so you will need to update. Luckily, it's a fairly easy process.
 
 * [YouTube video](https://www.youtube.com/watch?v=r0ihC8Dx3NM&) on how to update the firmware.
 * Firmware: [https://github.com/darkxst/silabs-firmware-builder/tree/main/firmware_builds/zbdonglee](https://github.com/darkxst/silabs-firmware-builder/tree/main/firmware_builds/zbdonglee)
@@ -35,29 +35,29 @@ From there we can pull the following adapter locations
 
 ## ZigbeeMQTT and Mosquitto
 
-For the inital set up I used a [Proxmox Community Helper Script](https://community-scripts.github.io/ProxmoxVE/scripts?id=zigbee2mqtt) to get this going. 
+For the initial setup I used a [Proxmox Community Helper Script](https://community-scripts.github.io/ProxmoxVE/scripts?id=zigbee2mqtt) to get this going. 
 ```bash
 bash -c "$(wget -qLO - https://github.com/community-scripts/ProxmoxVE/raw/main/ct/zigbee2mqtt.sh)"
 ```
-After running this command I chose the advanced setup to ensure the container is privilaged. I also set the IP address as static, but that's optional depending on your network setup. This helper script sets up a systemctl background service to automatically start ZigbeeMQTT when the system starts up. We are going to make some changes so let's ensure the serivce isn't running. Login to the console for our new LXC and run the command to stop the service.
+After running this command I chose the advanced setup to ensure the container is privilaged. I also set the IP address as static, but that's optional depending on your network setup. This helper script sets up a systemctl background service to automatically start ZigbeeMQTT when the system starts up. We are going to make some changes so let's ensure the service isn't running. Login to the console for our new LXC and run the command to stop the service.
 ```bash
 sudo systemctl stop zigbee2mqtt
 ```
 ### Mosquitto MQTT Broker
 
-For ZigbeeMQTT to be able to communicate with Home Assistant we will set up Mosquitto, a MQTT broker. You can set this up as a [Home Assistant addon](https://github.com/home-assistant/addons/blob/master/mosquitto/DOCS.md), it's [own seperate LXC](https://community-scripts.github.io/ProxmoxVE/scripts?id=mqtt), or many other deploylemt methods. I chose to install this on the same LXC that ZigbeeMQTT is running on. Lets install it and make sure it's running.
+For ZigbeeMQTT to be able to communicate with Home Assistant we will set up Mosquitto, a MQTT broker. You can set this up as a [Home Assistant addon](https://github.com/home-assistant/addons/blob/master/mosquitto/DOCS.md), its [own separate LXC](https://community-scripts.github.io/ProxmoxVE/scripts?id=mqtt), or many other deployment methods. I chose to install this on the same LXC that ZigbeeMQTT is running on. Lets install it and make sure it's running.
 
 ```bash
 sudo apt install -y mosquitto
 systemctl status mosquitto
 ```
-Next we can use the built in passwork creation tool to set our password and encrypt it. Use the command below replacing _brandon_ with your username of choice.
+Next we can use the built in password creation tool to set our password and encrypt it. Use the command below replacing _brandon_ with your username of choice.
 
 ```bash
 mosquitto_passwd -c /etc/mosquitto/passwd brandon
 ```
 
-You can run ```cat /etc/mosquitto/passwd``` to view the password encryption. Now lets ensure our configure is setup use nano to create or edit the file and copy the configuration below.
+You can run ```cat /etc/mosquitto/passwd``` to view the password encryption. Now let's ensure our configuration is set up use nano to create or edit the file and copy the configuration below.
 
 ```bash
 nano /etc/mosquitto/conf.d/default.conf
@@ -68,7 +68,7 @@ persistence true
 password_file /etc/mosquitto/passwd
 listener 1883
 ```
-Now lets reload mosquitto and it will be ready to use in ZigbeeMQTT and Home Assistant.
+Now let's reload mosquitto and it will be ready to use in ZigbeeMQTT and Home Assistant.
 
 systemctl restart mosquitto
 
@@ -102,7 +102,7 @@ advanced:
   network_key: GENERATE
   channel: 20
 ```
-Be sure to change you username and password or mqtt and the device id under port. Once the configuration is saved run the service using npm so we can see if there are any errors.
+Be sure to change your username and password for mqtt and the device id under port. Once the configuration is saved run the service using npm so we can see if there are any errors.
 ```bash
 cd /opt/zigbee2mqtt && npm start
 ```
@@ -111,4 +111,4 @@ If there are no errors you can exit the service with ctrl+c and restart the the 
 ```bash
 sudo systemctl restart zigbee2mqtt
 ```
-Once everything is complete you can navigate to the frontend for ZigbeeMQTT and begin adding your devices! For my installation I navigate to ```http://10.0.0.106:9442```. Change your the IP to match yours. For my set up I added this to NGINX Proxy Manager so I just nagivate to ```https://zigbee.hopki.net/```
+Once everything is complete you can navigate to the frontend for ZigbeeMQTT and begin adding your devices! For my installation I navigate to ```http://10.0.0.106:9442```. Change your the IP to match yours. For my set up I added this to NGINX Proxy Manager so I just navigate to ```https://zigbee.hopki.net/```
