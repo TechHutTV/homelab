@@ -1,69 +1,76 @@
 # My Homelab Setup
-Homelab stacks, templates, and more fun resources! This is a *work in progress*. I still have a ton to update and add.
 
-## Navigation
-* [Apps](https://github.com/TechHutTV/homelab/tree/main/apps) - List of all the apps and services.
-* [Automations](https://github.com/TechHutTV/homelab/tree/main/automations) - Making my life easier.
-* [Home Assistant](https://github.com/TechHutTV/homelab/tree/main/homeassistant) - Smart home services and automation.
-* [Media Server](https://github.com/TechHutTV/homelab/tree/main/media) - Plex, Jellyfin, *arr stack, and more.
-* [Server Monitoring](https://github.com/TechHutTV/homelab/tree/main/monitoring) - Graphs and Visualizations for Unraid, Proxmox, and more.
-* [Surveillance System](https://github.com/TechHutTV/homelab/tree/main/surveillance) - Frigate NVR Solution with Coral TPU.
-* [Storage](https://github.com/TechHutTV/homelab/tree/main/storage) - Current Storage and Backup Solution.
-* [Proxy Management](https://github.com/TechHutTV/homelab/tree/main/proxy) - NGINX Proxy Manager, DDNS with Cloudflare, Local Domains, and more.
+This repo contains Docker Compose stacks, configuration templates, and documentation for everything running in my homelab. It spans two servers - an Unraid NAS for media and a Proxmox node for everything else - tied together with Ubiquiti networking, self-hosted cloud services, and a full monitoring stack.
+
+Whether you're looking for a complete Servarr media setup behind a VPN, a Frigate NVR config with Coral TPU, or just want to see how someone else organizes their self-hosted infrastructure, feel free to dig around and use whatever is helpful. This is a *work in progress* - I still have a ton to update and add.
+
+## Table of Contents
+
+* [Apps](apps/) - List of all the apps and services.
+* [Automations](automations/) - n8n workflows and automation.
+* [Cloud](cloud/) - NextCloud, Immich, and self-hosted cloud services.
+* [Home Assistant](homeassistant/) - Smart home services and automation.
+* [Media Server](media/) - Plex, Jellyfin, *arr stack, and more.
+* [Monitoring](monitoring/) - Graphs and visualizations for Unraid, Proxmox, and more.
+* [NetBird](netbird/) - Self-hosted zero-trust networking with PocketID.
+* [Proxy Management](proxy/) - NGINX Proxy Manager, DDNS with Cloudflare, local domains, and more.
+* [Storage](storage/) - Current storage and backup solution.
+* [Surveillance](surveillance/) - Frigate NVR solution with Coral TPU.
 
 ## Hardware
-wip
 
 ### Compute
-#### OpnNAS SL-R12 Pro (Unraid)
-The model I have is an early release press model. I'm not quite sure when they will be ready for sale, but you can learn more [here](https://opnnas.com/#hls). This machine is running Unraid and acts as my main media server. Also includes a Ubuntu VM running NextCloud.
-* [13th Gen Intel® Core™ i5-13500T](https://amzn.to/4qblt9y)
-* [Crucial Pro 96GB DDR5 RAM](https://amzn.to/3Jbh2uD)
-* [x5 Seagate Exos 20TB](https://amzn.to/4nPhn5d) 
-* [x7 Seagate IronWolf 4TB](https://amzn.to/3W1IFt5)
 
-#### Miniforum AI X1 Pro (Proxmox)
-This acts as my Proxmox Node. Running a variety of services including Grafana, NPM, n8n, and other non-media related instances.
-[get it here](https://amzn.to/4n0xTOR)
-* AMD Ryzen AI 9 HX 370
-* 96GB SODIMM DDR5
-* [x2 Western Digital SN580 1TB](https://amzn.to/4hdfHzY) (Mirrored Boot Drives)
+| | OpnNAS SL-R12 Pro | Miniforum AI X1 Pro |
+|---|---|---|
+| **OS** | Unraid | Proxmox |
+| **Role** | Media server, NextCloud VM | Grafana, NPM, n8n, and other services |
+| **CPU** | [Intel Core i5-13500T](https://amzn.to/4qblt9y) | AMD Ryzen AI 9 HX 370 |
+| **RAM** | [Crucial Pro 96GB DDR5](https://amzn.to/3Jbh2uD) | 96GB SODIMM DDR5 |
+| **Storage** | [5x Seagate Exos 20TB](https://amzn.to/4nPhn5d), [7x Seagate IronWolf 4TB](https://amzn.to/3W1IFt5) | [2x WD SN580 1TB NVMe](https://amzn.to/4hdfHzY) (mirrored boot) |
+| **Link** | [learn more](https://opnnas.com/#hls) | [get it here](https://amzn.to/4n0xTOR) |
 
+The OpnNAS is an early release press model - check [their site](https://opnnas.com/#hls) for availability. The Miniforum handles all non-media workloads as a dedicated Proxmox node.
 
 ### Networking
-Now, Ubiquiti sent all this over to me. There is no way I'd be able to afford all this stuff on my own dime, so note that. This setup is crazy overpowered for what I need.
 
-#### UDM Pro Max
-#### USW Pro Max 24 PoE
-#### USW Pro XG 10 PoE
-#### x2 U7 Pro XG
-#### USW Lite 16 PoE
+Ubiquiti sent all of this over to me. There is no way I'd be able to afford all this stuff on my own dime, so note that. This setup is crazy overpowered for what I need.
 
-Other Unifi Devices
-* 2 x 8TB-HDDs
-* 1 x U-Rack-6U-TL
-* 1 x UACC-Cable-Patch-EL-0.15M-W-24
-* 5 x UACC-Cable-Patch-EL-3M-W
-* 2 x UACC-Cable-Patch-EL-15M-W
+| Device | Description |
+|---|---|
+| **UDM Pro Max** | Primary router, gateway, and UniFi Protect NVR with 2x 8TB HDDs for camera storage. |
+| **USW Pro Max 24 PoE** | Main 24-port PoE switch powering cameras and access points. |
+| **USW Pro XG 10 PoE** | 10G aggregation switch for high-bandwidth connections between devices. |
+| **2x U7 Pro XG** | Wi-Fi 7 access points providing wireless coverage. |
+| **USW Lite 16 PoE** | Secondary 16-port PoE switch for additional wired devices. |
+
+<details>
+<summary>Accessories</summary>
+
+* 1x U-Rack-6U-TL
+* 1x UACC-Cable-Patch-EL-0.15M-W-24
+* 5x UACC-Cable-Patch-EL-3M-W
+* 2x UACC-Cable-Patch-EL-15M-W
+
+</details>
 
 ### Security
-Currently have two different systems as I was fully on Reolink for some time, but since Ubiquiti sent over some equipment to try we currently have a mix. 
 
-[https://www.youtube.com/watch?v=2RiiKi4vjJc](https://www.youtube.com/watch?v=2RiiKi4vjJc)
+Currently running two camera systems - originally fully Reolink, but added UniFi Protect after Ubiquiti sent equipment to try. See the [video overview](https://www.youtube.com/watch?v=2RiiKi4vjJc).
 
-#### Reolink NVR Kit
-This is great if you're trying to save money and have a simple PoE plug and play solution. This does add difficulties to manage as all the streams are under a single device and kit camera NEED the NVR to function. Some kit cameras may have more features so check the specific features of the camera model in the kit. You can probably find a great deal used. Cameras are the B400s.
-* [REOLINK 8CH 5MP](https://amzn.to/4dulGgG)
-* [REOLINK 16CH 12MP](https://amzn.to/4d9YaWz) (my kit)
+| Camera | Details |
+|---|---|
+| **3x UVC-G6-Turret-W** | Connected to the UDM Pro Max via UniFi Protect. Planning to slowly transition fully to Ubiquiti as budget allows. |
+| **Reolink PoE** | [RLC-1224A 12MP](https://amzn.to/4d6BuGJ) and [4K Floodlight](https://amzn.to/4ceRKnM). Great for the Reolink ecosystem and 3rd party services like Frigate. |
+| **Reolink NVR Kit** | [16CH 12MP](https://amzn.to/4d9YaWz) (my kit) - simple PoE plug-and-play solution. Kit cameras require the NVR to function. Budget option: [8CH 5MP](https://amzn.to/4dulGgG). |
 
-#### Reolink PoE
-I've had no issues with these. Great for the Reolink ecosystem and using 3rd party services such as Frigate.
-* [Reolink RLC-1224A 12MP UHD PoE](https://amzn.to/4d6BuGJ)
-* [Reolink 4K Floodlight](https://amzn.to/4ceRKnM)
+### Other Devices
 
+* **Raspberry Pi 5** (PoE HAT) - Twingate connector and Cloudflare DDNS updater.
+* **Raspberry Pi 4** - OctoPrint for 3D printer management.
+* **VPS** ([Hostinger KVM](https://www.hostinger.com/)) - Self-hosted NetBird management server.
 
-#### x3 UVC-G6-Turret-W
-These are running hooked up to the Dream Machine Pro Max. I like it enough I will be slowly switching to Unifi stuff as I can afford it.
+> Previous hardware? See [old_hardware.md](old_hardware.md).
 
 ## Stars
 
