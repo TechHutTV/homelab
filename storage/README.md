@@ -349,6 +349,13 @@ Windows 10/11 use WS-Discovery instead of NetBIOS. Make sure `wsdd` is installed
 sudo systemctl status wsdd
 ```
 
+If your Windows machine is on a different subnet than the server, shares won't auto-appear under "Network" in File Explorer. You'll need to connect manually by entering `\\SERVER-IP\` in the File Explorer address bar. You can then right-click a share and select "Map network drive" to make it persistent.
+
+To verify what shares the server is advertising from Windows, run:
+```powershell
+net view \\SERVER-IP
+```
+
 ### "The specified network name is no longer available"
 This usually means the connection is being blocked. Check these in order:
 
@@ -381,7 +388,7 @@ This usually means the connection is being blocked. Check these in order:
    ```
 
 ### "Access Denied" or "Bad Password"
-Verify the Samba user exists and password is set:
+Make sure you created a dedicated Samba user — root will not work. Verify the user exists and the password is set:
 ```bash
 sudo pdbedit -L  # List Samba users
 sudo smbpasswd -a youruser  # Add/reset password
