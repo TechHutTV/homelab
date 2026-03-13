@@ -23,7 +23,15 @@ My current setup involves a single server with x3 NVME drives and a bunch of har
 
 ### Post Install Steps (optional)
 
-#### Disable Enterprise Repositories
+#### Proxmox Community Post-Install Script
+The quickest way to handle post-install tasks is with the [Proxmox VE Post Install script](https://community-scripts.github.io/ProxmoxVE/scripts?id=post-pve-install) from the community scripts project. Run this within the Proxmox shell:
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/misc/post-pve-install.sh)"
+```
+This will disable enterprise repos, add the free repos, remove the subscription nag, and update your system. It will walk you through each step interactively.
+
+#### Manual: Disable Enterprise Repositories
+If you prefer to do it manually:
 1. Navigate to _Node > Repositories_ Disable the enterprise repositories.
 2. Now click Add and enable the no subscription repository. Finally, go _Updates > Refresh_.
 3. Upgrade your system by clicking _Upgrade_ above the repository setting page.
