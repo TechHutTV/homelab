@@ -95,9 +95,12 @@ Now, edit the `fstab` file and add the following lines editing them to match you
 sudo nano /etc/fstab
 ```
 ```
-//10.0.0.100/data /data cifs uid=1000,gid=1000,username=user,password=password,iocharset=utf8 0 0
+//10.0.0.100/data /data cifs x-systemd.automount,uid=1000,gid=1000,username=user,password=password,iocharset=utf8 0 0
 ```
 Storing the user credentials within this file isn't the best idea. Check out [this question](https://unix.stackexchange.com/questions/178187/how-to-edit-etc-fstab-properly-for-network-drive) on Stack Exchange to learn more.
+
+> [!TIP]
+> The `x-systemd.automount` option mounts the share on first access instead of at boot. This prevents `mount error(111): Connection refused` errors caused by fstab running before the network is ready.
 
 Now reload the configuration and mount the shares with the following commands.
 ```bash

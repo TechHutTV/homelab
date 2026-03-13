@@ -49,8 +49,11 @@ sudo mkdir -p /data
 sudo nano /etc/fstab
 ```
 ```
-//10.0.0.100/data /data cifs uid=1000,gid=1000,credentials=/etc/samba/credentials,iocharset=utf8 0 0
+//10.0.0.100/data /data cifs x-systemd.automount,uid=1000,gid=1000,credentials=/etc/samba/credentials,iocharset=utf8 0 0
 ```
+
+> [!TIP]
+> The `x-systemd.automount` option mounts the share on first access instead of at boot. This prevents `mount error(111): Connection refused` errors caused by fstab running before the network is ready.
 
 Now reload the configuration and mount the shares with the following commands.
 ```bash

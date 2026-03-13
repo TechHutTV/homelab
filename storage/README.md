@@ -325,7 +325,7 @@ sudo mount -t cifs //SERVER-IP/data /mnt/data -o username=youruser
 
 2. Add to `/etc/fstab`:
    ```
-   //SERVER-IP/data /mnt/data cifs credentials=/etc/samba/credentials,uid=1000,gid=1000 0 0
+   //SERVER-IP/data /mnt/data cifs x-systemd.automount,credentials=/etc/samba/credentials,uid=1000,gid=1000 0 0
    ```
 
 3. Mount it:
