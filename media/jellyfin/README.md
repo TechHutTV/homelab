@@ -21,20 +21,39 @@ docker
 ```
 
 ### Network Share (VM)
-I generally install Docker on the same LXC that I have my media server on as well as all my data. This, however, is [not recommended by Proxmox](https://www.reddit.com/r/Proxmox/comments/1afslhs/should_i_use_lxc_or_vm_for_running_docker/). Going forward you should create a separate VM for all your docker containers and mount the data directory we created in the storage guide with the share. 
+I generally install Docker on the same LXC that I have my media server on as well as all my data. This, however, is [not recommended by Proxmox](https://www.reddit.com/r/Proxmox/comments/1afslhs/should_i_use_lxc_or_vm_for_running_docker/). Going forward you should create a separate VM for all your docker containers and mount the data directory we created in the storage guide with the share.
+
+> [!IMPORTANT]
+> This assumes you already have a working Samba share on your server. If you haven't set that up yet, follow the [SMB share guide](https://github.com/TechHutTV/homelab/tree/main/storage#creating-smb-shares) first. If you get `mount error(113): No route to host`, verify the Samba server is running and reachable from your VM.
 
 Within the VM install `cifs-utils`
 ```bash
 sudo apt install cifs-utils
 ```
-Now, edit the `fstab` file and add the following lines editing them to match your information.
+
+Create a credentials file so your password isn't stored in plain text in fstab:
 ```bash
+sudo nano /etc/samba/credentials
+```
+```
+username=youruser
+password=yourpassword
+```
+```bash
+sudo chmod 600 /etc/samba/credentials
+```
+
+Create the mount point and edit fstab:
+```bash
+sudo mkdir -p /data
 sudo nano /etc/fstab
 ```
 ```
-//10.0.0.100/data /data cifs uid=1000,gid=1000,username=user,password=password,iocharset=utf8 0 0
+//10.0.0.100/data /data cifs x-systemd.automount,uid=1000,gid=1000,credentials=/etc/samba/credentials,iocharset=utf8 0 0
 ```
-Storing the user credentials within this file isn't the best idea. Check out [this question](https://unix.stackexchange.com/questions/178187/how-to-edit-etc-fstab-properly-for-network-drive) on Stack Exchange to learn more.
+
+> [!TIP]
+> The `x-systemd.automount` option mounts the share on first access instead of at boot. This prevents `mount error(111): Connection refused` errors caused by fstab running before the network is ready.
 
 Now reload the configuration and mount the shares with the following commands.
 ```bash
@@ -88,6 +107,9 @@ services:
       - 1900:1900/udp #Client Discovery
     restart: unless-stopped
 ```
+
+> [!TIP]
+> **Autodiscovery not working?** Docker's port forwarding doesn't handle UDP broadcast well, so clients may not automatically find your Jellyfin server. You can always connect manually via `http://SERVER-IP:8096`. If you want autodiscovery to work, switch to host networking by replacing the `ports` section with `network_mode: host`.
 
 ### System Installation (NOT Recommended)
 Run the following command on your Ubuntu system, VM, or Proxmox LXC. You can learn about how to verify the script integrity [here](https://jellyfin.org/docs/general/installation/linux/).

@@ -23,7 +23,15 @@ My current setup involves a single server with x3 NVME drives and a bunch of har
 
 ### Post Install Steps (optional)
 
-#### Disable Enterprise Repositories
+#### Proxmox Community Post-Install Script
+The quickest way to handle post-install tasks is with the [Proxmox VE Post Install script](https://community-scripts.github.io/ProxmoxVE/scripts?id=post-pve-install) from the community scripts project. Run this within the Proxmox shell:
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/misc/post-pve-install.sh)"
+```
+This will disable enterprise repos, add the free repos, remove the subscription nag, and update your system. It will walk you through each step interactively.
+
+#### Manual: Disable Enterprise Repositories
+If you prefer to do it manually:
 1. Navigate to _Node > Repositories_ Disable the enterprise repositories.
 2. Now click Add and enable the no subscription repository. Finally, go _Updates > Refresh_.
 3. Upgrade your system by clicking _Upgrade_ above the repository setting page.
@@ -66,6 +74,14 @@ Now check to make sure everything is enabled.
 dmesg | grep -e DMAR -e IOMMU
 dmesg | grep 'remapping'
 ```
+
+> [!NOTE]
+> **Newer Intel iGPUs (N100/N150 series):** If you see `DMAR: Skip IOMMU disabling for graphics` in the dmesg output or `renderD128` is missing from `/dev/dri/`, your kernel may be too old. The Intel N150 iGPU (8086:46d4) requires kernel 6.9+ for proper driver support. Proxmox's default kernel may be older, but you can install a newer one:
+> ```bash
+> apt install pve-kernel-6.14
+> ```
+> After rebooting, verify with `ls /dev/dri/` — you should see `card1` and `renderD128`. See [issue #44](https://github.com/TechHutTV/homelab/issues/44) for more details and alternative approaches using LXC passthrough.
+
 Learn about enabling PCI Passthrough [here](https://pve.proxmox.com/wiki/PCI_Passthrough)
 
 ### Create ZFS Pools
@@ -119,6 +135,8 @@ In our new LXC we first need to run some general updates and user creation.
    sudo chown -R youruser:youruser /data
    sudo chown -R youruser:youruser /docker
    ```
+   > [!NOTE]
+   > If you're using ext4 (e.g., a single drive setup without ZFS), you may see `chown: cannot read directory 'lost+found': Permission denied`. This is normal — `lost+found` is a system directory. You can safely remove it with `sudo rm -rf /docker/lost+found` or ignore the error.
 
 5. Install Samba
    ```bash
@@ -195,7 +213,13 @@ In our new LXC we first need to run some general updates and user creation.
     sudo systemctl enable wsdd
     sudo systemctl start wsdd
     ```
-> For certain linux distributions (mainly Ubuntu 24+ and Debian), install the wsdd-server package instead as wsdd doesn't include the service in those anymore.
+    > [!NOTE]
+    > On Ubuntu 24+ and Debian, the `wsdd` package may not include the service or may not be available. Install `wsdd-server` instead:
+    > ```bash
+    > sudo apt install wsdd-server
+    > sudo systemctl enable wsdd-server
+    > sudo systemctl start wsdd-server
+    > ```
 
 11. Allow services on firewall if you run into any issues.
     ```bash
@@ -301,7 +325,7 @@ sudo mount -t cifs //SERVER-IP/data /mnt/data -o username=youruser
 
 2. Add to `/etc/fstab`:
    ```
-   //SERVER-IP/data /mnt/data cifs credentials=/etc/samba/credentials,uid=1000,gid=1000 0 0
+   //SERVER-IP/data /mnt/data cifs x-systemd.automount,credentials=/etc/samba/credentials,uid=1000,gid=1000 0 0
    ```
 
 3. Mount it:
@@ -325,6 +349,13 @@ sudo mount -t cifs //SERVER-IP/data /mnt/data -o username=youruser
 Windows 10/11 use WS-Discovery instead of NetBIOS. Make sure `wsdd` is installed and running:
 ```bash
 sudo systemctl status wsdd
+```
+
+If your Windows machine is on a different subnet than the server, shares won't auto-appear under "Network" in File Explorer. You'll need to connect manually by entering `\\SERVER-IP\` in the File Explorer address bar. You can then right-click a share and select "Map network drive" to make it persistent.
+
+To verify what shares the server is advertising from Windows, run:
+```powershell
+net view \\SERVER-IP
 ```
 
 ### "The specified network name is no longer available"
@@ -359,14 +390,14 @@ This usually means the connection is being blocked. Check these in order:
    ```
 
 ### "Access Denied" or "Bad Password"
-Verify the Samba user exists and password is set:
+Make sure you created a dedicated Samba user — root will not work. Verify the user exists and the password is set:
 ```bash
 sudo pdbedit -L  # List Samba users
 sudo smbpasswd -a youruser  # Add/reset password
 ```
 
 ### Can connect via IP but not hostname
-Install and enable wsdd, then verify it's running:
+Install and enable wsdd (or `wsdd-server` on Ubuntu 24+/Debian), then verify it's running:
 ```bash
 sudo apt install wsdd
 sudo systemctl enable --now wsdd

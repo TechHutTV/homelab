@@ -35,6 +35,7 @@ Make sure to review everything here and if you have any issues please submit it 
       + [qBittorrent Login Credentials](#qbittorrent-login-credentials)
       + [Download Directories Mapping](#qbittorrent-download-directories)
       + [qBittorrent Stalls with VPN Timeout](#qbittorrent-stalls-with-vpn-timeout)
+  - [FlareSolverr](#flaresolverr)
   - [*arr Apps](#arr-apps)
 * [Server Monitoring](https://github.com/TechHutTV/homelab/tree/main/monitoring)
 * [Surveillance System](https://github.com/TechHutTV/homelab/tree/main/surveillance)
@@ -94,9 +95,12 @@ Now, edit the `fstab` file and add the following lines editing them to match you
 sudo nano /etc/fstab
 ```
 ```
-//10.0.0.100/data /data cifs uid=1000,gid=1000,username=user,password=password,iocharset=utf8 0 0
+//10.0.0.100/data /data cifs x-systemd.automount,uid=1000,gid=1000,username=user,password=password,iocharset=utf8 0 0
 ```
 Storing the user credentials within this file isn't the best idea. Check out [this question](https://unix.stackexchange.com/questions/178187/how-to-edit-etc-fstab-properly-for-network-drive) on Stack Exchange to learn more.
+
+> [!TIP]
+> The `x-systemd.automount` option mounts the share on first access instead of at boot. This prevents `mount error(111): Connection refused` errors caused by fstab running before the network is ready.
 
 Now reload the configuration and mount the shares with the following commands.
 ```bash
@@ -171,8 +175,9 @@ WIREGUARD_PRESHARED_KEY=key
 WIREGUARD_ADDRESSES=ipv4
 
 # Optional location variables, comma separated list, no spaces after commas, make sure it matches the config you created
-SERVER_COUNTRIES=country
-SERVER_CITIES=city 
+# NOTE: These can cause connection failures with some providers. Remove or comment out if Gluetun won't connect.
+#SERVER_COUNTRIES=country
+#SERVER_CITIES=city
 
 # Health check duration
 HEALTH_VPN_DURATION_INITIAL=120s
@@ -250,8 +255,22 @@ If you see `dependency failed to start: container gluetun is unhealthy`, follow 
 
 1. **Check the logs**: `docker logs gluetun`
 2. **Verify .env file**: Ensure ALL placeholder values (key, port, country, city) are replaced with your actual VPN configuration
-3. **Verify /dev/net/tun exists**: Run `ls -la /dev/net/tun`
-4. **For LXC users**: Enable TUN device passthrough in your container config
+3. **Remove `SERVER_COUNTRIES` and `SERVER_CITIES`**: These optional variables can cause connection failures with some providers. Comment them out or remove them from your `.env` file and try again.
+4. **Verify /dev/net/tun exists**: Run `ls -la /dev/net/tun`
+5. **For LXC users**: Enable TUN device passthrough in your container config
+
+### Gluetun DNS Timeout / i/o Timeout
+
+If Gluetun logs show repeated `i/o timeout` errors like `dial tcp 1.1.1.1:853: i/o timeout`, the VPN tunnel has lost connectivity. Try the following:
+
+1. **Reset Gluetun state**: Stop the stack, delete the `gluetun` folder, and recompose:
+   ```bash
+   docker compose down
+   rm -rf ./gluetun
+   docker compose up -d
+   ```
+2. **Check your VPN provider's server status**: The server you selected may be down or overloaded. Try a different server.
+3. **Try a different VPN protocol**: Some providers (e.g., PIA) may work better with OpenVPN than WireGuard. Check the [Gluetun provider docs](https://github.com/qdm12/gluetun-wiki/tree/main/setup/providers) for your specific provider's recommended setup.
 
 ## Download Clients
 
@@ -270,6 +289,17 @@ _DestDir:_ `${MainDir}/completed`
 _InterDir:_ `${MainDir}/intermediate`
 
 And keep everything else as is.
+
+#### NZBGet with Network Shares (NAS)
+If your `/data` directory is a mounted network share (e.g., Synology, TrueNAS, Unraid), NZBGet can fill up your VM's local disk if the NAS goes offline or enters standby. NZBGet will create the download directories locally when it can't reach the share, quickly consuming all available space and causing other services to fail.
+
+To prevent this, set `InterDir` to a **local path** on the VM (not on the network share) so downloads happen locally first, and only the final move goes to the NAS:
+
+_InterDir:_ `/docker/nzbget/intermediate` (local to VM)
+
+_DestDir:_ `${MainDir}/completed` (on network share)
+
+If your VM disk does fill up, stop the stack, remove the locally created directories, bring the NAS back online, and restart.
 
 #### Fix directory does not appear to exist inside the container error
 This error may appear within Sonarr and Radarr. Once NZBGet is setup go to settings and under **INCOMING NZBS** change the **AppendCategoryDir** to **No**. This will prevent some potential mapping issues and save on unnecessary directories.
@@ -328,6 +358,19 @@ Next we need to add a health check and label to our `qbittorrent` container. We 
     ...
 ```
 Relevant Resources: [DBTech video on deunhealth](https://www.youtube.com/watch?v=Oeo-mrtwRgE), [gluetun/issues/2442](https://github.com/qdm12/gluetun/issues/2442) and [gluetun/issues/1277](https://github.com/qdm12/gluetun/issues/1277#issuecomment-1352009151)
+
+## FlareSolverr
+
+[FlareSolverr](https://github.com/FlareSolverr/FlareSolverr) is a proxy server that bypasses Cloudflare and DDoS-GUARD protection on indexers. Some torrent and usenet indexers use Cloudflare anti-bot challenges which prevent Prowlarr from accessing them. FlareSolverr runs a headless browser to solve these challenges automatically.
+
+It's included in the `compose.yaml` and routed through Gluetun like the rest of the stack. To connect it to Prowlarr:
+
+1. Open Prowlarr and go to _Settings > Indexers_.
+2. Click the **+** button under **Indexer Proxies** and select **FlareSolverr**.
+3. Set the **Host** to `http://localhost:8191` (since it shares the Gluetun network).
+4. Click **Test** then **Save**.
+
+Once added, Prowlarr will automatically route requests through FlareSolverr for indexers that require it.
 
 ## *arr Apps
 
