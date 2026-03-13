@@ -89,8 +89,8 @@ Now on your VPS, create a directory for PocketID:
 
 ```bash
 cd ~
-mkdir pocketid
-cd pocketid
+mkdir services
+cd services
 ```
 
 ### Generate Encryption Key
