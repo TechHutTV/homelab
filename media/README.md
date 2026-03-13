@@ -287,6 +287,17 @@ _InterDir:_ `${MainDir}/intermediate`
 
 And keep everything else as is.
 
+#### NZBGet with Network Shares (NAS)
+If your `/data` directory is a mounted network share (e.g., Synology, TrueNAS, Unraid), NZBGet can fill up your VM's local disk if the NAS goes offline or enters standby. NZBGet will create the download directories locally when it can't reach the share, quickly consuming all available space and causing other services to fail.
+
+To prevent this, set `InterDir` to a **local path** on the VM (not on the network share) so downloads happen locally first, and only the final move goes to the NAS:
+
+_InterDir:_ `/docker/nzbget/intermediate` (local to VM)
+
+_DestDir:_ `${MainDir}/completed` (on network share)
+
+If your VM disk does fill up, stop the stack, remove the locally created directories, bring the NAS back online, and restart.
+
 #### Fix directory does not appear to exist inside the container error
 This error may appear within Sonarr and Radarr. Once NZBGet is setup go to settings and under **INCOMING NZBS** change the **AppendCategoryDir** to **No**. This will prevent some potential mapping issues and save on unnecessary directories.
 
