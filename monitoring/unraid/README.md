@@ -29,9 +29,9 @@ This container provides a telegraf docker image with added tools for monitoring 
 
 ### Add the following:
 
-Extra Parameters: ```/bin/bash -c "/entrypoint.sh telegraf"```
+Extra Parameters: ```--user telegraf:$(stat -c '%g' /var/run/docker.sock)```
 
-Extra Argument: ```--user telegraf:$(stat -c '%g' /var/run/docker.sock)```
+Extra Argument: ```/bin/bash -c "/entrypoint.sh telegraf"```
 
 ### Start and verify
 
