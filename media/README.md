@@ -172,8 +172,9 @@ WIREGUARD_PRESHARED_KEY=key
 WIREGUARD_ADDRESSES=ipv4
 
 # Optional location variables, comma separated list, no spaces after commas, make sure it matches the config you created
-SERVER_COUNTRIES=country
-SERVER_CITIES=city 
+# NOTE: These can cause connection failures with some providers. Remove or comment out if Gluetun won't connect.
+#SERVER_COUNTRIES=country
+#SERVER_CITIES=city
 
 # Health check duration
 HEALTH_VPN_DURATION_INITIAL=120s
@@ -251,8 +252,22 @@ If you see `dependency failed to start: container gluetun is unhealthy`, follow 
 
 1. **Check the logs**: `docker logs gluetun`
 2. **Verify .env file**: Ensure ALL placeholder values (key, port, country, city) are replaced with your actual VPN configuration
-3. **Verify /dev/net/tun exists**: Run `ls -la /dev/net/tun`
-4. **For LXC users**: Enable TUN device passthrough in your container config
+3. **Remove `SERVER_COUNTRIES` and `SERVER_CITIES`**: These optional variables can cause connection failures with some providers. Comment them out or remove them from your `.env` file and try again.
+4. **Verify /dev/net/tun exists**: Run `ls -la /dev/net/tun`
+5. **For LXC users**: Enable TUN device passthrough in your container config
+
+### Gluetun DNS Timeout / i/o Timeout
+
+If Gluetun logs show repeated `i/o timeout` errors like `dial tcp 1.1.1.1:853: i/o timeout`, the VPN tunnel has lost connectivity. Try the following:
+
+1. **Reset Gluetun state**: Stop the stack, delete the `gluetun` folder, and recompose:
+   ```bash
+   docker compose down
+   rm -rf ./gluetun
+   docker compose up -d
+   ```
+2. **Check your VPN provider's server status**: The server you selected may be down or overloaded. Try a different server.
+3. **Try a different VPN protocol**: Some providers (e.g., PIA) may work better with OpenVPN than WireGuard. Check the [Gluetun provider docs](https://github.com/qdm12/gluetun-wiki/tree/main/setup/providers) for your specific provider's recommended setup.
 
 ## Download Clients
 
