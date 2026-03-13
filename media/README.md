@@ -35,6 +35,7 @@ Make sure to review everything here and if you have any issues please submit it 
       + [qBittorrent Login Credentials](#qbittorrent-login-credentials)
       + [Download Directories Mapping](#qbittorrent-download-directories)
       + [qBittorrent Stalls with VPN Timeout](#qbittorrent-stalls-with-vpn-timeout)
+  - [FlareSolverr](#flaresolverr)
   - [*arr Apps](#arr-apps)
 * [Server Monitoring](https://github.com/TechHutTV/homelab/tree/main/monitoring)
 * [Surveillance System](https://github.com/TechHutTV/homelab/tree/main/surveillance)
@@ -328,6 +329,19 @@ Next we need to add a health check and label to our `qbittorrent` container. We 
     ...
 ```
 Relevant Resources: [DBTech video on deunhealth](https://www.youtube.com/watch?v=Oeo-mrtwRgE), [gluetun/issues/2442](https://github.com/qdm12/gluetun/issues/2442) and [gluetun/issues/1277](https://github.com/qdm12/gluetun/issues/1277#issuecomment-1352009151)
+
+## FlareSolverr
+
+[FlareSolverr](https://github.com/FlareSolverr/FlareSolverr) is a proxy server that bypasses Cloudflare and DDoS-GUARD protection on indexers. Some torrent and usenet indexers use Cloudflare anti-bot challenges which prevent Prowlarr from accessing them. FlareSolverr runs a headless browser to solve these challenges automatically.
+
+It's included in the `compose.yaml` and routed through Gluetun like the rest of the stack. To connect it to Prowlarr:
+
+1. Open Prowlarr and go to _Settings > Indexers_.
+2. Click the **+** button under **Indexer Proxies** and select **FlareSolverr**.
+3. Set the **Host** to `http://localhost:8191` (since it shares the Gluetun network).
+4. Click **Test** then **Save**.
+
+Once added, Prowlarr will automatically route requests through FlareSolverr for indexers that require it.
 
 ## *arr Apps
 
