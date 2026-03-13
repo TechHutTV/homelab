@@ -135,6 +135,8 @@ In our new LXC we first need to run some general updates and user creation.
    sudo chown -R youruser:youruser /data
    sudo chown -R youruser:youruser /docker
    ```
+   > [!NOTE]
+   > If you're using ext4 (e.g., a single drive setup without ZFS), you may see `chown: cannot read directory 'lost+found': Permission denied`. This is normal — `lost+found` is a system directory. You can safely remove it with `sudo rm -rf /docker/lost+found` or ignore the error.
 
 5. Install Samba
    ```bash
