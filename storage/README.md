@@ -203,7 +203,13 @@ In our new LXC we first need to run some general updates and user creation.
     sudo systemctl enable wsdd
     sudo systemctl start wsdd
     ```
-> For certain linux distributions (mainly Ubuntu 24+ and Debian), install the wsdd-server package instead as wsdd doesn't include the service in those anymore.
+    > [!NOTE]
+    > On Ubuntu 24+ and Debian, the `wsdd` package may not include the service or may not be available. Install `wsdd-server` instead:
+    > ```bash
+    > sudo apt install wsdd-server
+    > sudo systemctl enable wsdd-server
+    > sudo systemctl start wsdd-server
+    > ```
 
 11. Allow services on firewall if you run into any issues.
     ```bash
@@ -374,7 +380,7 @@ sudo smbpasswd -a youruser  # Add/reset password
 ```
 
 ### Can connect via IP but not hostname
-Install and enable wsdd, then verify it's running:
+Install and enable wsdd (or `wsdd-server` on Ubuntu 24+/Debian), then verify it's running:
 ```bash
 sudo apt install wsdd
 sudo systemctl enable --now wsdd
