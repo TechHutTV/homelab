@@ -74,6 +74,14 @@ Now check to make sure everything is enabled.
 dmesg | grep -e DMAR -e IOMMU
 dmesg | grep 'remapping'
 ```
+
+> [!NOTE]
+> **Newer Intel iGPUs (N100/N150 series):** If you see `DMAR: Skip IOMMU disabling for graphics` in the dmesg output or `renderD128` is missing from `/dev/dri/`, your kernel may be too old. The Intel N150 iGPU (8086:46d4) requires kernel 6.9+ for proper driver support. Proxmox's default kernel may be older, but you can install a newer one:
+> ```bash
+> apt install pve-kernel-6.14
+> ```
+> After rebooting, verify with `ls /dev/dri/` — you should see `card1` and `renderD128`. See [issue #44](https://github.com/TechHutTV/homelab/issues/44) for more details and alternative approaches using LXC passthrough.
+
 Learn about enabling PCI Passthrough [here](https://pve.proxmox.com/wiki/PCI_Passthrough)
 
 ### Create ZFS Pools
