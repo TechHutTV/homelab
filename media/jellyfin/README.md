@@ -105,6 +105,9 @@ services:
     restart: unless-stopped
 ```
 
+> [!TIP]
+> **Autodiscovery not working?** Docker's port forwarding doesn't handle UDP broadcast well, so clients may not automatically find your Jellyfin server. You can always connect manually via `http://SERVER-IP:8096`. If you want autodiscovery to work, switch to host networking by replacing the `ports` section with `network_mode: host`.
+
 ### System Installation (NOT Recommended)
 Run the following command on your Ubuntu system, VM, or Proxmox LXC. You can learn about how to verify the script integrity [here](https://jellyfin.org/docs/general/installation/linux/).
 ```bash
