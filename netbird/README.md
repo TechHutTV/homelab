@@ -100,7 +100,7 @@ PocketID requires an encryption key to secure sensitive data. Generate one and s
 ```bash
 mkdir -p pocket-id/key
 openssl rand -base64 32 > pocket-id/key/encryption_key
-chmod 600 pocket-id/key/encryption_key
+chmod 644 pocket-id/key/encryption_key
 ```
 
 ### Running Pocket ID with the NetBird Client
