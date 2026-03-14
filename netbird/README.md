@@ -98,9 +98,9 @@ cd services
 PocketID requires an encryption key to secure sensitive data. Generate one and store it in a file:
 
 ```bash
-mkdir key
-openssl rand -base64 32 > key/encryption_key
-chmod 644 key/encryption_key
+mkdir -p pocket-id/key
+openssl rand -base64 32 > pocket-id/key/encryption_key
+chmod 600 pocket-id/key/encryption_key
 ```
 
 ### Running Pocket ID with the NetBird Client
@@ -126,8 +126,8 @@ services:
       - ENCRYPTION_KEY_FILE=/key/encryption_key
       - TRUST_PROXY=true
     volumes:
-      - "./data:/app/data"
-      - "./key:/key"
+      - "./pocket-id/data:/app/data"
+      - "./pocket-id/key:/key"
     networks:
       services:
         ipv4_address: 172.28.10.10
