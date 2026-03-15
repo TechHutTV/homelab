@@ -1,215 +1,113 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Onboarding Agent Schema",
-  "description": "Input and output schemas for the Onboarding Agent sub-agent",
   "input": {
-    "type": "object",
-    "required": ["signed_contract", "client_details", "project_scope", "team_assignments"],
-    "properties": {
-      "signed_contract": {
-        "type": "object",
-        "required": ["contract_id", "signed_date"],
-        "properties": {
-          "contract_id": {
-            "type": "string",
-            "description": "PandaDoc or internal contract ID"
-          },
-          "signed_date": {
-            "type": "string",
-            "format": "date",
-            "description": "Date the contract was signed"
-          },
-          "contract_type": {
-            "type": "string",
-            "enum": ["brand_package", "content_retainer", "one_off_production", "web_development", "consulting"],
-            "description": "Type of contract/project"
-          },
-          "contract_value": {
-            "type": "number",
-            "description": "Total contract value"
-          },
-          "duration_months": {
-            "type": "integer",
-            "description": "Contract duration in months"
-          }
-        }
+    "signed_contract": {
+      "type": "object",
+      "description": "Details from the signed client contract",
+      "properties": {
+        "contract_id": {"type": "string"},
+        "signed_date": {"type": "string", "format": "date-time"},
+        "contract_url": {"type": "string"},
+        "deliverables": {"type": "array", "items": {"type": "string"}},
+        "timeline_weeks": {"type": "integer"},
+        "budget": {"type": "number"}
       },
-      "client_details": {
-        "type": "object",
-        "required": ["company_name", "primary_contact"],
-        "properties": {
-          "company_name": {
-            "type": "string",
-            "description": "Client company name"
-          },
-          "industry": {
-            "type": "string"
-          },
-          "primary_contact": {
-            "type": "object",
-            "required": ["name", "email"],
-            "properties": {
-              "name": { "type": "string" },
-              "email": { "type": "string", "format": "email" },
-              "phone": { "type": "string" },
-              "title": { "type": "string" }
-            }
-          },
-          "additional_contacts": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "name": { "type": "string" },
-                "email": { "type": "string", "format": "email" },
-                "role": { "type": "string" }
-              }
-            }
-          },
-          "brand_guidelines_url": {
-            "type": "string",
-            "format": "uri"
-          }
-        }
-      },
-      "project_scope": {
-        "type": "object",
-        "required": ["deliverables", "timeline"],
-        "properties": {
-          "project_name": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string",
-            "description": "Project scope summary"
-          },
-          "deliverables": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "name": { "type": "string" },
-                "description": { "type": "string" },
-                "due_date": { "type": "string", "format": "date" }
-              }
-            }
-          },
-          "timeline": {
+      "required": ["contract_id", "signed_date"]
+    },
+    "client_details": {
+      "type": "object",
+      "description": "Client company and contact information",
+      "properties": {
+        "company_name": {"type": "string"},
+        "primary_contact_name": {"type": "string"},
+        "primary_contact_email": {"type": "string"},
+        "additional_contacts": {
+          "type": "array",
+          "items": {
             "type": "object",
             "properties": {
-              "start_date": { "type": "string", "format": "date" },
-              "end_date": { "type": "string", "format": "date" },
-              "milestones": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "name": { "type": "string" },
-                    "date": { "type": "string", "format": "date" }
-                  }
-                }
-              }
+              "name": {"type": "string"},
+              "email": {"type": "string"},
+              "role": {"type": "string"}
             }
           }
-        }
+        },
+        "industry": {"type": "string"},
+        "timezone": {"type": "string"}
       },
-      "team_assignments": {
-        "type": "array",
-        "description": "Team members assigned to this project",
-        "items": {
-          "type": "object",
-          "required": ["name", "role", "email"],
-          "properties": {
-            "name": {
-              "type": "string"
-            },
-            "role": {
-              "type": "string",
-              "description": "Role on the project (project_lead, designer, editor, strategist, developer)"
-            },
-            "email": {
-              "type": "string",
-              "format": "email"
-            },
-            "clickup_user_id": {
-              "type": "string"
-            },
-            "lark_user_id": {
-              "type": "string"
-            }
-          }
+      "required": ["company_name", "primary_contact_name", "primary_contact_email"]
+    },
+    "project_scope": {
+      "type": "object",
+      "description": "Scope of the project determining resource allocation",
+      "properties": {
+        "project_type": {"type": "string"},
+        "description": {"type": "string"},
+        "required_roles": {"type": "array", "items": {"type": "string"}},
+        "complexity": {"type": "string", "enum": ["low", "medium", "high"]},
+        "start_date": {"type": "string", "format": "date"},
+        "end_date": {"type": "string", "format": "date"}
+      },
+      "required": ["project_type"]
+    },
+    "assigned_team": {
+      "type": "array",
+      "description": "Pre-assigned team members (optional — TaskMaster AI will assign if empty)",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "role": {"type": "string"},
+          "email": {"type": "string"}
         }
+      }
+    },
+    "meeting_preferences": {
+      "type": "object",
+      "description": "Client preferences for the kickoff meeting",
+      "properties": {
+        "preferred_days": {"type": "array", "items": {"type": "string"}},
+        "preferred_time_range": {"type": "string"},
+        "duration_minutes": {"type": "integer", "default": 60},
+        "video_platform": {"type": "string", "enum": ["google_meet", "zoom", "teams"], "default": "google_meet"}
       }
     }
   },
   "output": {
-    "type": "object",
-    "required": ["clickup_project_id", "lark_channel_url", "notion_workspace_url", "kickoff_email_confirmation", "meeting_scheduled"],
-    "properties": {
-      "clickup_project_id": {
-        "type": "string",
-        "description": "ID of the created ClickUp project"
-      },
-      "lark_channel_url": {
-        "type": "string",
-        "format": "uri",
-        "description": "URL to the created Lark client channel"
-      },
-      "notion_workspace_url": {
-        "type": "string",
-        "format": "uri",
-        "description": "URL to the client Notion workspace/wiki"
-      },
-      "kickoff_email_confirmation": {
-        "type": "object",
-        "properties": {
-          "sent": {
-            "type": "boolean",
-            "description": "Whether the kickoff email was successfully sent"
-          },
-          "message_id": {
-            "type": "string",
-            "description": "Gmail message ID"
-          },
-          "sent_to": {
-            "type": "string",
-            "format": "email"
-          },
-          "sent_at": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
-      "meeting_scheduled": {
-        "type": "object",
-        "properties": {
-          "scheduled": {
-            "type": "boolean"
-          },
-          "calendar_event_id": {
-            "type": "string"
-          },
-          "meeting_time": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "attendees": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "email"
-            }
-          }
-        }
-      },
-      "team_notified": {
-        "type": "boolean",
-        "description": "Whether all team members were notified via Lark"
-      },
-      "onboarding_complete": {
-        "type": "boolean",
-        "description": "Whether all onboarding steps completed successfully"
+    "clickup_project_id": {
+      "type": "string",
+      "description": "ID of the created ClickUp project"
+    },
+    "clickup_project_url": {
+      "type": "string",
+      "description": "URL to the created ClickUp project"
+    },
+    "lark_channel_url": {
+      "type": "string",
+      "description": "URL to the created Lark channel"
+    },
+    "notion_workspace_url": {
+      "type": "string",
+      "description": "URL to the created Notion workspace"
+    },
+    "kickoff_email_confirmation": {
+      "type": "object",
+      "description": "Confirmation details for the sent kickoff email",
+      "properties": {
+        "sent": {"type": "boolean"},
+        "sent_at": {"type": "string", "format": "date-time"},
+        "recipients": {"type": "array", "items": {"type": "string"}},
+        "message_id": {"type": "string"}
+      }
+    },
+    "meeting_details": {
+      "type": "object",
+      "description": "Scheduled kickoff meeting details",
+      "properties": {
+        "event_id": {"type": "string"},
+        "meeting_url": {"type": "string"},
+        "scheduled_date": {"type": "string", "format": "date-time"},
+        "duration_minutes": {"type": "integer"},
+        "attendees": {"type": "array", "items": {"type": "string"}}
       }
     }
   }

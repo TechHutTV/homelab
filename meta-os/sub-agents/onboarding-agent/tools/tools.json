@@ -2,162 +2,28 @@
   "tools": [
     {
       "name": "clickup",
-      "type": "api",
-      "description": "Create projects from templates and manage task assignments",
-      "endpoints": {
-        "create_project_from_template": {
-          "method": "POST",
-          "path": "/api/v2/team/{team_id}/project/template/{template_id}",
-          "description": "Create a new project from a predefined template"
-        },
-        "get_templates": {
-          "method": "GET",
-          "path": "/api/v2/team/{team_id}/project/template",
-          "description": "List available project templates"
-        },
-        "create_task": {
-          "method": "POST",
-          "path": "/api/v2/list/{list_id}/task",
-          "description": "Create individual tasks within the project"
-        },
-        "update_task": {
-          "method": "PUT",
-          "path": "/api/v2/task/{task_id}",
-          "description": "Update task assignees, dates, and status"
-        },
-        "get_members": {
-          "method": "GET",
-          "path": "/api/v2/team/{team_id}/member",
-          "description": "Get team members for assignment"
-        }
-      },
-      "auth": {
-        "type": "api_key",
-        "credentials_ref": "vault://clickup/onboarding-agent"
-      },
-      "config": {
-        "team_id": "{{CLICKUP_TEAM_ID}}",
-        "templates": {
-          "brand_package": "{{CLICKUP_TEMPLATE_BRAND}}",
-          "content_retainer": "{{CLICKUP_TEMPLATE_CONTENT}}",
-          "one_off_production": "{{CLICKUP_TEMPLATE_PRODUCTION}}",
-          "web_development": "{{CLICKUP_TEMPLATE_WEB}}",
-          "consulting": "{{CLICKUP_TEMPLATE_CONSULTING}}"
-        }
-      }
+      "type": "project_management",
+      "capabilities": ["create_project", "create_task_list", "assign_tasks", "set_milestones", "template_management"]
     },
     {
       "name": "lark",
-      "type": "api",
-      "description": "Create client channels and send team notifications",
-      "endpoints": {
-        "create_channel": {
-          "method": "POST",
-          "path": "/open-apis/im/v1/chats",
-          "description": "Create a new Lark channel for the client"
-        },
-        "add_members": {
-          "method": "POST",
-          "path": "/open-apis/im/v1/chats/{chat_id}/members",
-          "description": "Add team members to the client channel"
-        },
-        "send_message": {
-          "method": "POST",
-          "path": "/open-apis/im/v1/messages",
-          "description": "Send welcome message or team notifications"
-        },
-        "pin_message": {
-          "method": "POST",
-          "path": "/open-apis/im/v1/pins",
-          "description": "Pin the welcome message in the channel"
-        }
-      },
-      "auth": {
-        "type": "oauth2",
-        "credentials_ref": "vault://lark/onboarding-agent"
-      }
+      "type": "messaging",
+      "capabilities": ["create_channel", "add_members", "post_message", "pin_message"]
     },
     {
       "name": "notion",
-      "type": "api",
-      "description": "Create and populate client workspace in Notion",
-      "endpoints": {
-        "create_page": {
-          "method": "POST",
-          "path": "/v1/pages",
-          "description": "Create client wiki pages"
-        },
-        "append_blocks": {
-          "method": "PATCH",
-          "path": "/v1/blocks/{block_id}/children",
-          "description": "Add content blocks to wiki pages"
-        },
-        "create_database": {
-          "method": "POST",
-          "path": "/v1/databases",
-          "description": "Create meeting notes and tracking databases"
-        }
-      },
-      "auth": {
-        "type": "bearer_token",
-        "credentials_ref": "vault://notion/onboarding-agent"
-      },
-      "config": {
-        "clients_parent_page_id": "{{NOTION_CLIENTS_PARENT_PAGE}}",
-        "wiki_template_id": "{{NOTION_CLIENT_WIKI_TEMPLATE}}"
-      }
+      "type": "workspace",
+      "capabilities": ["create_workspace", "create_page", "set_permissions", "populate_content", "template_management"]
     },
     {
       "name": "gmail",
-      "type": "api",
-      "description": "Send kickoff emails to clients",
-      "endpoints": {
-        "send_email": {
-          "method": "POST",
-          "path": "/gmail/v1/users/me/messages/send",
-          "description": "Send the kickoff welcome email"
-        },
-        "create_draft": {
-          "method": "POST",
-          "path": "/gmail/v1/users/me/drafts",
-          "description": "Create email draft for review before sending"
-        }
-      },
-      "auth": {
-        "type": "oauth2",
-        "credentials_ref": "vault://google/gmail-onboarding"
-      },
-      "config": {
-        "from_address": "{{EEVL_ONBOARDING_EMAIL}}",
-        "reply_to": "{{EEVL_MAIN_EMAIL}}",
-        "email_template_id": "{{KICKOFF_EMAIL_TEMPLATE}}"
-      }
+      "type": "email",
+      "capabilities": ["compose", "send", "cc", "attachments", "template_rendering"]
     },
     {
-      "name": "calendar",
-      "type": "api",
-      "description": "Schedule kickoff meetings",
-      "endpoints": {
-        "create_event": {
-          "method": "POST",
-          "path": "/calendar/v3/calendars/{calendar_id}/events",
-          "description": "Create kickoff meeting calendar event"
-        },
-        "check_availability": {
-          "method": "POST",
-          "path": "/calendar/v3/freeBusy",
-          "description": "Check team availability for scheduling"
-        }
-      },
-      "auth": {
-        "type": "oauth2",
-        "credentials_ref": "vault://google/calendar-onboarding"
-      },
-      "config": {
-        "calendar_id": "{{EEVL_MAIN_CALENDAR_ID}}",
-        "meeting_duration_minutes": 60,
-        "scheduling_window_days": 5
-      }
+      "name": "google_calendar",
+      "type": "scheduling",
+      "capabilities": ["create_event", "send_invites", "attach_agenda", "add_conferencing", "check_availability"]
     }
   ]
 }
