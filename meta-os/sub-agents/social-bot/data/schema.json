@@ -1,163 +1,105 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "SocialBot Agent Schema",
-  "description": "Input and output schemas for the SocialBot sub-agent",
   "input": {
-    "type": "object",
-    "required": ["content_package"],
-    "properties": {
-      "content_package": {
+    "content_package": {
+      "copy": {
         "type": "object",
-        "required": ["copy", "assets"],
+        "description": "Finalized post copy per platform",
         "properties": {
-          "copy": {
-            "type": "object",
-            "required": ["master_text"],
-            "properties": {
-              "master_text": {
-                "type": "string",
-                "description": "Primary content copy to be adapted per platform"
-              },
-              "headline": {
-                "type": "string"
-              },
-              "hashtags": {
-                "type": "array",
-                "items": { "type": "string" }
-              },
-              "cta": {
-                "type": "string",
-                "description": "Call to action text"
-              },
-              "link": {
-                "type": "string",
-                "format": "uri",
-                "description": "URL to include in posts"
-              }
-            }
+          "headline": {"type": "string"},
+          "body": {"type": "string"},
+          "cta": {"type": "string"},
+          "hashtags": {"type": "array", "items": {"type": "string"}}
+        },
+        "required": ["body"]
+      },
+      "assets": {
+        "type": "array",
+        "description": "Designed media assets for distribution",
+        "items": {
+          "type": "object",
+          "properties": {
+            "asset_url": {"type": "string"},
+            "asset_type": {"type": "string", "enum": ["image", "video", "carousel", "story", "reel"]},
+            "dimensions": {"type": "string"},
+            "alt_text": {"type": "string"}
           },
-          "assets": {
-            "type": "array",
-            "description": "Media assets for the posts",
-            "items": {
-              "type": "object",
-              "required": ["url", "type"],
-              "properties": {
-                "url": {
-                  "type": "string",
-                  "format": "uri"
-                },
-                "type": {
-                  "type": "string",
-                  "enum": ["image", "video", "carousel"]
-                },
-                "alt_text": {
-                  "type": "string"
-                },
-                "dimensions": {
-                  "type": "object",
-                  "properties": {
-                    "width": { "type": "integer" },
-                    "height": { "type": "integer" }
-                  }
-                }
-              }
-            }
-          },
-          "schedule": {
-            "type": "object",
-            "description": "Custom scheduling overrides",
-            "properties": {
-              "publish_date": {
-                "type": "string",
-                "format": "date"
-              },
-              "timezone": {
-                "type": "string",
-                "default": "Asia/Manila"
-              },
-              "platforms": {
-                "type": "array",
-                "items": {
-                  "type": "string",
-                  "enum": ["facebook", "instagram", "twitter", "linkedin", "gmb", "email"]
-                },
-                "description": "Specific platforms to post to (default: all)"
-              }
-            }
-          }
+          "required": ["asset_url", "asset_type"]
         }
       },
-      "ab_test_enabled": {
-        "type": "boolean",
-        "default": false,
-        "description": "Enable A/B testing of caption variants"
+      "posting_schedule": {
+        "type": "object",
+        "description": "Scheduled posting times per platform",
+        "properties": {
+          "facebook": {"type": "string", "format": "date-time"},
+          "instagram": {"type": "string", "format": "date-time"},
+          "twitter_x": {"type": "array", "items": {"type": "string", "format": "date-time"}},
+          "linkedin": {"type": "string", "format": "date-time"},
+          "google_my_business": {"type": "string", "format": "date-time"}
+        }
+      },
+      "target_platforms": {
+        "type": "array",
+        "description": "Platforms to distribute content to",
+        "items": {"type": "string", "enum": ["facebook", "instagram", "twitter_x", "linkedin", "google_my_business"]}
+      },
+      "ab_test_config": {
+        "type": "object",
+        "description": "Configuration for A/B testing caption variants",
+        "properties": {
+          "enabled": {"type": "boolean"},
+          "variant_a": {"type": "string"},
+          "variant_b": {"type": "string"},
+          "test_duration_hours": {"type": "integer", "default": 24},
+          "target_platform": {"type": "string"}
+        }
       }
     }
   },
   "output": {
-    "type": "object",
-    "required": ["post_ids", "scheduled_times", "engagement_metrics"],
-    "properties": {
-      "post_ids": {
-        "type": "object",
-        "description": "Post IDs per platform",
-        "properties": {
-          "facebook": { "type": "string" },
-          "instagram": { "type": "string" },
-          "twitter": { "type": "string" },
-          "linkedin": { "type": "string" },
-          "gmb": { "type": "string" },
-          "email_campaign": { "type": "string" }
-        }
-      },
-      "scheduled_times": {
-        "type": "object",
-        "description": "Scheduled publish times per platform",
-        "properties": {
-          "facebook": { "type": "string", "format": "date-time" },
-          "instagram": { "type": "string", "format": "date-time" },
-          "twitter": { "type": "string", "format": "date-time" },
-          "linkedin": { "type": "string", "format": "date-time" },
-          "gmb": { "type": "string", "format": "date-time" },
-          "email": { "type": "string", "format": "date-time" }
-        }
-      },
-      "engagement_metrics": {
-        "type": "object",
-        "description": "Engagement metrics after monitoring period",
-        "properties": {
-          "per_platform": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "platform": { "type": "string" },
-                "impressions": { "type": "integer" },
-                "reach": { "type": "integer" },
-                "likes": { "type": "integer" },
-                "comments": { "type": "integer" },
-                "shares": { "type": "integer" },
-                "clicks": { "type": "integer" },
-                "saves": { "type": "integer" },
-                "engagement_rate": { "type": "number" }
-              }
-            }
-          },
-          "ab_test_results": {
-            "type": "object",
-            "properties": {
-              "variant_a_engagement": { "type": "number" },
-              "variant_b_engagement": { "type": "number" },
-              "winner": {
-                "type": "string",
-                "enum": ["variant_a", "variant_b", "inconclusive"]
-              }
-            }
-          },
-          "total_reach": { "type": "integer" },
-          "total_engagement": { "type": "integer" }
-        }
+    "post_ids": {
+      "type": "object",
+      "description": "Published post IDs per platform",
+      "properties": {
+        "facebook": {"type": "string"},
+        "instagram": {"type": "string"},
+        "twitter_x": {"type": "array", "items": {"type": "string"}},
+        "linkedin": {"type": "string"},
+        "google_my_business": {"type": "string"}
+      }
+    },
+    "scheduled_times": {
+      "type": "object",
+      "description": "Confirmed scheduled times per platform",
+      "properties": {
+        "facebook": {"type": "string", "format": "date-time"},
+        "instagram": {"type": "string", "format": "date-time"},
+        "twitter_x": {"type": "array", "items": {"type": "string", "format": "date-time"}},
+        "linkedin": {"type": "string", "format": "date-time"},
+        "google_my_business": {"type": "string", "format": "date-time"}
+      }
+    },
+    "engagement_metrics": {
+      "type": "object",
+      "description": "Initial engagement metrics collected post-publish",
+      "properties": {
+        "likes": {"type": "integer"},
+        "comments": {"type": "integer"},
+        "shares": {"type": "integer"},
+        "reach": {"type": "integer"},
+        "impressions": {"type": "integer"},
+        "click_through_rate": {"type": "number"},
+        "saves": {"type": "integer"}
+      }
+    },
+    "newsletter_send_confirmation": {
+      "type": "object",
+      "description": "Email newsletter distribution confirmation",
+      "properties": {
+        "sent": {"type": "boolean"},
+        "send_time": {"type": "string", "format": "date-time"},
+        "recipient_count": {"type": "integer"},
+        "open_rate": {"type": "number"},
+        "click_rate": {"type": "number"}
       }
     }
   }

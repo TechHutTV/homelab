@@ -1,14 +1,31 @@
 {
-  "default_batch_size": 10,
-  "default_max_iterations": 20,
-  "default_target_score": 90,
-  "run_interval_minutes": 5,
-  "eval_model": "claude-sonnet-4-6",
-  "generation_model": "claude-sonnet-4-6",
-  "log_level": "detailed",
-  "auto_save_winner": true,
-  "changelog_enabled": true,
-  "anti_gaming_checks": true,
-  "max_prompt_length_chars": 5000,
-  "score_history_retention_days": 90
+  "name": "M3TA OS Auto Research Configuration",
+  "version": "1.0.0",
+  "defaults": {
+    "batch_size": 10,
+    "max_iterations": 20,
+    "target_score": 90,
+    "run_interval_minutes": 5,
+    "eval_model": "claude-sonnet-4-6",
+    "generation_model": "claude-sonnet-4-6",
+    "log_level": "detailed",
+    "auto_save_winner": true,
+    "changelog_enabled": true,
+    "anti_gaming_checks": true,
+    "max_prompt_length_chars": 5000,
+    "score_history_retention_days": 90
+  },
+  "skill_rotation": [
+    "media-production-brief",
+    "client-onboarding",
+    "content-pipeline",
+    "social-bot",
+    "club-trapeze-social"
+  ],
+  "notifications": {
+    "on_improvement": true,
+    "on_target_reached": true,
+    "on_regression": true,
+    "channel": "lark"
+  }
 }

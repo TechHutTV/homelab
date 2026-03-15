@@ -1,141 +1,73 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Sparrow Handoff Agent Schema",
-  "description": "Input and output schemas for the Sparrow Handoff sub-agent",
   "input": {
-    "type": "object",
-    "required": ["raw_file_manifest", "project_id", "edit_notes"],
-    "properties": {
-      "raw_file_manifest": {
-        "type": "array",
-        "description": "List of raw media files from the shoot",
-        "items": {
-          "type": "object",
-          "required": ["file_name", "file_url", "file_type"],
-          "properties": {
-            "file_name": {
-              "type": "string",
-              "description": "Original file name"
-            },
-            "file_url": {
-              "type": "string",
-              "format": "uri",
-              "description": "Source URL or path to the raw file"
-            },
-            "file_type": {
-              "type": "string",
-              "enum": ["raw_footage", "audio", "photo", "graphics", "b_roll", "interview", "bts"],
-              "description": "Type of media file"
-            },
-            "file_size_bytes": {
-              "type": "integer",
-              "description": "File size in bytes"
-            },
-            "duration_seconds": {
-              "type": "number",
-              "description": "Duration for video/audio files"
-            }
-          }
-        }
-      },
-      "project_id": {
-        "type": "string",
-        "description": "ClickUp project/task ID for this shoot"
-      },
-      "edit_notes": {
+    "raw_file_manifest": {
+      "type": "array",
+      "description": "List of raw media files from the production session",
+      "items": {
         "type": "object",
-        "required": ["summary"],
         "properties": {
-          "summary": {
-            "type": "string",
-            "description": "Summary of editing instructions"
-          },
-          "style_reference": {
-            "type": "string",
-            "description": "Reference to style guide or previous edits"
-          },
-          "music_notes": {
-            "type": "string",
-            "description": "Music selection preferences"
-          },
-          "color_grade": {
-            "type": "string",
-            "description": "Color grading preferences"
-          },
-          "deliverable_specs": {
-            "type": "object",
-            "properties": {
-              "format": { "type": "string" },
-              "resolution": { "type": "string" },
-              "aspect_ratio": { "type": "string" },
-              "duration_target": { "type": "string" }
-            }
-          },
-          "special_instructions": {
-            "type": "string"
-          }
-        }
-      },
-      "project_name": {
-        "type": "string",
-        "description": "Human-readable project name"
-      },
-      "client_name": {
-        "type": "string"
-      },
-      "shoot_date": {
-        "type": "string",
-        "format": "date"
-      },
-      "priority": {
-        "type": "string",
-        "enum": ["normal", "rush"],
-        "default": "normal"
-      },
-      "is_gold_star": {
-        "type": "boolean",
-        "default": false,
-        "description": "Whether this is a Gold Star project"
-      },
-      "expected_delivery_date": {
-        "type": "string",
-        "format": "date"
+          "file_name": {"type": "string"},
+          "file_type": {"type": "string", "enum": ["video", "audio", "photo", "b_roll", "asset"]},
+          "file_size_mb": {"type": "number"},
+          "file_path": {"type": "string"}
+        },
+        "required": ["file_name", "file_type", "file_path"]
       }
+    },
+    "project_id": {
+      "type": "string",
+      "description": "ClickUp project/task ID for this production"
+    },
+    "client_name": {
+      "type": "string",
+      "description": "Client name used in file naming and channel selection"
+    },
+    "project_type": {
+      "type": "string",
+      "description": "Type of project (e.g., BrandVideo, SocialContent, EventCoverage, ProductShoot)"
+    },
+    "edit_notes": {
+      "type": "object",
+      "description": "Creative direction and editing instructions for Sparrow",
+      "properties": {
+        "creative_direction": {"type": "string"},
+        "mood_tone": {"type": "string"},
+        "specific_instructions": {"type": "string"},
+        "deadline": {"type": "string", "format": "date"},
+        "priority": {"type": "string", "enum": ["normal", "high", "rush"]}
+      }
+    },
+    "channel_override": {
+      "type": "string",
+      "description": "Optional override for the Lark channel (bypasses default channel selection)"
     }
   },
   "output": {
-    "type": "object",
-    "required": ["google_drive_folder_url", "lark_message_id", "acknowledgment_status"],
-    "properties": {
-      "google_drive_folder_url": {
-        "type": "string",
-        "format": "uri",
-        "description": "URL to the organized project folder in Google Drive"
-      },
-      "lark_message_id": {
-        "type": "string",
-        "description": "ID of the handoff notification message in Lark"
-      },
-      "acknowledgment_status": {
-        "type": "string",
-        "enum": ["acknowledged", "pending", "follow_up_sent", "escalated"],
-        "description": "Current acknowledgment status from Sparrow"
-      },
-      "files_uploaded": {
-        "type": "integer",
-        "description": "Total number of files successfully uploaded"
-      },
-      "files_missing": {
-        "type": "array",
-        "description": "Files from manifest that could not be found or uploaded",
-        "items": {
-          "type": "string"
-        }
-      },
-      "clickup_status_updated": {
-        "type": "boolean",
-        "description": "Whether the ClickUp task was updated to 'With Editor'"
+    "google_drive_folder_url": {
+      "type": "string",
+      "description": "Shareable URL for the organized Google Drive folder"
+    },
+    "lark_message_id": {
+      "type": "string",
+      "description": "ID of the handoff notification message posted to Lark"
+    },
+    "lark_channel": {
+      "type": "string",
+      "description": "The Lark channel where the notification was posted"
+    },
+    "acknowledgment_status": {
+      "type": "object",
+      "description": "Sparrow team acknowledgment tracking",
+      "properties": {
+        "acknowledged": {"type": "boolean"},
+        "acknowledged_by": {"type": "string"},
+        "acknowledged_at": {"type": "string", "format": "date-time"}
       }
+    },
+    "clickup_task_status": {
+      "type": "string",
+      "description": "Updated ClickUp task status after handoff",
+      "enum": ["in_editing", "handoff_failed"]
     }
   }
 }
