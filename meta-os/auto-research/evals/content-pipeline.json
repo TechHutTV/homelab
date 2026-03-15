@@ -1,45 +1,16 @@
 {
   "skill_name": "content-pipeline",
-  "description": "Evaluates the content pipeline workflow from ideation through publication and monitoring, ensuring SEO, brand, and platform standards are maintained at every stage.",
+  "target_prompt": "workflows/content-pipeline/content-creation/prompts/prompt.md",
   "target_score": 85,
   "batch_size": 10,
   "max_iterations": 25,
+  "eval_model": "claude-sonnet-4-6",
   "criteria": [
-    {
-      "criteria_id": "trend-relevance-scoring",
-      "question": "Are content ideas scored by trend relevance? (yes/no)",
-      "weight": 1,
-      "category": "completeness"
-    },
-    {
-      "criteria_id": "seo-best-practices",
-      "question": "Does blog copy follow SEO best practices? (yes/no)",
-      "weight": 1,
-      "category": "format"
-    },
-    {
-      "criteria_id": "platform-specific-captions",
-      "question": "Are social captions platform-specific in tone and length? (yes/no)",
-      "weight": 1,
-      "category": "platform"
-    },
-    {
-      "criteria_id": "brand-colors-assets",
-      "question": "Do design assets use EEVL brand colors? (yes/no)",
-      "weight": 1,
-      "category": "brand"
-    },
-    {
-      "criteria_id": "optimal-scheduling",
-      "question": "Are posts scheduled at platform-optimal times? (yes/no)",
-      "weight": 1,
-      "category": "timing"
-    },
-    {
-      "criteria_id": "early-engagement-monitoring",
-      "question": "Is engagement monitored within first 2 hours? (yes/no)",
-      "weight": 1,
-      "category": "timing"
-    }
+    {"id": "C1", "question": "Are content ideas scored or ranked by trend relevance?", "category": "prioritization"},
+    {"id": "C2", "question": "Does blog copy include SEO elements (meta description, keywords, headers)?", "category": "seo"},
+    {"id": "C3", "question": "Are social captions differentiated by platform in tone and length?", "category": "platform_fit"},
+    {"id": "C4", "question": "Do design asset instructions reference EEVL brand colors or brand kit?", "category": "branding"},
+    {"id": "C5", "question": "Are posts scheduled at platform-optimal times (not all simultaneous)?", "category": "timing"},
+    {"id": "C6", "question": "Is engagement monitoring within the first 2 hours mentioned?", "category": "monitoring"}
   ]
 }

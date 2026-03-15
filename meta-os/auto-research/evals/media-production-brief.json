@@ -1,45 +1,16 @@
 {
   "skill_name": "media-production-brief",
-  "description": "Evaluates the completeness and quality of media production pre-production briefs, ensuring all logistical, creative, and organizational requirements are covered before a shoot.",
+  "target_prompt": "workflows/media-production/pre-production/prompts/prompt.md",
   "target_score": 90,
   "batch_size": 10,
   "max_iterations": 20,
+  "eval_model": "claude-sonnet-4-6",
   "criteria": [
-    {
-      "criteria_id": "shot-list-pillars",
-      "question": "Does the shot list include all three pillars (video, drone, photo)? (yes/no)",
-      "weight": 1,
-      "category": "completeness"
-    },
-    {
-      "criteria_id": "equipment-camera-models",
-      "question": "Does the equipment checklist specify camera models? (yes/no)",
-      "weight": 1,
-      "category": "completeness"
-    },
-    {
-      "criteria_id": "lark-channel-creation",
-      "question": "Is a Lark channel creation step included? (yes/no)",
-      "weight": 1,
-      "category": "integration"
-    },
-    {
-      "criteria_id": "schedule-setup-teardown",
-      "question": "Does the schedule include setup and teardown time? (yes/no)",
-      "weight": 1,
-      "category": "timing"
-    },
-    {
-      "criteria_id": "client-name-referenced",
-      "question": "Is the client name referenced in the output? (yes/no)",
-      "weight": 1,
-      "category": "accuracy"
-    },
-    {
-      "criteria_id": "file-naming-conventions",
-      "question": "Are file naming conventions specified? (yes/no)",
-      "weight": 1,
-      "category": "format"
-    }
+    {"id": "C1", "question": "Does the output include shot lists for all three pillars (video, drone, photo)?", "category": "completeness"},
+    {"id": "C2", "question": "Does the equipment checklist specify specific camera models or categories?", "category": "specificity"},
+    {"id": "C3", "question": "Is a Lark channel creation step explicitly included in the workflow?", "category": "integration"},
+    {"id": "C4", "question": "Does the schedule include both setup and teardown time blocks?", "category": "planning"},
+    {"id": "C5", "question": "Is the client name referenced or templated in the output?", "category": "personalization"},
+    {"id": "C6", "question": "Are file naming conventions (YYYY-MM-DD format) specified?", "category": "standards"}
   ]
 }

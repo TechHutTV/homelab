@@ -1,148 +1,87 @@
-# Writing Eval Suites for Auto Research
+# Eval Suites — How to Write Binary Criteria
 
 ## Overview
 
-Each skill in the M3TA OS auto-research system has a corresponding eval suite — a JSON file in this directory named after the skill (e.g., `media-production-brief.json`). The eval suite defines the binary criteria used to score generated outputs during optimization.
+Each eval suite is a JSON file named after the skill or workflow it tests. It lives in `auto-research/evals/` and contains an array of binary criteria that an evaluator agent uses to score generated outputs.
 
-## File Naming
-
-```
-evals/<skill-name>.json
-```
-
-The skill name must match the directory name in `skills/`. For example:
-- Skill prompt: `skills/media-production-brief/prompt.md`
-- Eval suite: `evals/media-production-brief.json`
-
-## Structure
-
-Every eval JSON file follows this schema:
+## File Structure
 
 ```json
 {
-  "skill_name": "example-skill",
-  "description": "What this eval measures",
+  "skill_name": "my-skill-name",
+  "target_prompt": "relative/path/to/prompt.md",
   "target_score": 90,
   "batch_size": 10,
   "max_iterations": 20,
+  "eval_model": "claude-sonnet-4-6",
   "criteria": [
     {
-      "criteria_id": "unique-kebab-case-id",
-      "question": "Does the output include X? (yes/no)",
-      "weight": 1,
+      "id": "C1",
+      "question": "Does the output include X?",
       "category": "completeness"
+    },
+    {
+      "id": "C2",
+      "question": "Is Y explicitly mentioned or specified?",
+      "category": "specificity"
     }
   ]
 }
 ```
 
-### Field Reference
+### Fields
 
-| Field | Type | Required | Description |
-|---|---|---|---|
-| `skill_name` | string | yes | Must match the skill directory name |
-| `description` | string | yes | Human-readable summary of what this eval checks |
-| `target_score` | number | yes | Score (0-100) at which optimization stops |
-| `batch_size` | number | no | Outputs per iteration (overrides run-config default) |
-| `max_iterations` | number | no | Max optimization loops (overrides run-config default) |
-| `criteria` | array | yes | List of binary eval criteria |
-| `criteria[].criteria_id` | string | yes | Unique identifier, kebab-case |
-| `criteria[].question` | string | yes | Binary yes/no question about the output |
-| `criteria[].weight` | number | yes | Multiplier for this criterion (default: 1) |
-| `criteria[].category` | string | yes | Grouping label for analysis |
+| Field | Type | Description |
+|-------|------|-------------|
+| `skill_name` | string | Identifier matching the JSON filename (without extension) |
+| `target_prompt` | string | Relative path from M3TA OS root to the prompt being optimized |
+| `target_score` | number | Score (0-100) the prompt must reach to "win" |
+| `batch_size` | number | How many outputs to generate per iteration (default: 10) |
+| `max_iterations` | number | Maximum optimization rounds before stopping |
+| `eval_model` | string | Model used to evaluate outputs against criteria |
+| `criteria` | array | List of binary criterion objects |
+
+### Criterion Object
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | string | Unique identifier (C1, C2, etc.) |
+| `question` | string | Yes/no question the evaluator answers about the output |
+| `category` | string | Category tag for grouping failure analysis |
 
 ## Writing Good Criteria
 
-### The Golden Rule: Binary Only
+### DO: Keep Criteria Independent
+Each criterion should test exactly one thing. If C1 and C3 both check for "timeline included," you're double-counting and inflating scores.
 
-Every criterion must be answerable with a strict **yes** or **no**. There is no "partially" or "somewhat". If you find yourself wanting to say "it kind of does", the criterion is too vague — rewrite it.
+### DO: Use Binary Questions Only
+Every criterion must be answerable with YES (pass=1) or NO (fail=0). No "rate from 1-5." No "how well does it..." Binary only. This eliminates probability variance that compounds across criteria and runs.
 
-**Good criteria:**
-- "Does the output include a shot list? (yes/no)"
-- "Is the client name referenced at least once? (yes/no)"
-- "Are file naming conventions specified? (yes/no)"
+### DO: Aim for 5-8 Criteria Per Eval
+- Fewer than 5: not enough signal to differentiate prompt quality
+- More than 8: variance compounds, scores become noisy, and you risk over-constraining
 
-**Bad criteria:**
-- "Is the shot list comprehensive?" (subjective — what counts as comprehensive?)
-- "How well does the output handle scheduling?" (not binary)
-- "Rate the quality of the equipment checklist" (Likert scale, not binary)
+### DO: Focus on Business-Meaningful Outcomes
+Good: "Does the output include a shot list for each content pillar?"
+Bad: "Does the output use bullet points for the shot list?"
 
-### Keep Criteria Independent
+The first tests whether the output is useful. The second tests formatting that could be gamed.
 
-Each criterion should test one thing. If criterion A passing depends on criterion B passing, they are coupled and should be restructured.
+### DON'T: Use Scoring Scales
+No Likert scales. No "1-5 ratings." No "partially meets criteria." When you introduce scales, evaluator models introduce their own variance on top of generation variance. Binary keeps the signal clean.
 
-**Bad (coupled):**
-1. "Does the output include a schedule?"
-2. "Does the schedule include setup time?"
+### DON'T: Over-Constrain
+If your criteria are too narrow, the optimization loop will "teach to the test." The prompt will learn to parrot specific phrases that pass criteria without producing genuinely useful output. Keep criteria at the right altitude — specific enough to measure, general enough to allow creative solutions.
 
-Criterion 2 implicitly requires criterion 1. If there is no schedule at all, criterion 2 is not really testable.
+### DON'T: Overlap Criteria
+If two criteria measure the same underlying thing, one of them is redundant. Merge or remove.
 
-**Better:**
-1. "Does the output include a schedule?"
-2. "Does the output include time allocated for setup and teardown (either in a schedule or as a separate note)?"
+## Example
 
-### Don't Overlap
+See any `.json` file in this directory for working examples:
 
-If two criteria can be satisfied by the exact same piece of content, one of them is redundant. Each criterion should target a distinct aspect of the output.
-
-### Avoid Overly Narrow Constraints
-
-Criteria that are too specific force the optimization agent to game them. The model will learn to insert the exact phrasing rather than genuinely improving.
-
-**Too narrow:**
-- "Does the output contain the exact phrase 'Brand Guidelines v3.2'?"
-
-**Better:**
-- "Does the output reference brand guidelines? (yes/no)"
-
-### Recommended Category Labels
-
-Use consistent categories across eval suites for cross-skill analysis:
-
-| Category | What it Covers |
-|---|---|
-| `completeness` | Are all required sections/items present? |
-| `accuracy` | Are facts, names, and references correct? |
-| `format` | Does the output follow structural requirements? |
-| `integration` | Does the output connect to other systems (Lark, ClickUp, etc.)? |
-| `timing` | Are time-based requirements met? |
-| `brand` | Does the output maintain brand standards? |
-| `platform` | Are platform-specific requirements met? |
-
-## Scoring Math
-
-The score for a single run is:
-
-```
-score = (total_weighted_passes / (N * sum_of_weights)) * 100
-```
-
-Where:
-- `total_weighted_passes` = sum of (pass * weight) across all outputs and all criteria
-- `N` = batch size (number of outputs generated)
-- `sum_of_weights` = sum of all criterion weights
-
-With all weights set to 1, this simplifies to:
-
-```
-score = (total_passes / (N * criteria_count)) * 100
-```
-
-## Tips for Setting Target Scores
-
-- **90-95**: Appropriate for critical workflows where every output must be nearly perfect (client-facing, financial, legal)
-- **85-89**: Good for creative workflows where some variation is acceptable
-- **80-84**: Suitable for internal-only outputs or early-stage optimization
-- **Below 80**: Likely indicates the prompt needs a fundamental rewrite, not just tuning
-
-## Tips for Setting Batch Size
-
-- **N=10**: Good default for most skills. Enough to see patterns without excessive cost.
-- **N=5**: Acceptable for quick iteration during initial prompt development.
-- **N=20+**: Use for final validation of a prompt you believe is ready for production.
-
-## Tips for Setting Max Iterations
-
-- **15-20**: Standard range. Most prompts converge within 10 iterations.
-- **25+**: Use for complex skills with many criteria or when starting from a low baseline.
-- **Under 10**: Only for minor tweaks to an already-good prompt.
+- `media-production-brief.json` — Pre-production workflow eval
+- `client-onboarding.json` — Lead capture and onboarding eval
+- `content-pipeline.json` — Content creation workflow eval
+- `social-bot.json` — Social media posting agent eval
+- `club-trapeze-social.json` — Club Trapeze social management eval

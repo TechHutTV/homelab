@@ -1,39 +1,15 @@
 {
   "skill_name": "social-bot",
-  "description": "Evaluates SocialBot outputs for platform compliance, scheduling discipline, and optimization practices across all supported social media platforms.",
+  "target_prompt": "sub-agents/social-bot/prompts/prompt.md",
   "target_score": 90,
   "batch_size": 10,
   "max_iterations": 15,
+  "eval_model": "claude-sonnet-4-6",
   "criteria": [
-    {
-      "criteria_id": "platform-character-limits",
-      "question": "Does each post respect platform character limits? (yes/no)",
-      "weight": 1,
-      "category": "platform"
-    },
-    {
-      "criteria_id": "hashtag-appropriateness",
-      "question": "Are hashtags platform-appropriate (count and relevance)? (yes/no)",
-      "weight": 1,
-      "category": "platform"
-    },
-    {
-      "criteria_id": "media-dimensions",
-      "question": "Is media formatted to correct dimensions per platform? (yes/no)",
-      "weight": 1,
-      "category": "format"
-    },
-    {
-      "criteria_id": "scheduled-not-simultaneous",
-      "question": "Are posts scheduled (not all posted simultaneously)? (yes/no)",
-      "weight": 1,
-      "category": "timing"
-    },
-    {
-      "criteria_id": "ab-testing-included",
-      "question": "Is A/B testing included for at least one platform? (yes/no)",
-      "weight": 1,
-      "category": "completeness"
-    }
+    {"id": "C1", "question": "Does each post respect the target platform's character limits?", "category": "compliance"},
+    {"id": "C2", "question": "Are hashtags platform-appropriate in count and relevance?", "category": "optimization"},
+    {"id": "C3", "question": "Is media formatted to correct dimensions for each platform?", "category": "formatting"},
+    {"id": "C4", "question": "Are posts staggered/scheduled rather than posted simultaneously?", "category": "timing"},
+    {"id": "C5", "question": "Is A/B testing included for at least one platform or post?", "category": "testing"}
   ]
 }
