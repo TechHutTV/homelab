@@ -1,0 +1,204 @@
+{
+  "task": "design-assets",
+  "schema_version": "1.0.0",
+  "input": {
+    "description": "Content from the Content Creation stage plus EEVL brand kit parameters for generating platform-specific visual assets.",
+    "type": "object",
+    "properties": {
+      "content": {
+        "type": "object",
+        "description": "Written content to be transformed into visual assets.",
+        "properties": {
+          "idea_title": {
+            "type": "string",
+            "description": "Title of the content idea — used as primary text on graphics."
+          },
+          "headline": {
+            "type": "string",
+            "description": "Short headline for overlay text on graphics (under 10 words)."
+          },
+          "captions": {
+            "type": "object",
+            "description": "Platform-specific captions from the content-creation stage.",
+            "properties": {
+              "instagram": { "type": "string" },
+              "facebook": { "type": "string" },
+              "twitter_x": { "type": "string" },
+              "linkedin": { "type": "string" },
+              "gmb": { "type": "string" }
+            }
+          },
+          "carousel_points": {
+            "type": "array",
+            "description": "Key points for carousel slides (one point per slide).",
+            "items": {
+              "type": "object",
+              "properties": {
+                "slide_number": { "type": "integer" },
+                "heading": { "type": "string" },
+                "body_text": { "type": "string", "maxLength": 120 },
+                "icon_suggestion": { "type": "string" }
+              },
+              "required": ["slide_number", "heading"]
+            }
+          },
+          "video_title": {
+            "type": "string",
+            "description": "Title for video thumbnail generation."
+          },
+          "email_subject": {
+            "type": "string",
+            "description": "Email subject line for newsletter header design."
+          }
+        },
+        "required": ["idea_title", "headline"]
+      },
+      "brand_kit": {
+        "type": "object",
+        "description": "EEVL brand kit reference for design consistency.",
+        "properties": {
+          "colors": {
+            "type": "object",
+            "properties": {
+              "primary_blue": { "type": "string", "default": "#1A3A5C" },
+              "primary_gold": { "type": "string", "default": "#D4A843" },
+              "white": { "type": "string", "default": "#FFFFFF" },
+              "dark_charcoal": { "type": "string", "default": "#2D2D2D" },
+              "light_gray": { "type": "string", "default": "#F4F4F4" },
+              "accent_teal": { "type": "string", "default": "#2ABFBF" }
+            }
+          },
+          "fonts": {
+            "type": "object",
+            "properties": {
+              "headline": { "type": "string", "default": "Montserrat Bold" },
+              "subheadline": { "type": "string", "default": "Montserrat SemiBold" },
+              "body": { "type": "string", "default": "Open Sans Regular" },
+              "cta": { "type": "string", "default": "Open Sans SemiBold" }
+            }
+          },
+          "logo_full_url": { "type": "string" },
+          "logo_icon_url": { "type": "string" },
+          "canva_brand_kit_id": { "type": "string" }
+        }
+      },
+      "target_platforms": {
+        "type": "array",
+        "description": "Which platforms to generate assets for.",
+        "items": {
+          "type": "string",
+          "enum": ["instagram_feed", "instagram_story", "instagram_carousel", "facebook", "twitter_x", "linkedin", "gmb", "youtube_thumbnail", "email_header"]
+        },
+        "default": ["instagram_feed", "instagram_story", "facebook", "twitter_x", "linkedin"]
+      }
+    },
+    "required": ["content", "brand_kit"]
+  },
+  "output": {
+    "description": "Generated design assets per platform with URLs, Canva edit links, and brand consistency check results.",
+    "type": "object",
+    "properties": {
+      "assets": {
+        "type": "array",
+        "description": "List of all generated design assets.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "asset_id": {
+              "type": "string",
+              "description": "Unique identifier for this asset."
+            },
+            "platform": {
+              "type": "string",
+              "enum": ["instagram_feed", "instagram_story", "instagram_carousel", "facebook", "twitter_x", "linkedin", "gmb", "youtube_thumbnail", "email_header"]
+            },
+            "file_name": {
+              "type": "string",
+              "description": "File name of the exported asset."
+            },
+            "dimensions": {
+              "type": "object",
+              "properties": {
+                "width": { "type": "integer" },
+                "height": { "type": "integer" }
+              }
+            },
+            "format": {
+              "type": "string",
+              "enum": ["png", "jpg", "pdf"]
+            },
+            "file_size_bytes": {
+              "type": "integer"
+            },
+            "google_drive_url": {
+              "type": "string",
+              "format": "uri",
+              "description": "Shareable Google Drive link for the exported asset."
+            },
+            "canva_edit_url": {
+              "type": "string",
+              "format": "uri",
+              "description": "Canva editor link for making manual adjustments if needed."
+            },
+            "brand_check": {
+              "type": "object",
+              "properties": {
+                "passed": { "type": "boolean" },
+                "checks": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "check_name": { "type": "string" },
+                      "status": { "type": "string", "enum": ["pass", "fail", "warning"] },
+                      "notes": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": ["asset_id", "platform", "file_name", "dimensions", "google_drive_url"]
+        }
+      },
+      "carousel_summary": {
+        "type": "object",
+        "description": "Summary of carousel assets if generated.",
+        "properties": {
+          "total_slides": { "type": "integer" },
+          "slide_sequence": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "slide_number": { "type": "integer" },
+                "heading": { "type": "string" },
+                "google_drive_url": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "thumbnail_previews": {
+        "type": "array",
+        "description": "Preview URLs for generated thumbnails.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "title": { "type": "string" },
+            "preview_url": { "type": "string", "format": "uri" },
+            "full_resolution_url": { "type": "string", "format": "uri" }
+          }
+        }
+      },
+      "total_assets_generated": {
+        "type": "integer"
+      },
+      "generation_timestamp": {
+        "type": "string",
+        "format": "date-time"
+      }
+    },
+    "required": ["assets", "total_assets_generated", "generation_timestamp"]
+  }
+}

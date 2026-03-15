@@ -1,0 +1,49 @@
+{
+  "name": "lark",
+  "description": "Team messaging, channels, meeting integration",
+  "version": "1.0.0",
+  "auth_type": "bot_token",
+  "auth_config": {
+    "app_id": "${LARK_APP_ID}",
+    "app_secret": "${LARK_APP_SECRET}",
+    "bot_token": "${LARK_BOT_TOKEN}"
+  },
+  "base_url": "https://open.larksuite.com/open-apis",
+  "capabilities": [
+    "send_message",
+    "create_channel",
+    "read_messages",
+    "meeting_recording",
+    "file_share"
+  ],
+  "key_channels": [
+    {
+      "name": "#edited-by-sparrow",
+      "purpose": "Content review and editing queue"
+    },
+    {
+      "name": "#gold-star",
+      "purpose": "Gold Star roster updates and notifications"
+    },
+    {
+      "name": "#client-general",
+      "purpose": "Client-facing communication channels"
+    },
+    {
+      "name": "#eevl-internal",
+      "purpose": "Internal team coordination"
+    }
+  ],
+  "used_by": {
+    "workflows": [
+      "notification-dispatch",
+      "meeting-recap",
+      "content-review"
+    ],
+    "sub_agents": [
+      "sparrow",
+      "echo",
+      "sentinel"
+    ]
+  }
+}

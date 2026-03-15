@@ -1,0 +1,170 @@
+{
+  "schema": {
+    "task_id": "lead-capture",
+    "version": "1.0.0",
+    "input": {
+      "description": "Form submission data from GHL web forms, chat widget, or manual entry.",
+      "type": "object",
+      "required": ["first_name", "email", "phone", "service_interest", "source"],
+      "properties": {
+        "first_name": {
+          "type": "string",
+          "description": "Lead's first name."
+        },
+        "last_name": {
+          "type": "string",
+          "description": "Lead's last name."
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Lead's email address."
+        },
+        "phone": {
+          "type": "string",
+          "description": "Lead's phone number in E.164 format (e.g., +15551234567)."
+        },
+        "company": {
+          "type": "string",
+          "description": "Lead's company or organization name, if provided.",
+          "nullable": true
+        },
+        "service_interest": {
+          "type": "string",
+          "enum": ["ai-automation", "web-dev", "consulting", "full-stack", "other"],
+          "description": "Primary service the lead is interested in."
+        },
+        "budget": {
+          "type": "string",
+          "enum": ["enterprise", "mid-market", "starter", "unknown"],
+          "description": "Self-reported or inferred budget tier.",
+          "default": "unknown"
+        },
+        "source": {
+          "type": "string",
+          "enum": ["web-form", "chat", "referral", "paid", "manual"],
+          "description": "How the lead was captured."
+        },
+        "company_size": {
+          "type": "string",
+          "enum": ["1-9", "10-49", "50+", "unknown"],
+          "description": "Number of employees at the lead's company.",
+          "default": "unknown"
+        },
+        "timeline": {
+          "type": "string",
+          "enum": ["immediate", "1-3 months", "3+ months", "unknown"],
+          "description": "Lead's timeline urgency for the project.",
+          "default": "unknown"
+        },
+        "message": {
+          "type": "string",
+          "description": "Free-text message or notes from the lead.",
+          "nullable": true
+        },
+        "form_id": {
+          "type": "string",
+          "description": "GHL form ID that captured this lead, if applicable.",
+          "nullable": true
+        },
+        "capture_timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of when the lead was captured."
+        }
+      }
+    },
+    "output": {
+      "description": "Results of lead processing: CRM record, SMS confirmation, lead score, and nurture enrollment.",
+      "type": "object",
+      "properties": {
+        "ghl_contact_id": {
+          "type": "string",
+          "description": "GoHighLevel contact ID for the newly created CRM record."
+        },
+        "ghl_contact_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Direct URL to the contact record in GHL."
+        },
+        "sms_confirmation": {
+          "type": "object",
+          "description": "Details of the 60-second SLA SMS auto-response.",
+          "properties": {
+            "message_id": {
+              "type": "string",
+              "description": "GHL SMS message ID."
+            },
+            "sent_at": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Timestamp when the SMS was sent."
+            },
+            "latency_seconds": {
+              "type": "number",
+              "description": "Seconds between lead capture and SMS send. Must be <= 60."
+            },
+            "sla_met": {
+              "type": "boolean",
+              "description": "Whether the 60-second SLA was met."
+            },
+            "status": {
+              "type": "string",
+              "enum": ["sent", "failed", "retried"],
+              "description": "Delivery status of the SMS."
+            }
+          }
+        },
+        "lead_score": {
+          "type": "object",
+          "description": "Qualification score and tier assignment.",
+          "properties": {
+            "score": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Numeric lead score (0-100)."
+            },
+            "tier": {
+              "type": "string",
+              "enum": ["hot", "warm", "cool"],
+              "description": "Score tier: hot (70-100), warm (40-69), cool (0-39)."
+            },
+            "breakdown": {
+              "type": "object",
+              "description": "Score breakdown by criterion.",
+              "properties": {
+                "budget": { "type": "number" },
+                "service_fit": { "type": "number" },
+                "timeline": { "type": "number" },
+                "company_size": { "type": "number" },
+                "source_quality": { "type": "number" }
+              }
+            }
+          }
+        },
+        "nurture_sequence_id": {
+          "type": "string",
+          "description": "GHL nurture sequence enrollment ID."
+        },
+        "nurture_sequence_name": {
+          "type": "string",
+          "description": "Name of the triggered nurture sequence."
+        },
+        "tags_applied": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of auto-tags applied to the GHL contact."
+        },
+        "airtable_record_id": {
+          "type": "string",
+          "description": "Airtable tracking record ID for SLA auditing."
+        },
+        "lark_notification_sent": {
+          "type": "boolean",
+          "description": "Whether the sales team notification was posted to Lark."
+        }
+      }
+    }
+  }
+}

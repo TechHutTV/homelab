@@ -1,0 +1,104 @@
+{
+  "task": "content-creation",
+  "tools": [
+    {
+      "name": "OpenRouter",
+      "type": "mcp",
+      "provider": "openrouter",
+      "description": "LLM routing layer for all content generation — blog drafts, captions, SEO copy, email newsletters, and video scripts.",
+      "config": {
+        "default_model": "openai/gpt-4o",
+        "fallback_model": "anthropic/claude-sonnet-4-20250514",
+        "routing_strategy": "cost-optimized",
+        "max_tokens_per_request": 4096,
+        "temperature": {
+          "blog_drafts": 0.7,
+          "social_captions": 0.8,
+          "seo_metadata": 0.3,
+          "email_copy": 0.7,
+          "video_scripts": 0.75
+        }
+      },
+      "capabilities": [
+        "long_form_generation",
+        "tone_adaptation",
+        "seo_keyword_integration",
+        "multi_format_output"
+      ],
+      "auth": {
+        "type": "api_key",
+        "env_var": "OPENROUTER_API_KEY"
+      }
+    },
+    {
+      "name": "Notion",
+      "type": "api",
+      "provider": "notion",
+      "description": "Draft storage and collaboration workspace. All generated content is saved as Notion pages for review before publishing.",
+      "base_url": "https://api.notion.com/v1",
+      "endpoints": {
+        "create_page": {
+          "method": "POST",
+          "path": "/pages",
+          "description": "Create a new draft page with blog post, captions, or newsletter content."
+        },
+        "update_page": {
+          "method": "PATCH",
+          "path": "/pages/{page_id}",
+          "description": "Update an existing draft with revisions or additional content."
+        },
+        "query_database": {
+          "method": "POST",
+          "path": "/databases/{database_id}/query",
+          "description": "Query the EEVL content drafts database to check for existing drafts."
+        },
+        "append_blocks": {
+          "method": "PATCH",
+          "path": "/blocks/{block_id}/children",
+          "description": "Append content blocks (text, headings, images) to an existing page."
+        }
+      },
+      "config": {
+        "drafts_database_id": "EEVL_NOTION_DRAFTS_DB_ID",
+        "brand_guidelines_page_id": "EEVL_NOTION_BRAND_GUIDE_PAGE_ID"
+      },
+      "auth": {
+        "type": "bearer_token",
+        "env_var": "NOTION_API_TOKEN"
+      }
+    },
+    {
+      "name": "Google Drive",
+      "type": "api",
+      "provider": "google-drive",
+      "description": "Asset reference storage. Used to retrieve brand assets, templates, and reference materials during content creation.",
+      "base_url": "https://www.googleapis.com/drive/v3",
+      "endpoints": {
+        "list_files": {
+          "method": "GET",
+          "path": "/files",
+          "description": "List files in the EEVL brand assets folder."
+        },
+        "get_file": {
+          "method": "GET",
+          "path": "/files/{file_id}",
+          "description": "Retrieve a specific asset file (brand guide PDF, template doc, image)."
+        },
+        "export_file": {
+          "method": "GET",
+          "path": "/files/{file_id}/export",
+          "description": "Export Google Docs/Sheets to a usable format (Markdown, CSV)."
+        }
+      },
+      "config": {
+        "brand_assets_folder_id": "EEVL_GDRIVE_BRAND_ASSETS_FOLDER_ID",
+        "templates_folder_id": "EEVL_GDRIVE_TEMPLATES_FOLDER_ID",
+        "content_archive_folder_id": "EEVL_GDRIVE_CONTENT_ARCHIVE_FOLDER_ID"
+      },
+      "auth": {
+        "type": "oauth2",
+        "env_var": "GOOGLE_SERVICE_ACCOUNT_KEY"
+      }
+    }
+  ]
+}

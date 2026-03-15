@@ -1,0 +1,52 @@
+{
+  "name": "llm-router",
+  "description": "AI model routing - Claude, GPT-4o, Gemini via OpenRouter",
+  "version": "1.0.0",
+  "provider": "openrouter",
+  "auth_config": {
+    "api_key": "${OPENROUTER_API_KEY}"
+  },
+  "base_url": "https://openrouter.ai/api/v1",
+  "models": [
+    {
+      "id": "anthropic/claude-opus",
+      "use_case": "deep_analysis",
+      "description": "Deep analysis, complex reasoning, strategic planning",
+      "priority": 1,
+      "max_tokens": 4096
+    },
+    {
+      "id": "anthropic/claude-sonnet",
+      "use_case": "general",
+      "description": "General tasks, content writing, summaries",
+      "priority": 2,
+      "max_tokens": 4096
+    },
+    {
+      "id": "openai/gpt-4o",
+      "use_case": "vision_creative",
+      "description": "Vision tasks, creative content, image analysis",
+      "priority": 3,
+      "max_tokens": 4096
+    },
+    {
+      "id": "google/gemini-flash",
+      "use_case": "speed",
+      "description": "Fast responses, simple queries, high-throughput tasks",
+      "priority": 4,
+      "max_tokens": 2048
+    }
+  ],
+  "capabilities": [
+    "chat",
+    "vision",
+    "code",
+    "analysis"
+  ],
+  "routing_rules": {
+    "default_model": "anthropic/claude-sonnet",
+    "fallback_model": "google/gemini-flash",
+    "max_retries": 3,
+    "timeout_ms": 30000
+  }
+}

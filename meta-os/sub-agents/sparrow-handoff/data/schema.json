@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Sparrow Handoff Agent Schema",
+  "description": "Input and output schemas for the Sparrow Handoff sub-agent",
+  "input": {
+    "type": "object",
+    "required": ["raw_file_manifest", "project_id", "edit_notes"],
+    "properties": {
+      "raw_file_manifest": {
+        "type": "array",
+        "description": "List of raw media files from the shoot",
+        "items": {
+          "type": "object",
+          "required": ["file_name", "file_url", "file_type"],
+          "properties": {
+            "file_name": {
+              "type": "string",
+              "description": "Original file name"
+            },
+            "file_url": {
+              "type": "string",
+              "format": "uri",
+              "description": "Source URL or path to the raw file"
+            },
+            "file_type": {
+              "type": "string",
+              "enum": ["raw_footage", "audio", "photo", "graphics", "b_roll", "interview", "bts"],
+              "description": "Type of media file"
+            },
+            "file_size_bytes": {
+              "type": "integer",
+              "description": "File size in bytes"
+            },
+            "duration_seconds": {
+              "type": "number",
+              "description": "Duration for video/audio files"
+            }
+          }
+        }
+      },
+      "project_id": {
+        "type": "string",
+        "description": "ClickUp project/task ID for this shoot"
+      },
+      "edit_notes": {
+        "type": "object",
+        "required": ["summary"],
+        "properties": {
+          "summary": {
+            "type": "string",
+            "description": "Summary of editing instructions"
+          },
+          "style_reference": {
+            "type": "string",
+            "description": "Reference to style guide or previous edits"
+          },
+          "music_notes": {
+            "type": "string",
+            "description": "Music selection preferences"
+          },
+          "color_grade": {
+            "type": "string",
+            "description": "Color grading preferences"
+          },
+          "deliverable_specs": {
+            "type": "object",
+            "properties": {
+              "format": { "type": "string" },
+              "resolution": { "type": "string" },
+              "aspect_ratio": { "type": "string" },
+              "duration_target": { "type": "string" }
+            }
+          },
+          "special_instructions": {
+            "type": "string"
+          }
+        }
+      },
+      "project_name": {
+        "type": "string",
+        "description": "Human-readable project name"
+      },
+      "client_name": {
+        "type": "string"
+      },
+      "shoot_date": {
+        "type": "string",
+        "format": "date"
+      },
+      "priority": {
+        "type": "string",
+        "enum": ["normal", "rush"],
+        "default": "normal"
+      },
+      "is_gold_star": {
+        "type": "boolean",
+        "default": false,
+        "description": "Whether this is a Gold Star project"
+      },
+      "expected_delivery_date": {
+        "type": "string",
+        "format": "date"
+      }
+    }
+  },
+  "output": {
+    "type": "object",
+    "required": ["google_drive_folder_url", "lark_message_id", "acknowledgment_status"],
+    "properties": {
+      "google_drive_folder_url": {
+        "type": "string",
+        "format": "uri",
+        "description": "URL to the organized project folder in Google Drive"
+      },
+      "lark_message_id": {
+        "type": "string",
+        "description": "ID of the handoff notification message in Lark"
+      },
+      "acknowledgment_status": {
+        "type": "string",
+        "enum": ["acknowledged", "pending", "follow_up_sent", "escalated"],
+        "description": "Current acknowledgment status from Sparrow"
+      },
+      "files_uploaded": {
+        "type": "integer",
+        "description": "Total number of files successfully uploaded"
+      },
+      "files_missing": {
+        "type": "array",
+        "description": "Files from manifest that could not be found or uploaded",
+        "items": {
+          "type": "string"
+        }
+      },
+      "clickup_status_updated": {
+        "type": "boolean",
+        "description": "Whether the ClickUp task was updated to 'With Editor'"
+      }
+    }
+  }
+}

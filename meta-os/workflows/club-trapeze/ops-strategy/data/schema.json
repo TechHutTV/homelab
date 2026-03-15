@@ -1,0 +1,109 @@
+{
+  "task_id": "ops-strategy",
+  "input": {
+    "description": "Vtiger CRM data export combined with a target date range for analysis.",
+    "fields": {
+      "vtiger_crm_export": {
+        "type": "object",
+        "description": "Structured export from Vtiger CRM containing contacts, deals, events, and transaction history.",
+        "properties": {
+          "contacts": {
+            "type": "array",
+            "description": "Customer contact records with visit history and segmentation tags."
+          },
+          "deals": {
+            "type": "array",
+            "description": "Deal/booking records including private events, VIP packages, and partnerships."
+          },
+          "events": {
+            "type": "array",
+            "description": "Event records with attendance counts, ticket sales, and capacity data."
+          },
+          "transactions": {
+            "type": "array",
+            "description": "Revenue transaction records by category."
+          }
+        },
+        "required": true
+      },
+      "date_range": {
+        "type": "object",
+        "description": "Start and end dates defining the analysis period.",
+        "properties": {
+          "start_date": {
+            "type": "string",
+            "format": "date",
+            "description": "Analysis period start date (YYYY-MM-DD)."
+          },
+          "end_date": {
+            "type": "string",
+            "format": "date",
+            "description": "Analysis period end date (YYYY-MM-DD)."
+          }
+        },
+        "required": true
+      }
+    }
+  },
+  "output": {
+    "description": "KPI dashboard data, prioritized recommendations, and a formatted strategy report for Fred.",
+    "fields": {
+      "kpi_dashboard": {
+        "type": "object",
+        "description": "Structured KPI summary with current values, trends, and period-over-period changes.",
+        "properties": {
+          "total_revenue": { "type": "number" },
+          "revenue_by_category": {
+            "type": "object",
+            "properties": {
+              "bar_sales": { "type": "number" },
+              "event_tickets": { "type": "number" },
+              "cover_charges": { "type": "number" },
+              "private_bookings": { "type": "number" },
+              "vip_packages": { "type": "number" }
+            }
+          },
+          "customer_retention_rate": { "type": "number" },
+          "average_event_attendance": { "type": "number" },
+          "capacity_utilization": { "type": "number" },
+          "new_customers": { "type": "integer" },
+          "repeat_customers": { "type": "integer" },
+          "trends": {
+            "type": "object",
+            "description": "Period-over-period trend indicators for each KPI."
+          }
+        }
+      },
+      "recommendations": {
+        "type": "array",
+        "description": "Prioritized list of actionable recommendations for Fred.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "priority": { "type": "string", "enum": ["urgent", "high", "medium", "low"] },
+            "observation": { "type": "string" },
+            "insight": { "type": "string" },
+            "recommended_action": { "type": "string" },
+            "expected_outcome": { "type": "string" },
+            "estimated_impact": { "type": "string" },
+            "timeline": { "type": "string" }
+          }
+        }
+      },
+      "strategy_report": {
+        "type": "object",
+        "description": "Formatted strategy report document.",
+        "properties": {
+          "title": { "type": "string" },
+          "period": { "type": "string" },
+          "executive_summary": { "type": "string" },
+          "kpi_analysis": { "type": "string" },
+          "competitor_landscape": { "type": "string" },
+          "operational_recommendations": { "type": "string" },
+          "action_items": { "type": "array", "items": { "type": "string" } },
+          "report_url": { "type": "string", "format": "uri" }
+        }
+      }
+    }
+  }
+}

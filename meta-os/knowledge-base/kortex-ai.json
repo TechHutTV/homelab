@@ -1,0 +1,16 @@
+{
+  "name": "Kortex.ai",
+  "type": "knowledge_management",
+  "description": "Central AI knowledge base for EEVL content and processes",
+  "version": "1.0.0",
+  "base_url": "https://app.kortex.ai/api/v1",
+  "auth_config": {
+    "api_key": "${KORTEX_API_KEY}"
+  },
+  "capabilities": [
+    "document_storage",
+    "semantic_search",
+    "content_tagging",
+    "knowledge_graph"
+  ]
+}

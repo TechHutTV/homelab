@@ -1,0 +1,28 @@
+{
+  "name": "notion",
+  "description": "Knowledge base, wikis, client workspaces",
+  "version": "1.0.0",
+  "auth_type": "integration_token",
+  "auth_config": {
+    "integration_token": "${NOTION_INTEGRATION_TOKEN}"
+  },
+  "base_url": "https://api.notion.com/v1",
+  "capabilities": [
+    "create_page",
+    "update_page",
+    "query_database",
+    "create_database"
+  ],
+  "used_by": {
+    "workflows": [
+      "client-onboarding",
+      "sop-management",
+      "wiki-sync"
+    ],
+    "sub_agents": [
+      "atlas",
+      "echo",
+      "sparrow"
+    ]
+  }
+}

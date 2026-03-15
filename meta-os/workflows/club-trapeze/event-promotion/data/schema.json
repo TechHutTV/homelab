@@ -1,0 +1,162 @@
+{
+  "task_id": "event-promotion",
+  "schema_version": "1.0.0",
+  "input": {
+    "description": "Event brief containing all details needed to execute a full promotional campaign.",
+    "fields": {
+      "event_brief": {
+        "type": "object",
+        "description": "Complete event details for campaign execution.",
+        "properties": {
+          "event_name": {
+            "type": "string",
+            "description": "Marketable event title."
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Event date and start time."
+          },
+          "end_time": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Event end time."
+          },
+          "theme": {
+            "type": "string",
+            "description": "Creative theme or concept for the event."
+          },
+          "description": {
+            "type": "string",
+            "description": "Full event description for marketing copy."
+          },
+          "talent": {
+            "type": "array",
+            "description": "Performers, DJs, hosts, or celebrity guests.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string" },
+                "role": { "type": "string", "enum": ["dj", "live_performer", "host", "celebrity_guest"] },
+                "social_handle": { "type": "string" },
+                "bio": { "type": "string" }
+              },
+              "required": ["name", "role"]
+            }
+          },
+          "pricing": {
+            "type": "object",
+            "description": "Ticket and entry pricing tiers.",
+            "properties": {
+              "general_admission": { "type": "number" },
+              "early_bird": { "type": "number" },
+              "vip": { "type": "number" },
+              "bottle_service_minimum": { "type": "number" },
+              "group_rate": {
+                "type": "object",
+                "properties": {
+                  "min_group_size": { "type": "integer" },
+                  "price_per_person": { "type": "number" }
+                }
+              }
+            }
+          },
+          "target_audience": {
+            "type": "string",
+            "description": "Description of the ideal attendee demographic and interests."
+          },
+          "key_selling_points": {
+            "type": "array",
+            "description": "Top 3 promotional hooks for this event.",
+            "items": { "type": "string" },
+            "maxItems": 5
+          },
+          "dress_code": {
+            "type": "string",
+            "description": "Dress code requirements or suggestions."
+          },
+          "venue_details": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string", "default": "Club Trapeze" },
+              "address": { "type": "string" },
+              "capacity": { "type": "integer" }
+            }
+          }
+        },
+        "required": ["event_name", "date", "theme", "pricing"]
+      }
+    },
+    "required": ["event_brief"]
+  },
+  "output": {
+    "description": "Complete campaign deliverables — flyer assets, email campaigns, social posts, ticket page, and RSVP tracking.",
+    "fields": {
+      "flyer_assets": {
+        "type": "array",
+        "description": "Generated flyer files in multiple sizes.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "size": { "type": "string", "enum": ["instagram_square", "instagram_story", "facebook_cover", "print_ready"] },
+            "dimensions": { "type": "string" },
+            "file_url": { "type": "string", "format": "uri" },
+            "canva_design_id": { "type": "string" },
+            "approval_status": { "type": "string", "enum": ["pending", "approved", "revision_requested"] }
+          }
+        }
+      },
+      "email_campaign_id": {
+        "type": "string",
+        "description": "Identifier for the email campaign sequence."
+      },
+      "email_campaign_details": {
+        "type": "object",
+        "description": "Email campaign execution details.",
+        "properties": {
+          "announcement_sent": { "type": "boolean" },
+          "announcement_open_rate": { "type": "number" },
+          "reminder_sent": { "type": "boolean" },
+          "reminder_open_rate": { "type": "number" },
+          "last_call_sent": { "type": "boolean" },
+          "last_call_open_rate": { "type": "number" },
+          "total_recipients": { "type": "integer" },
+          "total_clicks": { "type": "integer" }
+        }
+      },
+      "social_posts": {
+        "type": "array",
+        "description": "Scheduled or published social media posts for the event campaign.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "platform": { "type": "string", "enum": ["instagram_feed", "instagram_reel", "instagram_story", "facebook_post", "facebook_event"] },
+            "post_id": { "type": "string" },
+            "scheduled_time": { "type": "string", "format": "date-time" },
+            "status": { "type": "string", "enum": ["scheduled", "published", "failed"] },
+            "campaign_phase": { "type": "string", "enum": ["announcement", "talent_spotlight", "early_bird_reminder", "hype", "final_countdown", "day_of", "recap"] }
+          }
+        }
+      },
+      "ticket_page_url": {
+        "type": "string",
+        "format": "uri",
+        "description": "URL to the ticket purchase or RSVP page."
+      },
+      "rsvp_count": {
+        "type": "object",
+        "description": "Current RSVP and ticket sales tracking.",
+        "properties": {
+          "total_tickets_sold": { "type": "integer" },
+          "general_admission_sold": { "type": "integer" },
+          "vip_sold": { "type": "integer" },
+          "early_bird_sold": { "type": "integer" },
+          "facebook_rsvp_count": { "type": "integer" },
+          "revenue_to_date": { "type": "number" },
+          "pacing_status": { "type": "string", "enum": ["ahead", "on_track", "behind"] },
+          "last_updated": { "type": "string", "format": "date-time" }
+        }
+      }
+    }
+  }
+}

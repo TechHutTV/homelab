@@ -1,0 +1,132 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MeetingScribe Agent Schema",
+  "description": "Input and output schemas for the MeetingScribe sub-agent",
+  "input": {
+    "type": "object",
+    "required": ["meeting_recording_url", "attendees"],
+    "properties": {
+      "meeting_recording_url": {
+        "type": "string",
+        "format": "uri",
+        "description": "URL to the Lark meeting recording"
+      },
+      "attendees": {
+        "type": "array",
+        "description": "List of meeting attendees",
+        "items": {
+          "type": "object",
+          "required": ["name", "email"],
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Attendee full name"
+            },
+            "email": {
+              "type": "string",
+              "format": "email",
+              "description": "Attendee email address"
+            },
+            "role": {
+              "type": "string",
+              "description": "Attendee role in the meeting (host, presenter, participant)"
+            }
+          }
+        }
+      },
+      "meeting_title": {
+        "type": "string",
+        "description": "Title of the meeting"
+      },
+      "meeting_date": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Date and time of the meeting"
+      },
+      "clickup_list_id": {
+        "type": "string",
+        "description": "Override ClickUp list for task creation"
+      }
+    }
+  },
+  "output": {
+    "type": "object",
+    "required": ["transcription", "notion_page_url", "clickup_task_ids", "action_items"],
+    "properties": {
+      "transcription": {
+        "type": "object",
+        "properties": {
+          "full_text": {
+            "type": "string",
+            "description": "Complete meeting transcription"
+          },
+          "duration_seconds": {
+            "type": "integer",
+            "description": "Total meeting duration in seconds"
+          },
+          "speaker_segments": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "speaker": { "type": "string" },
+                "start_time": { "type": "number" },
+                "end_time": { "type": "number" },
+                "text": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "notion_page_url": {
+        "type": "string",
+        "format": "uri",
+        "description": "URL to the created Notion summary page"
+      },
+      "clickup_task_ids": {
+        "type": "array",
+        "description": "List of created ClickUp task IDs",
+        "items": {
+          "type": "string"
+        }
+      },
+      "action_items": {
+        "type": "array",
+        "description": "Extracted action items from the meeting",
+        "items": {
+          "type": "object",
+          "required": ["description", "assignee"],
+          "properties": {
+            "description": {
+              "type": "string",
+              "description": "Action item description"
+            },
+            "assignee": {
+              "type": "string",
+              "description": "Person responsible"
+            },
+            "due_date": {
+              "type": "string",
+              "format": "date",
+              "description": "Target completion date"
+            },
+            "priority": {
+              "type": "string",
+              "enum": ["high", "medium", "low"],
+              "description": "Priority level"
+            },
+            "clickup_task_id": {
+              "type": "string",
+              "description": "Corresponding ClickUp task ID"
+            }
+          }
+        }
+      },
+      "google_drive_url": {
+        "type": "string",
+        "format": "uri",
+        "description": "URL to archived recording in Google Drive"
+      }
+    }
+  }
+}

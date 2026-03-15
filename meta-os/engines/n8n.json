@@ -1,0 +1,47 @@
+{
+  "name": "n8n",
+  "type": "workflow_automation",
+  "description": "Primary automation engine for EEVL",
+  "version": "1.0.0",
+  "base_url": "${N8N_BASE_URL}",
+  "auth_config": {
+    "api_key": "${N8N_API_KEY}"
+  },
+  "capabilities": [
+    "webhook_trigger",
+    "http_request",
+    "conditional_logic",
+    "loop",
+    "error_handling"
+  ],
+  "active_workflows": [
+    {
+      "id": "wf-001",
+      "name": "lead-nurture",
+      "description": "Automated lead follow-up and nurture sequences",
+      "trigger": "webhook",
+      "status": "active"
+    },
+    {
+      "id": "wf-002",
+      "name": "invoice-reminder",
+      "description": "Overdue invoice reminders via email and SMS",
+      "trigger": "schedule",
+      "status": "active"
+    },
+    {
+      "id": "wf-003",
+      "name": "content-scheduler",
+      "description": "Content publishing and distribution pipeline",
+      "trigger": "schedule",
+      "status": "active"
+    },
+    {
+      "id": "wf-004",
+      "name": "file-organizer",
+      "description": "Automatic file sorting and tagging in Google Drive",
+      "trigger": "webhook",
+      "status": "active"
+    }
+  ]
+}

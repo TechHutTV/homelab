@@ -1,0 +1,12 @@
+{
+  "name": "Onboarding Agent",
+  "version": "1.0.0",
+  "trigger": "contract_signed",
+  "model": "claude-sonnet-4-6",
+  "description": "Full client kickoff sequence automation — executes entire onboarding within 5 minutes of contract signing",
+  "sequence": ["clickup_project", "lark_channel", "notion_workspace", "kickoff_email", "team_assignment", "kickoff_meeting"],
+  "sla": {
+    "total_completion": "5_minutes",
+    "first_touchpoint": "60_seconds"
+  }
+}

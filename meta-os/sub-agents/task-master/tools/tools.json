@@ -1,0 +1,105 @@
+{
+  "tools": [
+    {
+      "name": "clickup",
+      "type": "api",
+      "description": "Read and manage ClickUp tasks, assignments, and board state",
+      "endpoints": {
+        "get_tasks": {
+          "method": "GET",
+          "path": "/api/v2/team/{team_id}/task",
+          "description": "Get all tasks with filters (unassigned, overdue, etc.)"
+        },
+        "get_task": {
+          "method": "GET",
+          "path": "/api/v2/task/{task_id}",
+          "description": "Get single task details"
+        },
+        "update_task": {
+          "method": "PUT",
+          "path": "/api/v2/task/{task_id}",
+          "description": "Update task assignee, status, priority, or due date"
+        },
+        "get_spaces": {
+          "method": "GET",
+          "path": "/api/v2/team/{team_id}/space",
+          "description": "List all spaces in the workspace"
+        },
+        "get_lists": {
+          "method": "GET",
+          "path": "/api/v2/folder/{folder_id}/list",
+          "description": "List all lists in a folder"
+        },
+        "get_members": {
+          "method": "GET",
+          "path": "/api/v2/team/{team_id}/member",
+          "description": "Get all team members"
+        }
+      },
+      "auth": {
+        "type": "api_key",
+        "credentials_ref": "vault://clickup/task-master"
+      },
+      "config": {
+        "team_id": "{{CLICKUP_TEAM_ID}}",
+        "workspace_id": "{{CLICKUP_WORKSPACE_ID}}"
+      }
+    },
+    {
+      "name": "lark",
+      "type": "api",
+      "description": "Send notifications, reminders, and daily digest messages",
+      "endpoints": {
+        "send_message": {
+          "method": "POST",
+          "path": "/open-apis/im/v1/messages",
+          "description": "Send message to channel or individual"
+        },
+        "send_card": {
+          "method": "POST",
+          "path": "/open-apis/im/v1/messages",
+          "description": "Send interactive card message for digest"
+        },
+        "get_user_by_email": {
+          "method": "GET",
+          "path": "/open-apis/contact/v3/users/batch_get_id",
+          "description": "Look up Lark user for DM notifications"
+        }
+      },
+      "auth": {
+        "type": "oauth2",
+        "credentials_ref": "vault://lark/task-master"
+      },
+      "config": {
+        "team_channel_id": "{{LARK_TEAM_CHANNEL_ID}}",
+        "escalation_channel_id": "{{LARK_ESCALATION_CHANNEL_ID}}"
+      }
+    },
+    {
+      "name": "airtable",
+      "type": "api",
+      "description": "Access team skills matrix for intelligent task matching",
+      "endpoints": {
+        "list_records": {
+          "method": "GET",
+          "path": "/v0/{base_id}/{table_name}",
+          "description": "Query team skills matrix records"
+        },
+        "get_record": {
+          "method": "GET",
+          "path": "/v0/{base_id}/{table_name}/{record_id}",
+          "description": "Get individual team member skills record"
+        }
+      },
+      "auth": {
+        "type": "api_key",
+        "credentials_ref": "vault://airtable/task-master"
+      },
+      "config": {
+        "base_id": "{{AIRTABLE_TEAM_BASE_ID}}",
+        "skills_table": "Team Skills Matrix",
+        "availability_table": "Availability"
+      }
+    }
+  ]
+}

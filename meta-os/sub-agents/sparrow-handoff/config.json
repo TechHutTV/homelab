@@ -1,0 +1,13 @@
+{
+  "name": "Sparrow Handoff Agent",
+  "version": "1.0.0",
+  "trigger": "post_production_complete",
+  "model": "claude-haiku-4-5",
+  "description": "Packages raw files and notifies Edited By Sparrow via Lark channel automatically",
+  "channels": {
+    "default": "#edited-by-sparrow",
+    "gold_star": "#gold-star",
+    "club_trapeze": "#club-trapeze"
+  },
+  "naming_convention": "YYYY-MM-DD_ClientName_ProjectType_###"
+}

@@ -1,0 +1,98 @@
+{
+  "name": "club-trapeze-management",
+  "description": "End-to-end management workflow for Club Trapeze, an upscale entertainment and events venue in Tamarac, FL. Managed by Eagle Eye Vision Labz (EEVL) for client contact Fred.",
+  "version": "1.0.0",
+  "client": {
+    "name": "Club Trapeze",
+    "contact": "Fred",
+    "location": "Tamarac, FL",
+    "vertical": "Entertainment / Nightlife / Events Venue",
+    "managed_by": "Eagle Eye Vision Labz (EEVL)"
+  },
+  "tasks": [
+    {
+      "id": "ops-strategy",
+      "name": "Operational Strategy & KPI Analysis",
+      "path": "./ops-strategy",
+      "description": "CRM-driven KPI analysis, competitor research, and strategic recommendations for Fred.",
+      "parallel": true,
+      "depends_on": []
+    },
+    {
+      "id": "social-media-management",
+      "name": "Social Media Management",
+      "path": "./social-media-management",
+      "description": "Content creation, scheduling, and engagement management across social platforms.",
+      "parallel": true,
+      "depends_on": []
+    },
+    {
+      "id": "revenue-reporting",
+      "name": "Revenue Reporting & Reconciliation",
+      "path": "./revenue-reporting",
+      "description": "Stripe and QuickBooks aggregation, weekly executive summaries, and profit analysis for Fred.",
+      "parallel": true,
+      "depends_on": []
+    },
+    {
+      "id": "event-promotion",
+      "name": "Event Promotion & Campaign Execution",
+      "path": "./event-promotion",
+      "description": "End-to-end event promotion including flyer design, email blasts, social campaigns, and ticket tracking.",
+      "parallel": true,
+      "depends_on": []
+    }
+  ],
+  "triggers": {
+    "scheduled": {
+      "weekly": {
+        "day": "Monday",
+        "time": "09:00",
+        "timezone": "America/New_York",
+        "tasks": ["ops-strategy", "social-media-management", "revenue-reporting", "event-promotion"]
+      }
+    },
+    "manual": {
+      "description": "Any task can be triggered on-demand by EEVL operators or by Fred's request.",
+      "allowed_tasks": ["ops-strategy", "social-media-management", "revenue-reporting", "event-promotion"]
+    }
+  },
+  "mcp_connections": {
+    "vtiger_crm": {
+      "type": "mcp",
+      "name": "Vtiger CRM",
+      "description": "Customer relationship management, KPI data, contact records, and deal pipeline for Club Trapeze.",
+      "used_by": ["ops-strategy"]
+    },
+    "stripe": {
+      "type": "mcp",
+      "name": "Stripe",
+      "description": "Payment processing, transaction data, ticket sales, and revenue tracking.",
+      "used_by": ["revenue-reporting", "event-promotion"]
+    },
+    "quickbooks": {
+      "type": "mcp",
+      "name": "QuickBooks",
+      "description": "Accounting, expense tracking, reconciliation, and financial reporting.",
+      "used_by": ["revenue-reporting"]
+    },
+    "social_platforms": {
+      "type": "mcp",
+      "name": "Social Platforms (Facebook, Instagram)",
+      "description": "Post scheduling, event creation, engagement management, and analytics.",
+      "used_by": ["social-media-management", "event-promotion"]
+    },
+    "canva": {
+      "type": "mcp",
+      "name": "Canva API",
+      "description": "Graphic design for social posts, event flyers, and branded visual assets.",
+      "used_by": ["social-media-management", "event-promotion"]
+    },
+    "gmail": {
+      "type": "mcp",
+      "name": "Gmail",
+      "description": "Email campaign delivery, report distribution, and client communication.",
+      "used_by": ["revenue-reporting", "event-promotion"]
+    }
+  }
+}

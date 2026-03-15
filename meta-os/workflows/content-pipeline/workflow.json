@@ -1,0 +1,86 @@
+{
+  "workflow": {
+    "id": "content-pipeline",
+    "name": "EEVL Content Pipeline",
+    "description": "End-to-end content pipeline for Eagle Eye Vision Labz (EEVL). Driven by SocialBot sub-agent. Covers idea harvesting, content creation, design asset generation, and multi-platform distribution.",
+    "version": "1.0.0",
+    "sub_agent": "social-bot",
+    "tasks": [
+      {
+        "order": 1,
+        "id": "idea-harvest",
+        "name": "Idea Harvest",
+        "description": "Scrape trending content from TikTok and Reddit, analyze competitors, score trends, and populate the content calendar.",
+        "path": "idea-harvest/"
+      },
+      {
+        "order": 2,
+        "id": "content-creation",
+        "name": "Content Creation",
+        "description": "Draft blog posts, social captions, hashtags, SEO copy, email newsletters, and video script outlines using EEVL brand voice.",
+        "path": "content-creation/"
+      },
+      {
+        "order": 3,
+        "id": "design-assets",
+        "name": "Design Assets",
+        "description": "Generate platform-specific graphics, carousels, and thumbnails using the EEVL brand kit via Canva API.",
+        "path": "design-assets/"
+      },
+      {
+        "order": 4,
+        "id": "multi-platform-distribution",
+        "name": "Multi-Platform Distribution",
+        "description": "Publish content and assets across all social platforms, send email newsletters, monitor engagement, and run A/B tests.",
+        "path": "multi-platform-distribution/"
+      }
+    ],
+    "triggers": {
+      "scheduled": [
+        {
+          "type": "daily",
+          "cron": "0 6 * * *",
+          "description": "Daily content pipeline run at 6:00 AM UTC for social posting and engagement checks."
+        },
+        {
+          "type": "weekly",
+          "cron": "0 9 * * 1",
+          "description": "Weekly deep harvest every Monday at 9:00 AM UTC for trend analysis and content calendar planning."
+        }
+      ],
+      "manual": {
+        "enabled": true,
+        "description": "Trigger the pipeline on-demand for campaign launches, urgent posts, or ad-hoc content needs."
+      }
+    },
+    "mcp_connections": {
+      "web_scrape": {
+        "id": "web-scrape-mcp",
+        "name": "Web Scrape MCP",
+        "description": "General-purpose web scraping for competitor analysis, blog research, and page content extraction."
+      },
+      "apify": {
+        "id": "apify-mcp",
+        "name": "Apify MCP",
+        "description": "TikTok trending content scraping, Reddit thread mining, and structured data extraction at scale."
+      },
+      "openrouter": {
+        "id": "openrouter-mcp",
+        "name": "OpenRouter MCP",
+        "model": "gpt-4o",
+        "description": "LLM routing to GPT-4o for content drafting, caption generation, SEO optimization, and copywriting."
+      },
+      "canva_api": {
+        "id": "canva-api-mcp",
+        "name": "Canva API MCP",
+        "description": "Programmatic design generation using EEVL brand kit — social graphics, carousels, thumbnails, and stories."
+      },
+      "social_platforms": {
+        "id": "social-platforms-mcp",
+        "name": "Social Platforms MCP",
+        "platforms": ["facebook", "instagram", "twitter_x", "linkedin", "google_my_business"],
+        "description": "Publishing, scheduling, and engagement monitoring across all connected social media accounts."
+      }
+    }
+  }
+}

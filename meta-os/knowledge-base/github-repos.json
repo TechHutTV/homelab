@@ -1,0 +1,29 @@
+{
+  "name": "GitHub Repositories",
+  "type": "code_storage",
+  "description": "EEVL codebase, automation scripts, agent configurations",
+  "version": "1.0.0",
+  "org": "eevl",
+  "repos": [
+    {
+      "name": "homelab",
+      "description": "Infrastructure, server configs, and M3TA OS core",
+      "visibility": "private"
+    },
+    {
+      "name": "meta-os-agents",
+      "description": "Sub-agent definitions, prompts, and orchestration logic",
+      "visibility": "private"
+    },
+    {
+      "name": "eevl-automations",
+      "description": "n8n workflows, Make scenarios, and automation scripts",
+      "visibility": "private"
+    },
+    {
+      "name": "client-templates",
+      "description": "Reusable client project templates and boilerplates",
+      "visibility": "private"
+    }
+  ]
+}

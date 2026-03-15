@@ -1,0 +1,334 @@
+{
+  "tools": [
+    {
+      "id": "clickup_project_creation",
+      "name": "ClickUp Project Creation",
+      "mcp_connection": "clickup",
+      "capability": "project_creation",
+      "description": "Create new client projects from EEVL templates in ClickUp with all standard tasks, assignments, and custom fields.",
+      "operations": [
+        {
+          "name": "create_project_from_template",
+          "description": "Create a new ClickUp project (folder) from an EEVL template with pre-configured tasks and workflows.",
+          "input": {
+            "space_id": "string",
+            "template_id": "string",
+            "project_name": "string",
+            "due_dates": {
+              "start_date": "ISO8601 date",
+              "end_date": "ISO8601 date",
+              "milestone_dates": [
+                {
+                  "task_name": "string",
+                  "due_date": "ISO8601 date"
+                }
+              ]
+            },
+            "custom_fields": {
+              "ghl_contact_id": "string",
+              "pandadoc_contract_id": "string",
+              "stripe_invoice_id": "string",
+              "notion_workspace_url": "string",
+              "lark_channel_id": "string",
+              "project_value_cents": "number",
+              "client_email": "string",
+              "account_lead": "string"
+            },
+            "priority": "urgent | high | normal | low"
+          },
+          "output": {
+            "project_id": "string",
+            "project_url": "string",
+            "tasks_created": "number",
+            "lists": ["string"]
+          }
+        },
+        {
+          "name": "assign_team_members",
+          "description": "Assign EEVL team members to tasks within the project.",
+          "input": {
+            "project_id": "string",
+            "assignments": [
+              {
+                "task_id": "string",
+                "assignee_id": "string"
+              }
+            ]
+          },
+          "output": {
+            "assignments_made": "number",
+            "success": "boolean"
+          }
+        },
+        {
+          "name": "update_project_custom_fields",
+          "description": "Update custom fields on the project after other resources are created (e.g., Notion URL, Lark channel).",
+          "input": {
+            "project_id": "string",
+            "custom_fields": "object"
+          },
+          "output": {
+            "success": "boolean"
+          }
+        }
+      ]
+    },
+    {
+      "id": "lark_channel_creation",
+      "name": "Lark Channel Creation",
+      "mcp_connection": "lark",
+      "capability": "channels",
+      "description": "Create dedicated Lark channels for client projects and manage membership and pinned content.",
+      "operations": [
+        {
+          "name": "create_channel",
+          "description": "Create a new Lark channel for the client project.",
+          "input": {
+            "name": "string",
+            "description": "string",
+            "type": "private | public",
+            "members": ["string"]
+          },
+          "output": {
+            "channel_id": "string",
+            "channel_name": "string",
+            "invite_link": "string"
+          }
+        },
+        {
+          "name": "pin_message",
+          "description": "Pin a project overview message in the channel.",
+          "input": {
+            "channel_id": "string",
+            "message": "string"
+          },
+          "output": {
+            "message_id": "string",
+            "pinned": "boolean"
+          }
+        },
+        {
+          "name": "send_channel_message",
+          "description": "Post a message to the client project channel (e.g., project brief, resource links).",
+          "input": {
+            "channel_id": "string",
+            "message": "string"
+          },
+          "output": {
+            "message_id": "string",
+            "sent_at": "ISO8601 timestamp"
+          }
+        },
+        {
+          "name": "send_direct_message",
+          "description": "Send a direct message to a team member (e.g., assignment notification).",
+          "input": {
+            "user_id": "string",
+            "message": "string"
+          },
+          "output": {
+            "message_id": "string"
+          }
+        }
+      ]
+    },
+    {
+      "id": "notion_workspace_setup",
+      "name": "Notion Workspace Setup",
+      "mcp_connection": "notion",
+      "capability": "workspace_setup",
+      "description": "Provision complete Notion workspaces for new client projects including wiki, docs, meeting notes, and deliverables tracker.",
+      "operations": [
+        {
+          "name": "create_workspace",
+          "description": "Create a full client workspace from the EEVL workspace template.",
+          "input": {
+            "parent_page_id": "string",
+            "client_name": "string",
+            "project_name": "string",
+            "template_id": "string",
+            "initial_content": {
+              "overview": "string",
+              "scope": "string",
+              "key_contacts": [
+                {
+                  "name": "string",
+                  "role": "string",
+                  "email": "string"
+                }
+              ],
+              "deliverables": [
+                {
+                  "name": "string",
+                  "description": "string",
+                  "due_date": "ISO8601 date",
+                  "acceptance_criteria": "string"
+                }
+              ],
+              "timeline_summary": "string"
+            }
+          },
+          "output": {
+            "workspace_page_id": "string",
+            "workspace_url": "string",
+            "sub_pages": {
+              "wiki_url": "string",
+              "docs_url": "string",
+              "meeting_notes_db_id": "string",
+              "deliverables_db_id": "string"
+            }
+          }
+        },
+        {
+          "name": "create_meeting_entry",
+          "description": "Create a pre-populated kickoff meeting entry in the meeting notes database.",
+          "input": {
+            "database_id": "string",
+            "title": "string",
+            "date": "ISO8601 date",
+            "attendees": ["string"],
+            "agenda": ["string"]
+          },
+          "output": {
+            "page_id": "string",
+            "page_url": "string"
+          }
+        },
+        {
+          "name": "set_permissions",
+          "description": "Configure workspace permissions for EEVL team and optionally client stakeholders.",
+          "input": {
+            "page_id": "string",
+            "permissions": [
+              {
+                "user_or_group": "string",
+                "level": "full_access | edit | comment | read"
+              }
+            ]
+          },
+          "output": {
+            "success": "boolean"
+          }
+        }
+      ]
+    },
+    {
+      "id": "gmail_kickoff_email",
+      "name": "Gmail Kickoff Email",
+      "mcp_connection": "gmail",
+      "capability": "email_send",
+      "description": "Send comprehensive kickoff emails to clients with project details, timeline, deliverables, and communication channel information.",
+      "operations": [
+        {
+          "name": "send_kickoff_email",
+          "description": "Send the project kickoff email to the client and EEVL team.",
+          "input": {
+            "to": ["string"],
+            "cc": ["string"],
+            "from_alias": "string",
+            "subject": "string",
+            "body_html": "string",
+            "attachments": [
+              {
+                "filename": "string",
+                "content_type": "string",
+                "data": "base64 string"
+              }
+            ]
+          },
+          "output": {
+            "message_id": "string",
+            "sent_at": "ISO8601 timestamp",
+            "status": "sent | failed",
+            "delivery_confirmed": "boolean"
+          }
+        }
+      ]
+    },
+    {
+      "id": "onboarding_agent",
+      "name": "Onboarding Agent Sub-Agent",
+      "type": "sub_agent",
+      "description": "Orchestrates the entire project kickoff sequence automatically — ClickUp project creation, Lark channel setup, Notion workspace provisioning, kickoff email dispatch, and team assignment. Runs autonomously and reports status for each step.",
+      "operations": [
+        {
+          "name": "execute_kickoff",
+          "description": "Run the full kickoff sequence. The onboarding-agent handles all steps in order, retrying failures and escalating as needed.",
+          "input": {
+            "client_name": "string",
+            "project_name": "string",
+            "engagement_type": "project | retainer | consulting",
+            "ghl_contact_id": "string",
+            "pandadoc_contract_id": "string",
+            "stripe_invoice_id": "string",
+            "contract_details": {
+              "scope": "string",
+              "deliverables": ["object"],
+              "timeline": "object",
+              "value_cents": "number"
+            },
+            "client_contacts": [
+              {
+                "name": "string",
+                "email": "string",
+                "role": "string"
+              }
+            ],
+            "eevl_team": [
+              {
+                "name": "string",
+                "email": "string",
+                "role": "string",
+                "lark_user_id": "string",
+                "clickup_user_id": "string"
+              }
+            ]
+          },
+          "output": {
+            "status": "completed | partial | failed",
+            "steps": {
+              "clickup": {
+                "status": "success | failed",
+                "project_id": "string | null",
+                "project_url": "string | null"
+              },
+              "lark": {
+                "status": "success | failed",
+                "channel_id": "string | null",
+                "channel_name": "string | null"
+              },
+              "notion": {
+                "status": "success | failed",
+                "workspace_url": "string | null"
+              },
+              "email": {
+                "status": "success | failed",
+                "message_id": "string | null"
+              },
+              "team_notifications": {
+                "status": "success | failed",
+                "notified_count": "number"
+              }
+            },
+            "errors": ["string"],
+            "completed_at": "ISO8601 timestamp"
+          }
+        },
+        {
+          "name": "get_kickoff_status",
+          "description": "Check the current status of an in-progress kickoff sequence.",
+          "input": {
+            "kickoff_id": "string"
+          },
+          "output": {
+            "status": "in_progress | completed | partial | failed",
+            "current_step": "string",
+            "steps_completed": ["string"],
+            "steps_remaining": ["string"],
+            "errors": ["string"]
+          }
+        }
+      ]
+    }
+  ]
+}

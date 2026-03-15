@@ -1,0 +1,76 @@
+{
+  "task_id": "revenue-reporting",
+  "tools": [
+    {
+      "id": "stripe",
+      "name": "Stripe",
+      "type": "mcp",
+      "description": "Payment processing platform — transaction data for bar sales, ticket sales, cover charges, private bookings, VIP packages, and refunds.",
+      "capabilities": [
+        "list_transactions",
+        "get_transaction",
+        "list_charges",
+        "list_refunds",
+        "list_payouts",
+        "get_balance",
+        "list_disputes"
+      ],
+      "auth": {
+        "method": "api_key",
+        "env_var": "STRIPE_API_KEY"
+      }
+    },
+    {
+      "id": "quickbooks",
+      "name": "QuickBooks",
+      "type": "mcp",
+      "description": "Accounting platform — chart of accounts, expense records, profit/loss statements, accounts payable, and reconciliation data.",
+      "capabilities": [
+        "query_transactions",
+        "get_profit_loss_report",
+        "get_balance_sheet",
+        "list_expenses",
+        "list_invoices",
+        "list_vendors",
+        "get_accounts_payable_aging",
+        "reconcile_transactions"
+      ],
+      "auth": {
+        "method": "oauth2",
+        "env_var": "QUICKBOOKS_CREDENTIALS"
+      }
+    },
+    {
+      "id": "gmail",
+      "name": "Gmail",
+      "type": "mcp",
+      "description": "Email delivery for weekly executive summaries and ad-hoc financial reports to Fred.",
+      "capabilities": [
+        "send_email",
+        "send_email_with_attachment",
+        "create_draft"
+      ],
+      "auth": {
+        "method": "oauth2",
+        "env_var": "GMAIL_CREDENTIALS"
+      }
+    },
+    {
+      "id": "google-drive",
+      "name": "Google Drive",
+      "type": "mcp",
+      "description": "Report archive — store weekly summaries, monthly rollups, and financial data exports for historical reference.",
+      "capabilities": [
+        "upload_file",
+        "create_folder",
+        "list_files",
+        "share_file",
+        "export_document"
+      ],
+      "auth": {
+        "method": "oauth2",
+        "env_var": "GOOGLE_DRIVE_CREDENTIALS"
+      }
+    }
+  ]
+}

@@ -1,0 +1,261 @@
+{
+  "task_id": "shoot-day",
+  "schema_version": "1.0.0",
+  "input": {
+    "description": "Shot list and schedule produced by the pre-production task, used to guide on-location shoot execution.",
+    "type": "object",
+    "required": ["shot_list", "schedule"],
+    "properties": {
+      "shot_list": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "shot_id": {
+              "type": "string",
+              "description": "Unique shot identifier (e.g., V-001, D-003, P-012)."
+            },
+            "pillar": {
+              "type": "string",
+              "enum": ["video", "drone", "photo"]
+            },
+            "description": {
+              "type": "string",
+              "description": "What this shot captures."
+            },
+            "angle": {
+              "type": "string",
+              "description": "Camera angle or drone altitude."
+            },
+            "movement": {
+              "type": "string",
+              "description": "Camera/drone movement type."
+            },
+            "duration_seconds": {
+              "type": "integer",
+              "description": "Estimated duration for video/drone shots."
+            },
+            "notes": {
+              "type": "string",
+              "description": "Special requirements, lighting, audio, lens choice."
+            }
+          }
+        },
+        "description": "Complete shot list from pre-production."
+      },
+      "schedule": {
+        "type": "object",
+        "properties": {
+          "shoot_date": {
+            "type": "string",
+            "format": "date",
+            "description": "The shoot date in ISO 8601 format."
+          },
+          "call_time": {
+            "type": "string",
+            "format": "time",
+            "description": "Crew call time (e.g., 07:00)."
+          },
+          "wrap_time": {
+            "type": "string",
+            "format": "time",
+            "description": "Expected wrap time (e.g., 18:00)."
+          },
+          "clickup_task_id": {
+            "type": "string",
+            "description": "ClickUp task ID for the shoot-day milestone."
+          }
+        }
+      },
+      "equipment_checklist": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "item": { "type": "string" },
+            "pillar": { "type": "string", "enum": ["video", "drone", "photo", "shared"] },
+            "quantity": { "type": "integer" },
+            "status": { "type": "string", "enum": ["available", "needs-charge", "needs-rental", "unavailable"] }
+          }
+        },
+        "description": "Equipment checklist from pre-production with availability status."
+      },
+      "lark_channel_id": {
+        "type": "string",
+        "description": "Lark project channel ID for posting status updates."
+      },
+      "google_drive_folder_id": {
+        "type": "string",
+        "description": "Google Drive project folder ID for raw file uploads."
+      },
+      "client_code": {
+        "type": "string",
+        "description": "Short client code for file naming (e.g., ACME)."
+      }
+    }
+  },
+  "output": {
+    "description": "All artifacts produced during the shoot day, including raw file inventory and flight logs.",
+    "type": "object",
+    "properties": {
+      "raw_file_manifest": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "file_name": {
+              "type": "string",
+              "description": "File name following EEVL naming convention."
+            },
+            "file_size_bytes": {
+              "type": "integer",
+              "description": "File size in bytes."
+            },
+            "pillar": {
+              "type": "string",
+              "enum": ["video", "drone", "photo"]
+            },
+            "shot_id": {
+              "type": "string",
+              "description": "Associated shot ID from the shot list."
+            },
+            "card_source": {
+              "type": "string",
+              "description": "Media card label the file was captured on."
+            },
+            "duration_seconds": {
+              "type": "integer",
+              "description": "Duration in seconds (video/drone files only)."
+            },
+            "dimensions": {
+              "type": "object",
+              "properties": {
+                "width": { "type": "integer" },
+                "height": { "type": "integer" }
+              },
+              "description": "Image dimensions in pixels (photo files only)."
+            },
+            "google_drive_file_id": {
+              "type": "string",
+              "description": "Google Drive file ID after upload."
+            }
+          }
+        },
+        "description": "Complete manifest of every raw file captured during the shoot."
+      },
+      "drone_flight_log": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "flight_number": {
+              "type": "string",
+              "description": "Sequential flight ID (F01, F02, ...)."
+            },
+            "pilot": {
+              "type": "string",
+              "description": "Name of the licensed drone pilot."
+            },
+            "takeoff_time": {
+              "type": "string",
+              "format": "date-time",
+              "description": "ISO 8601 timestamp of takeoff."
+            },
+            "landing_time": {
+              "type": "string",
+              "format": "date-time",
+              "description": "ISO 8601 timestamp of landing."
+            },
+            "duration_minutes": {
+              "type": "number",
+              "description": "Total flight duration in minutes."
+            },
+            "max_altitude_ft": {
+              "type": "integer",
+              "description": "Maximum altitude reached in feet."
+            },
+            "battery_start_pct": {
+              "type": "integer",
+              "description": "Battery percentage at takeoff."
+            },
+            "battery_end_pct": {
+              "type": "integer",
+              "description": "Battery percentage at landing."
+            },
+            "gps_coordinates": {
+              "type": "object",
+              "properties": {
+                "lat": { "type": "number" },
+                "lng": { "type": "number" }
+              }
+            },
+            "shots_captured": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Shot IDs captured during this flight."
+            },
+            "incidents": {
+              "type": "string",
+              "description": "Any anomalies, warnings, or near-misses."
+            },
+            "weather_conditions": {
+              "type": "object",
+              "properties": {
+                "wind_speed_mph": { "type": "number" },
+                "visibility_miles": { "type": "number" },
+                "temperature_f": { "type": "number" }
+              }
+            }
+          }
+        },
+        "description": "Complete drone flight log for FAA compliance and insurance."
+      },
+      "shoot_status": {
+        "type": "object",
+        "properties": {
+          "overall_status": {
+            "type": "string",
+            "enum": ["completed", "partial", "aborted"],
+            "description": "Overall shoot completion status."
+          },
+          "shots_completed": {
+            "type": "integer",
+            "description": "Number of shots successfully captured."
+          },
+          "shots_planned": {
+            "type": "integer",
+            "description": "Total number of shots on the shot list."
+          },
+          "missed_shots": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "shot_id": { "type": "string" },
+                "reason": { "type": "string" }
+              }
+            },
+            "description": "Shots that were not captured and why."
+          },
+          "equipment_issues": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Equipment problems encountered during the shoot."
+          },
+          "weather_impact": {
+            "type": "string",
+            "description": "Summary of any weather-related disruptions."
+          },
+          "total_file_count": {
+            "type": "integer",
+            "description": "Total number of raw files captured."
+          },
+          "total_storage_gb": {
+            "type": "number",
+            "description": "Total storage used across all pillars in gigabytes."
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "ClickUp AI",
+  "type": "project_automation",
+  "description": "Task automation within ClickUp",
+  "version": "1.0.0",
+  "base_url": "https://api.clickup.com/api/v2",
+  "auth_config": {
+    "api_key": "${CLICKUP_API_KEY}"
+  },
+  "capabilities": [
+    "auto_assign",
+    "status_update",
+    "due_date_calc",
+    "dependency_management"
+  ]
+}

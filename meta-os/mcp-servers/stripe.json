@@ -1,0 +1,29 @@
+{
+  "name": "stripe",
+  "description": "Payments, invoicing, subscription management",
+  "version": "1.0.0",
+  "auth_type": "api_key",
+  "auth_config": {
+    "api_key": "${STRIPE_API_KEY}",
+    "webhook_secret": "${STRIPE_WEBHOOK_SECRET}"
+  },
+  "base_url": "https://api.stripe.com/v1",
+  "capabilities": [
+    "create_invoice",
+    "charge",
+    "refund",
+    "subscription",
+    "webhook"
+  ],
+  "used_by": {
+    "workflows": [
+      "invoice-reminder",
+      "payment-processing",
+      "subscription-management"
+    ],
+    "sub_agents": [
+      "ledger",
+      "sparrow"
+    ]
+  }
+}

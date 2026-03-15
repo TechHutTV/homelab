@@ -1,0 +1,173 @@
+{
+  "schema": {
+    "task_id": "season-report",
+    "input": {
+      "season_airtable_data": {
+        "type": "object",
+        "required": true,
+        "description": "Complete season data pulled from the Gold Star Flag Football Airtable base.",
+        "properties": {
+          "season_id": {
+            "type": "string",
+            "description": "Season identifier (e.g., 'fall-2026')."
+          },
+          "season_name": {
+            "type": "string",
+            "description": "Display name of the season (e.g., 'Fall 2026')."
+          },
+          "players": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "player_id": { "type": "string" },
+                "player_name": { "type": "string" },
+                "team_id": { "type": "string" },
+                "team_name": { "type": "string" },
+                "division": { "type": "string" },
+                "jersey_number": { "type": "integer" },
+                "parent_email": { "type": "string", "format": "email" },
+                "parent_phone": { "type": "string" },
+                "media_consent": { "type": "boolean" },
+                "is_first_year": { "type": "boolean" },
+                "stats": {
+                  "type": "object",
+                  "properties": {
+                    "touchdowns": { "type": "integer" },
+                    "flags_pulled": { "type": "integer" },
+                    "interceptions": { "type": "integer" },
+                    "receptions": { "type": "integer" },
+                    "rushing_yards": { "type": "number" },
+                    "passing_yards": { "type": "number" },
+                    "sportsmanship_points": { "type": "number" }
+                  }
+                },
+                "attendance": {
+                  "type": "object",
+                  "properties": {
+                    "games_played": { "type": "integer" },
+                    "total_games": { "type": "integer" },
+                    "practices_attended": { "type": "integer" },
+                    "total_practices": { "type": "integer" }
+                  }
+                },
+                "coach_comments": { "type": "string" }
+              }
+            }
+          },
+          "teams": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "team_id": { "type": "string" },
+                "team_name": { "type": "string" },
+                "division": { "type": "string" },
+                "wins": { "type": "integer" },
+                "losses": { "type": "integer" },
+                "ties": { "type": "integer" },
+                "points_scored": { "type": "integer" },
+                "points_allowed": { "type": "integer" }
+              }
+            }
+          },
+          "games": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "game_id": { "type": "string" },
+                "game_date": { "type": "string", "format": "date" },
+                "home_team_id": { "type": "string" },
+                "away_team_id": { "type": "string" },
+                "home_score": { "type": "integer" },
+                "away_score": { "type": "integer" },
+                "highlights_drive_url": { "type": "string", "format": "uri" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "output": {
+      "pdf_reports": {
+        "type": "array",
+        "description": "Individual player PDF season reports, one per player.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "player_id": { "type": "string" },
+            "player_name": { "type": "string" },
+            "pdf_url": { "type": "string", "format": "uri" },
+            "emailed_to": { "type": "string", "format": "email" },
+            "email_sent": { "type": "boolean" },
+            "email_timestamp": { "type": "string", "format": "date-time" }
+          }
+        }
+      },
+      "season_summary": {
+        "type": "object",
+        "description": "League-wide season summary with standings and statistics.",
+        "properties": {
+          "total_players": { "type": "integer" },
+          "total_teams": { "type": "integer" },
+          "total_games": { "type": "integer" },
+          "division_standings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "division": { "type": "string" },
+                "rankings": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "rank": { "type": "integer" },
+                      "team_name": { "type": "string" },
+                      "record": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "award_nominations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "award_name": { "type": "string" },
+                "division": { "type": "string" },
+                "nominee_name": { "type": "string" },
+                "nominee_player_id": { "type": "string" },
+                "supporting_stats": { "type": "object" }
+              }
+            }
+          }
+        }
+      },
+      "highlight_reel": {
+        "type": "object",
+        "description": "Season highlight reel compiled from game day footage.",
+        "properties": {
+          "reel_url": { "type": "string", "format": "uri" },
+          "duration_minutes": { "type": "number" },
+          "google_drive_folder_url": { "type": "string", "format": "uri" }
+        }
+      },
+      "next_season_promo": {
+        "type": "object",
+        "description": "Early registration promotion campaign results.",
+        "properties": {
+          "campaign_id": { "type": "string" },
+          "sms_sent_count": { "type": "integer" },
+          "email_sent_count": { "type": "integer" },
+          "registration_link": { "type": "string", "format": "uri" },
+          "early_bird_deadline": { "type": "string", "format": "date" },
+          "conversions_tracked": { "type": "integer" }
+        }
+      }
+    }
+  }
+}

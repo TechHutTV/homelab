@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "EEVL Creative Agent Schema",
+  "description": "Input and output schemas for the EEVL Creative sub-agent",
+  "input": {
+    "type": "object",
+    "required": ["design_brief", "asset_type", "dimensions"],
+    "properties": {
+      "design_brief": {
+        "type": "object",
+        "required": ["title", "description"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Title or headline for the design"
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed description of what the design should convey"
+          },
+          "copy_text": {
+            "type": "object",
+            "properties": {
+              "headline": { "type": "string" },
+              "subheadline": { "type": "string" },
+              "body": { "type": "string" },
+              "cta": { "type": "string" }
+            }
+          },
+          "reference_images": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            },
+            "description": "URLs to reference or inspiration images"
+          },
+          "style_notes": {
+            "type": "string",
+            "description": "Additional style preferences or constraints"
+          }
+        }
+      },
+      "asset_type": {
+        "type": "string",
+        "enum": ["social_post", "social_story", "cover_image", "thumbnail", "presentation", "print", "custom"],
+        "description": "Type of design asset to generate"
+      },
+      "dimensions": {
+        "type": "object",
+        "required": ["width", "height"],
+        "properties": {
+          "width": {
+            "type": "integer",
+            "description": "Width in pixels"
+          },
+          "height": {
+            "type": "integer",
+            "description": "Height in pixels"
+          }
+        }
+      },
+      "platform": {
+        "type": "string",
+        "enum": ["instagram", "facebook", "linkedin", "twitter", "youtube", "blog", "general"],
+        "description": "Target platform for the design"
+      },
+      "export_formats": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "enum": ["png", "jpg", "pdf", "svg"]
+        },
+        "default": ["png"]
+      },
+      "variants": {
+        "type": "boolean",
+        "default": false,
+        "description": "Generate both light and dark variants"
+      }
+    }
+  },
+  "output": {
+    "type": "object",
+    "required": ["design_file_urls", "asset_ids", "google_drive_locations"],
+    "properties": {
+      "design_file_urls": {
+        "type": "array",
+        "description": "Direct download URLs for the generated designs",
+        "items": {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string",
+              "format": "uri"
+            },
+            "format": {
+              "type": "string",
+              "enum": ["png", "jpg", "pdf", "svg"]
+            },
+            "variant": {
+              "type": "string",
+              "enum": ["light", "dark", "default"]
+            }
+          }
+        }
+      },
+      "asset_ids": {
+        "type": "object",
+        "properties": {
+          "canva_design_id": {
+            "type": "string",
+            "description": "Canva design ID for future editing"
+          },
+          "notion_record_id": {
+            "type": "string",
+            "description": "Notion asset library record ID"
+          }
+        }
+      },
+      "google_drive_locations": {
+        "type": "array",
+        "description": "Google Drive file locations for each exported asset",
+        "items": {
+          "type": "object",
+          "properties": {
+            "file_id": { "type": "string" },
+            "file_name": { "type": "string" },
+            "folder_path": { "type": "string" },
+            "web_view_link": {
+              "type": "string",
+              "format": "uri"
+            }
+          }
+        }
+      }
+    }
+  }
+}

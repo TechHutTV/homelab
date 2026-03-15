@@ -1,0 +1,61 @@
+{
+  "task_id": "ops-strategy",
+  "tools": [
+    {
+      "name": "vtiger_crm",
+      "type": "mcp",
+      "description": "Primary data source for customer records, deal pipeline, revenue KPIs, event attendance, and retention metrics for Club Trapeze.",
+      "operations": [
+        "query_contacts",
+        "query_deals",
+        "query_events",
+        "export_kpi_data",
+        "get_revenue_summary",
+        "get_retention_metrics",
+        "get_attendance_reports"
+      ],
+      "auth": "oauth2",
+      "required": true
+    },
+    {
+      "name": "airtable",
+      "type": "mcp",
+      "description": "Supplementary data source for competitor tracking, market research notes, and operational benchmarks.",
+      "operations": [
+        "read_base",
+        "query_records",
+        "update_records",
+        "create_records"
+      ],
+      "auth": "api_key",
+      "required": false
+    },
+    {
+      "name": "notion",
+      "type": "mcp",
+      "description": "Strategy document workspace for drafting, storing, and versioning strategy reports and recommendation logs.",
+      "operations": [
+        "create_page",
+        "update_page",
+        "query_database",
+        "append_block"
+      ],
+      "auth": "integration_token",
+      "required": false
+    },
+    {
+      "name": "google_drive",
+      "type": "mcp",
+      "description": "Report archive and delivery. Final strategy reports (PDF/Google Docs) are stored and shared with Fred via Drive.",
+      "operations": [
+        "upload_file",
+        "create_document",
+        "share_file",
+        "list_files",
+        "export_pdf"
+      ],
+      "auth": "oauth2",
+      "required": true
+    }
+  ]
+}

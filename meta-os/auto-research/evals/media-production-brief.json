@@ -1,0 +1,45 @@
+{
+  "skill_name": "media-production-brief",
+  "description": "Evaluates the completeness and quality of media production pre-production briefs, ensuring all logistical, creative, and organizational requirements are covered before a shoot.",
+  "target_score": 90,
+  "batch_size": 10,
+  "max_iterations": 20,
+  "criteria": [
+    {
+      "criteria_id": "shot-list-pillars",
+      "question": "Does the shot list include all three pillars (video, drone, photo)? (yes/no)",
+      "weight": 1,
+      "category": "completeness"
+    },
+    {
+      "criteria_id": "equipment-camera-models",
+      "question": "Does the equipment checklist specify camera models? (yes/no)",
+      "weight": 1,
+      "category": "completeness"
+    },
+    {
+      "criteria_id": "lark-channel-creation",
+      "question": "Is a Lark channel creation step included? (yes/no)",
+      "weight": 1,
+      "category": "integration"
+    },
+    {
+      "criteria_id": "schedule-setup-teardown",
+      "question": "Does the schedule include setup and teardown time? (yes/no)",
+      "weight": 1,
+      "category": "timing"
+    },
+    {
+      "criteria_id": "client-name-referenced",
+      "question": "Is the client name referenced in the output? (yes/no)",
+      "weight": 1,
+      "category": "accuracy"
+    },
+    {
+      "criteria_id": "file-naming-conventions",
+      "question": "Are file naming conventions specified? (yes/no)",
+      "weight": 1,
+      "category": "format"
+    }
+  ]
+}

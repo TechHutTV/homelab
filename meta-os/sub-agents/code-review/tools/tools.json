@@ -1,0 +1,69 @@
+{
+  "tools": [
+    {
+      "name": "github",
+      "type": "api",
+      "description": "Access GitHub PRs, read diffs, and post review feedback",
+      "endpoints": {
+        "get_pull_request": {
+          "method": "GET",
+          "path": "/repos/{owner}/{repo}/pulls/{pull_number}",
+          "description": "Retrieve PR metadata and description"
+        },
+        "get_pr_files": {
+          "method": "GET",
+          "path": "/repos/{owner}/{repo}/pulls/{pull_number}/files",
+          "description": "List all files changed in the PR with diffs"
+        },
+        "get_file_content": {
+          "method": "GET",
+          "path": "/repos/{owner}/{repo}/contents/{path}",
+          "description": "Read full file content for context"
+        },
+        "create_review": {
+          "method": "POST",
+          "path": "/repos/{owner}/{repo}/pulls/{pull_number}/reviews",
+          "description": "Submit a review with inline comments and verdict"
+        },
+        "create_review_comment": {
+          "method": "POST",
+          "path": "/repos/{owner}/{repo}/pulls/{pull_number}/comments",
+          "description": "Post an individual inline comment on a specific line"
+        },
+        "get_pr_commits": {
+          "method": "GET",
+          "path": "/repos/{owner}/{repo}/pulls/{pull_number}/commits",
+          "description": "List commits in the PR for context"
+        }
+      },
+      "auth": {
+        "type": "token",
+        "credentials_ref": "vault://github/code-review-bot"
+      }
+    },
+    {
+      "name": "lark",
+      "type": "api",
+      "description": "Send review notifications to the dev team channel",
+      "endpoints": {
+        "send_message": {
+          "method": "POST",
+          "path": "/open-apis/im/v1/messages",
+          "description": "Send review summary notification to dev channel"
+        },
+        "get_user_by_email": {
+          "method": "GET",
+          "path": "/open-apis/contact/v3/users/batch_get_id",
+          "description": "Look up Lark user ID by email for tagging"
+        }
+      },
+      "auth": {
+        "type": "oauth2",
+        "credentials_ref": "vault://lark/code-review"
+      },
+      "config": {
+        "dev_channel_id": "{{LARK_DEV_CHANNEL_ID}}"
+      }
+    }
+  ]
+}

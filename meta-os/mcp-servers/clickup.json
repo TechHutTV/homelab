@@ -1,0 +1,29 @@
+{
+  "name": "clickup",
+  "description": "Project management, task tracking, automations",
+  "version": "1.0.0",
+  "auth_type": "api_key",
+  "auth_config": {
+    "api_key": "${CLICKUP_API_KEY}"
+  },
+  "base_url": "https://api.clickup.com/api/v2",
+  "capabilities": [
+    "create_task",
+    "update_task",
+    "create_project",
+    "list_tasks",
+    "automations"
+  ],
+  "used_by": {
+    "workflows": [
+      "lead-nurture",
+      "content-scheduler",
+      "task-delegation"
+    ],
+    "sub_agents": [
+      "atlas",
+      "sparrow",
+      "sentinel"
+    ]
+  }
+}

@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CodeReview AI Agent Schema",
+  "description": "Input and output schemas for the CodeReview AI sub-agent",
+  "input": {
+    "type": "object",
+    "required": ["pr_url"],
+    "properties": {
+      "pr_url": {
+        "type": "string",
+        "format": "uri",
+        "description": "Full GitHub Pull Request URL"
+      },
+      "repo_context": {
+        "type": "object",
+        "description": "Additional repository context",
+        "properties": {
+          "language": {
+            "type": "string",
+            "description": "Primary programming language"
+          },
+          "framework": {
+            "type": "string",
+            "description": "Framework in use (e.g., Next.js, Django)"
+          },
+          "style_guide_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Link to project style guide"
+          },
+          "ci_status": {
+            "type": "string",
+            "enum": ["passing", "failing", "pending"],
+            "description": "Current CI pipeline status"
+          }
+        }
+      }
+    }
+  },
+  "output": {
+    "type": "object",
+    "required": ["review_comments", "overall_rating", "recommendation"],
+    "properties": {
+      "review_comments": {
+        "type": "array",
+        "description": "Inline review comments posted on the PR",
+        "items": {
+          "type": "object",
+          "required": ["file", "line", "severity", "comment"],
+          "properties": {
+            "file": {
+              "type": "string",
+              "description": "File path relative to repo root"
+            },
+            "line": {
+              "type": "integer",
+              "description": "Line number of the comment"
+            },
+            "severity": {
+              "type": "string",
+              "enum": ["critical", "warning", "suggestion", "nitpick"]
+            },
+            "category": {
+              "type": "string",
+              "enum": ["bug", "security", "performance", "readability", "design", "style"]
+            },
+            "comment": {
+              "type": "string",
+              "description": "Review comment text"
+            },
+            "suggested_fix": {
+              "type": "string",
+              "description": "Suggested code replacement if applicable"
+            }
+          }
+        }
+      },
+      "overall_rating": {
+        "type": "object",
+        "properties": {
+          "score": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10,
+            "description": "Overall code quality score"
+          },
+          "summary": {
+            "type": "string",
+            "description": "Brief review summary"
+          },
+          "strengths": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "issues_count": {
+            "type": "object",
+            "properties": {
+              "critical": { "type": "integer" },
+              "warning": { "type": "integer" },
+              "suggestion": { "type": "integer" },
+              "nitpick": { "type": "integer" }
+            }
+          }
+        }
+      },
+      "recommendation": {
+        "type": "string",
+        "enum": ["approve", "request_changes"],
+        "description": "Final review verdict"
+      }
+    }
+  }
+}

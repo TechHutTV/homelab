@@ -1,0 +1,72 @@
+{
+  "tools": [
+    {
+      "id": "canva-api",
+      "name": "Canva API",
+      "type": "design",
+      "description": "AI-powered flyer and graphic generation using Gold Star Flag Football brand kit. Produces tryout announcement flyers in multiple format variants (social, print, story).",
+      "actions": [
+        "generate_design",
+        "apply_brand_kit",
+        "export_formats",
+        "create_variant"
+      ],
+      "config": {
+        "brand_kit_id": "gold-star-flag-football",
+        "default_formats": ["instagram_square", "facebook_cover", "story", "print_8.5x11"]
+      }
+    },
+    {
+      "id": "ghl-crm",
+      "name": "GoHighLevel CRM",
+      "type": "crm",
+      "description": "SMS and email blasts to past registrants, contact segmentation, automated follow-up sequences, and registration page creation with embedded forms.",
+      "actions": [
+        "send_sms_blast",
+        "send_email_blast",
+        "segment_contacts",
+        "create_automation_sequence",
+        "create_landing_page",
+        "create_form",
+        "pull_contact_list"
+      ],
+      "config": {
+        "pipeline": "gold-star-registrations",
+        "sms_compliance": "tcpa",
+        "opt_out_required": true
+      }
+    },
+    {
+      "id": "social-platforms",
+      "name": "Social Platforms",
+      "type": "social_media",
+      "description": "Multi-platform content scheduling and publishing for tryout campaign posts, stories, and ads.",
+      "actions": [
+        "schedule_post",
+        "publish_post",
+        "create_ad_campaign",
+        "configure_targeting",
+        "ab_test_creatives"
+      ],
+      "config": {
+        "platforms": ["instagram", "facebook", "twitter_x"],
+        "ad_platforms": ["facebook_ads", "instagram_ads"]
+      }
+    },
+    {
+      "id": "google-drive",
+      "name": "Google Drive",
+      "type": "storage",
+      "description": "Storage and organization for all tryout campaign assets including flyers, campaign schedules, and ad creatives.",
+      "actions": [
+        "upload_file",
+        "create_folder",
+        "share_folder",
+        "generate_shareable_link"
+      ],
+      "config": {
+        "root_folder": "Gold Star Flag Football/Tryout Campaigns"
+      }
+    }
+  ]
+}

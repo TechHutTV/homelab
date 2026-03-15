@@ -1,0 +1,148 @@
+{
+  "workflow": {
+    "id": "client-onboarding",
+    "name": "Client Onboarding",
+    "version": "1.0.0",
+    "organization": "Eagle Eye Vision Labz (EEVL)",
+    "description": "End-to-end client onboarding workflow for EEVL — from lead capture through project kickoff. The onboarding-agent sub-agent handles the entire kickoff sequence automatically.",
+    "tasks": [
+      {
+        "id": "lead-capture",
+        "name": "Lead Capture & Qualification",
+        "order": 1,
+        "path": "lead-capture/",
+        "description": "Detect incoming leads via GHL forms or website, auto-respond within 60 seconds via SMS, qualify and score leads, create CRM records, and trigger nurture sequences.",
+        "sla": {
+          "sms_response_seconds": 60,
+          "critical": true,
+          "description": "SMS auto-response must fire within 60 seconds of lead capture — this is a hard SLA."
+        }
+      },
+      {
+        "id": "sales-call",
+        "name": "Sales Call & Follow-Up",
+        "order": 2,
+        "path": "sales-call/",
+        "description": "Record and transcribe sales calls via MeetingScribe, generate Notion summaries, create ClickUp follow-up tasks, update GHL pipeline, and draft proposals.",
+        "depends_on": ["lead-capture"]
+      },
+      {
+        "id": "contract-invoice",
+        "name": "Contract & Invoice Generation",
+        "order": 3,
+        "path": "contract-invoice/",
+        "description": "Generate PandaDoc contracts from approved proposals, track e-signatures, create Stripe invoices, sync to QuickBooks, and send receipts via Gmail.",
+        "depends_on": ["sales-call"]
+      },
+      {
+        "id": "project-kickoff",
+        "name": "Project Kickoff & Workspace Setup",
+        "order": 4,
+        "path": "project-kickoff/",
+        "description": "Create ClickUp project from template, set up Lark channel and Notion workspace, send kickoff email, and assign team members. The onboarding-agent sub-agent orchestrates this entire sequence.",
+        "depends_on": ["contract-invoice"]
+      }
+    ],
+    "triggers": [
+      {
+        "id": "ghl_lead_capture",
+        "type": "webhook",
+        "source": "GoHighLevel",
+        "event": "contact.created",
+        "description": "Fires when a new lead is captured via GHL form submission or website chat widget.",
+        "starts_task": "lead-capture"
+      },
+      {
+        "id": "manual",
+        "type": "manual",
+        "description": "Manual trigger for onboarding a client who came through a non-automated channel (referral, in-person meeting, etc.).",
+        "starts_task": "lead-capture"
+      }
+    ],
+    "mcp_connections": [
+      {
+        "id": "ghl",
+        "name": "GoHighLevel",
+        "type": "mcp_server",
+        "capabilities": ["crm", "forms", "sms", "pipeline", "auto-tagging", "workflows"],
+        "used_in": ["lead-capture", "sales-call"]
+      },
+      {
+        "id": "pandadoc",
+        "name": "PandaDoc",
+        "type": "mcp_server",
+        "capabilities": ["contract_generation", "e_signature", "templates", "tracking"],
+        "used_in": ["contract-invoice"]
+      },
+      {
+        "id": "stripe",
+        "name": "Stripe",
+        "type": "mcp_server",
+        "capabilities": ["invoicing", "payment_processing", "receipts", "subscriptions"],
+        "used_in": ["contract-invoice"]
+      },
+      {
+        "id": "quickbooks",
+        "name": "QuickBooks",
+        "type": "mcp_server",
+        "capabilities": ["accounting", "journal_entries", "invoicing", "reporting"],
+        "used_in": ["contract-invoice"]
+      },
+      {
+        "id": "clickup",
+        "name": "ClickUp",
+        "type": "mcp_server",
+        "capabilities": ["project_creation", "task_management", "templates", "assignments"],
+        "used_in": ["sales-call", "project-kickoff"]
+      },
+      {
+        "id": "lark",
+        "name": "Lark",
+        "type": "mcp_server",
+        "capabilities": ["messaging", "channels", "meetings", "notifications"],
+        "used_in": ["lead-capture", "sales-call", "project-kickoff"]
+      },
+      {
+        "id": "notion",
+        "name": "Notion",
+        "type": "mcp_server",
+        "capabilities": ["wiki", "databases", "pages", "meeting_notes", "workspace_setup"],
+        "used_in": ["sales-call", "project-kickoff"]
+      },
+      {
+        "id": "gmail",
+        "name": "Gmail",
+        "type": "mcp_server",
+        "capabilities": ["email_send", "templates", "receipts", "notifications"],
+        "used_in": ["contract-invoice", "project-kickoff"]
+      }
+    ],
+    "sub_agents": [
+      {
+        "id": "onboarding-agent",
+        "name": "Onboarding Agent",
+        "description": "Handles the entire project kickoff sequence automatically — workspace creation, channel setup, email dispatch, and team assignment. Orchestrates all kickoff sub-tasks without manual intervention.",
+        "activated_in": ["project-kickoff"],
+        "capabilities": [
+          "clickup_project_creation",
+          "lark_channel_setup",
+          "notion_workspace_provisioning",
+          "kickoff_email_dispatch",
+          "team_assignment"
+        ]
+      },
+      {
+        "id": "meeting-scribe",
+        "name": "MeetingScribe",
+        "description": "Records, transcribes, and summarizes sales calls. Extracts key discussion points and action items.",
+        "activated_in": ["sales-call"],
+        "capabilities": [
+          "call_recording",
+          "transcription",
+          "summarization",
+          "action_item_extraction"
+        ]
+      }
+    ]
+  }
+}

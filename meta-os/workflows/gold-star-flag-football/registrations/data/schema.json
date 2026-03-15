@@ -1,0 +1,143 @@
+{
+  "schema": {
+    "task_id": "registrations",
+    "input": {
+      "ghl_form_submission": {
+        "type": "object",
+        "required": true,
+        "description": "Raw form submission data from GoHighLevel registration form.",
+        "properties": {
+          "player_name": {
+            "type": "object",
+            "properties": {
+              "first_name": { "type": "string" },
+              "last_name": { "type": "string" }
+            }
+          },
+          "date_of_birth": {
+            "type": "string",
+            "format": "date",
+            "description": "Player date of birth, used to calculate age division."
+          },
+          "age": {
+            "type": "integer",
+            "description": "Player age at time of registration."
+          },
+          "parent_guardian": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "email": { "type": "string", "format": "email" },
+              "phone": { "type": "string" },
+              "preferred_contact_method": {
+                "type": "string",
+                "enum": ["sms", "email"]
+              }
+            }
+          },
+          "emergency_contact": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "phone": { "type": "string" },
+              "relationship": { "type": "string" }
+            }
+          },
+          "medical_notes": {
+            "type": "string",
+            "description": "Allergies, conditions, or medical notes for the player."
+          },
+          "shirt_size": {
+            "type": "string",
+            "enum": ["YS", "YM", "YL", "AS", "AM", "AL"]
+          },
+          "referral_source": {
+            "type": "string",
+            "description": "How the family heard about Gold Star (e.g., friend, Facebook ad, returning player)."
+          },
+          "sibling_grouping_request": {
+            "type": "string",
+            "description": "Name of sibling to be placed on the same team, if applicable."
+          },
+          "carpool_grouping_request": {
+            "type": "string",
+            "description": "Name of another player for carpool-based team grouping."
+          },
+          "payment": {
+            "type": "object",
+            "properties": {
+              "amount_usd": { "type": "number" },
+              "discount_code": { "type": "string" },
+              "stripe_payment_intent_id": { "type": "string" },
+              "payment_status": {
+                "type": "string",
+                "enum": ["completed", "pending", "failed"]
+              }
+            }
+          },
+          "parental_consent": {
+            "type": "boolean",
+            "description": "Parental consent acknowledgment for minor participation."
+          },
+          "submission_timestamp": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    "output": {
+      "roster_entry": {
+        "type": "object",
+        "description": "Airtable roster record created for the player.",
+        "properties": {
+          "airtable_record_id": { "type": "string" },
+          "player_name": { "type": "string" },
+          "age_division": { "type": "string" },
+          "team_id": { "type": "string", "description": "Null until team assignment is finalized." },
+          "registration_date": { "type": "string", "format": "date-time" },
+          "payment_status": { "type": "string" },
+          "roster_status": {
+            "type": "string",
+            "enum": ["active", "waitlisted", "pending_payment"]
+          }
+        }
+      },
+      "clickup_task": {
+        "type": "object",
+        "description": "ClickUp task created for registrant tracking.",
+        "properties": {
+          "task_id": { "type": "string" },
+          "task_url": { "type": "string", "format": "uri" },
+          "task_title": { "type": "string" },
+          "subtasks": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Subtask names: verify payment, confirm medical info, assign team, distribute welcome packet."
+          }
+        }
+      },
+      "welcome_sms_confirmation": {
+        "type": "object",
+        "description": "Confirmation that the welcome SMS was sent within the 60-second SLA.",
+        "properties": {
+          "sms_sent": { "type": "boolean" },
+          "sent_timestamp": { "type": "string", "format": "date-time" },
+          "latency_seconds": { "type": "number", "description": "Time between form submission and SMS delivery." },
+          "sla_met": { "type": "boolean" }
+        }
+      },
+      "team_assignment": {
+        "type": "object",
+        "description": "Team assignment details, populated when roster finalization is triggered.",
+        "properties": {
+          "team_id": { "type": "string" },
+          "team_name": { "type": "string" },
+          "division": { "type": "string" },
+          "assignment_date": { "type": "string", "format": "date-time" },
+          "notification_sent": { "type": "boolean" }
+        }
+      }
+    }
+  }
+}

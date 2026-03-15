@@ -1,0 +1,216 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Onboarding Agent Schema",
+  "description": "Input and output schemas for the Onboarding Agent sub-agent",
+  "input": {
+    "type": "object",
+    "required": ["signed_contract", "client_details", "project_scope", "team_assignments"],
+    "properties": {
+      "signed_contract": {
+        "type": "object",
+        "required": ["contract_id", "signed_date"],
+        "properties": {
+          "contract_id": {
+            "type": "string",
+            "description": "PandaDoc or internal contract ID"
+          },
+          "signed_date": {
+            "type": "string",
+            "format": "date",
+            "description": "Date the contract was signed"
+          },
+          "contract_type": {
+            "type": "string",
+            "enum": ["brand_package", "content_retainer", "one_off_production", "web_development", "consulting"],
+            "description": "Type of contract/project"
+          },
+          "contract_value": {
+            "type": "number",
+            "description": "Total contract value"
+          },
+          "duration_months": {
+            "type": "integer",
+            "description": "Contract duration in months"
+          }
+        }
+      },
+      "client_details": {
+        "type": "object",
+        "required": ["company_name", "primary_contact"],
+        "properties": {
+          "company_name": {
+            "type": "string",
+            "description": "Client company name"
+          },
+          "industry": {
+            "type": "string"
+          },
+          "primary_contact": {
+            "type": "object",
+            "required": ["name", "email"],
+            "properties": {
+              "name": { "type": "string" },
+              "email": { "type": "string", "format": "email" },
+              "phone": { "type": "string" },
+              "title": { "type": "string" }
+            }
+          },
+          "additional_contacts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string" },
+                "email": { "type": "string", "format": "email" },
+                "role": { "type": "string" }
+              }
+            }
+          },
+          "brand_guidelines_url": {
+            "type": "string",
+            "format": "uri"
+          }
+        }
+      },
+      "project_scope": {
+        "type": "object",
+        "required": ["deliverables", "timeline"],
+        "properties": {
+          "project_name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "description": "Project scope summary"
+          },
+          "deliverables": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string" },
+                "description": { "type": "string" },
+                "due_date": { "type": "string", "format": "date" }
+              }
+            }
+          },
+          "timeline": {
+            "type": "object",
+            "properties": {
+              "start_date": { "type": "string", "format": "date" },
+              "end_date": { "type": "string", "format": "date" },
+              "milestones": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": { "type": "string" },
+                    "date": { "type": "string", "format": "date" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "team_assignments": {
+        "type": "array",
+        "description": "Team members assigned to this project",
+        "items": {
+          "type": "object",
+          "required": ["name", "role", "email"],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "role": {
+              "type": "string",
+              "description": "Role on the project (project_lead, designer, editor, strategist, developer)"
+            },
+            "email": {
+              "type": "string",
+              "format": "email"
+            },
+            "clickup_user_id": {
+              "type": "string"
+            },
+            "lark_user_id": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  },
+  "output": {
+    "type": "object",
+    "required": ["clickup_project_id", "lark_channel_url", "notion_workspace_url", "kickoff_email_confirmation", "meeting_scheduled"],
+    "properties": {
+      "clickup_project_id": {
+        "type": "string",
+        "description": "ID of the created ClickUp project"
+      },
+      "lark_channel_url": {
+        "type": "string",
+        "format": "uri",
+        "description": "URL to the created Lark client channel"
+      },
+      "notion_workspace_url": {
+        "type": "string",
+        "format": "uri",
+        "description": "URL to the client Notion workspace/wiki"
+      },
+      "kickoff_email_confirmation": {
+        "type": "object",
+        "properties": {
+          "sent": {
+            "type": "boolean",
+            "description": "Whether the kickoff email was successfully sent"
+          },
+          "message_id": {
+            "type": "string",
+            "description": "Gmail message ID"
+          },
+          "sent_to": {
+            "type": "string",
+            "format": "email"
+          },
+          "sent_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "meeting_scheduled": {
+        "type": "object",
+        "properties": {
+          "scheduled": {
+            "type": "boolean"
+          },
+          "calendar_event_id": {
+            "type": "string"
+          },
+          "meeting_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "attendees": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "email"
+            }
+          }
+        }
+      },
+      "team_notified": {
+        "type": "boolean",
+        "description": "Whether all team members were notified via Lark"
+      },
+      "onboarding_complete": {
+        "type": "boolean",
+        "description": "Whether all onboarding steps completed successfully"
+      }
+    }
+  }
+}

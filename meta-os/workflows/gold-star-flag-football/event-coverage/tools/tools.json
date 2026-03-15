@@ -1,0 +1,75 @@
+{
+  "tools": [
+    {
+      "id": "lark",
+      "name": "Lark",
+      "type": "messaging",
+      "description": "Posts Sparrow handoff messages to the #gold-star Lark channel with media links, game details, and editing specs. Gold Star has a dedicated channel — do NOT use #edited-by-sparrow.",
+      "actions": [
+        "send_channel_message",
+        "tag_sub_agent",
+        "upload_attachment",
+        "track_message_status"
+      ],
+      "config": {
+        "channel": "#gold-star",
+        "restricted_channels": ["#edited-by-sparrow"],
+        "sub_agent_tag": "sparrow-handoff"
+      }
+    },
+    {
+      "id": "google-drive",
+      "name": "Google Drive",
+      "type": "storage",
+      "description": "Raw media storage, team/player photo organization, parent gallery hosting, and shareable link generation for game day assets.",
+      "actions": [
+        "upload_file",
+        "create_folder",
+        "organize_by_structure",
+        "generate_shareable_link",
+        "set_folder_permissions",
+        "get_file_count"
+      ],
+      "config": {
+        "root_folder": "Gold Star Flag Football/Event Coverage",
+        "folder_structure": "Season / Game Date / Team Name / Player Name",
+        "gallery_permissions": "password_protected"
+      }
+    },
+    {
+      "id": "clickup",
+      "name": "ClickUp",
+      "type": "project_management",
+      "description": "Game day shoot checklists with per-game subtasks, Sparrow handoff status tracking, and media delivery task management.",
+      "actions": [
+        "create_task",
+        "add_subtasks",
+        "update_task_status",
+        "add_checklist",
+        "set_custom_field",
+        "assign_task"
+      ],
+      "config": {
+        "space": "Gold Star Flag Football",
+        "list": "Event Coverage",
+        "statuses": ["Scheduled", "In Progress", "Handed Off to Sparrow", "Editing", "Delivered"]
+      }
+    },
+    {
+      "id": "sparrow-handoff",
+      "name": "Sparrow Handoff Sub-Agent",
+      "type": "sub_agent",
+      "description": "Triggers the Sparrow editing pipeline by posting structured handoff messages to #gold-star with media links, game context, highlight priorities, and reel specifications.",
+      "actions": [
+        "initiate_handoff",
+        "set_priority_edits",
+        "attach_reel_specs",
+        "confirm_handoff_received"
+      ],
+      "config": {
+        "handoff_channel": "#gold-star",
+        "required_fields": ["google_drive_link", "game_date", "teams_covered", "file_count", "reel_specs"]
+      }
+    }
+  ]
+}

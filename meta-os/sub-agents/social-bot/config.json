@@ -1,0 +1,19 @@
+{
+  "name": "SocialBot",
+  "version": "1.0.0",
+  "trigger": "content_pipeline_ready | scheduled",
+  "model": "claude-sonnet-4-6",
+  "description": "Multi-platform content distribution automation driving the entire Content Pipeline workflow",
+  "platforms": ["facebook", "instagram", "twitter_x", "linkedin", "google_my_business"],
+  "posting_frequency": {
+    "facebook": "1-2/day",
+    "instagram": "1-2/day + stories",
+    "twitter_x": "3-5/day",
+    "linkedin": "1/day weekdays",
+    "google_my_business": "2-3/week"
+  },
+  "newsletter": {
+    "provider": "email_service",
+    "frequency": "weekly"
+  }
+}

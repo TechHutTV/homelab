@@ -1,0 +1,174 @@
+{
+  "task_id": "revenue-reporting",
+  "schema_version": "1.0.0",
+  "input": {
+    "description": "Stripe transaction data and QuickBooks accounting records for a specified date range.",
+    "fields": {
+      "stripe_data": {
+        "type": "object",
+        "description": "Transaction data pulled from Stripe.",
+        "properties": {
+          "transactions": {
+            "type": "array",
+            "description": "Individual payment transactions with amount, category metadata, and timestamps.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "transaction_id": { "type": "string" },
+                "amount": { "type": "number" },
+                "currency": { "type": "string" },
+                "category": { "type": "string", "enum": ["bar_sales", "event_tickets", "cover_charges", "private_bookings", "vip_packages", "merchandise", "other"] },
+                "timestamp": { "type": "string", "format": "date-time" },
+                "status": { "type": "string", "enum": ["succeeded", "refunded", "disputed", "failed"] },
+                "description": { "type": "string" }
+              }
+            }
+          },
+          "refunds": {
+            "type": "array",
+            "description": "Refund records.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "refund_id": { "type": "string" },
+                "original_transaction_id": { "type": "string" },
+                "amount": { "type": "number" },
+                "reason": { "type": "string" },
+                "timestamp": { "type": "string", "format": "date-time" }
+              }
+            }
+          }
+        },
+        "required": ["transactions"]
+      },
+      "quickbooks_data": {
+        "type": "object",
+        "description": "Accounting records from QuickBooks.",
+        "properties": {
+          "expenses": {
+            "type": "array",
+            "description": "Expense line items by category.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "expense_id": { "type": "string" },
+                "category": { "type": "string", "enum": ["payroll", "inventory", "entertainment", "marketing", "rent_utilities", "insurance", "miscellaneous"] },
+                "amount": { "type": "number" },
+                "vendor": { "type": "string" },
+                "date": { "type": "string", "format": "date" },
+                "description": { "type": "string" }
+              }
+            }
+          },
+          "income_entries": {
+            "type": "array",
+            "description": "Income entries for reconciliation against Stripe data."
+          },
+          "accounts_payable": {
+            "type": "array",
+            "description": "Outstanding vendor invoices and payment due dates."
+          }
+        },
+        "required": ["expenses", "income_entries"]
+      },
+      "date_range": {
+        "type": "object",
+        "description": "Reporting period.",
+        "properties": {
+          "start_date": { "type": "string", "format": "date" },
+          "end_date": { "type": "string", "format": "date" }
+        },
+        "required": ["start_date", "end_date"]
+      }
+    },
+    "required": ["stripe_data", "quickbooks_data", "date_range"]
+  },
+  "output": {
+    "description": "Revenue breakdown, expense summary, profit analysis, and executive PDF report.",
+    "fields": {
+      "revenue_breakdown": {
+        "type": "object",
+        "description": "Revenue totals by category.",
+        "properties": {
+          "total_revenue": { "type": "number" },
+          "bar_sales": { "type": "number" },
+          "event_tickets": { "type": "number" },
+          "cover_charges": { "type": "number" },
+          "private_bookings": { "type": "number" },
+          "vip_packages": { "type": "number" },
+          "merchandise_and_other": { "type": "number" },
+          "refunds_total": { "type": "number" },
+          "net_revenue": { "type": "number" }
+        }
+      },
+      "expense_summary": {
+        "type": "object",
+        "description": "Expenses aggregated by category with variance flags.",
+        "properties": {
+          "total_expenses": { "type": "number" },
+          "by_category": {
+            "type": "object",
+            "properties": {
+              "payroll": { "type": "number" },
+              "inventory": { "type": "number" },
+              "entertainment": { "type": "number" },
+              "marketing": { "type": "number" },
+              "rent_utilities": { "type": "number" },
+              "insurance": { "type": "number" },
+              "miscellaneous": { "type": "number" }
+            }
+          },
+          "flagged_items": {
+            "type": "array",
+            "description": "Expense items exceeding normal thresholds.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "category": { "type": "string" },
+                "amount": { "type": "number" },
+                "reason": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "profit_analysis": {
+        "type": "object",
+        "description": "Margin calculations and period comparisons.",
+        "properties": {
+          "gross_profit": { "type": "number" },
+          "gross_margin_pct": { "type": "number" },
+          "net_profit": { "type": "number" },
+          "net_margin_pct": { "type": "number" },
+          "week_over_week": {
+            "type": "object",
+            "properties": {
+              "revenue_change_pct": { "type": "number" },
+              "expense_change_pct": { "type": "number" },
+              "profit_change_pct": { "type": "number" }
+            }
+          },
+          "month_over_month": {
+            "type": "object",
+            "properties": {
+              "revenue_change_pct": { "type": "number" },
+              "expense_change_pct": { "type": "number" },
+              "profit_change_pct": { "type": "number" }
+            }
+          }
+        }
+      },
+      "executive_pdf": {
+        "type": "object",
+        "description": "Generated PDF report for Fred.",
+        "properties": {
+          "file_name": { "type": "string" },
+          "google_drive_url": { "type": "string", "format": "uri" },
+          "email_sent": { "type": "boolean" },
+          "sent_to": { "type": "string", "format": "email" },
+          "generated_at": { "type": "string", "format": "date-time" }
+        }
+      }
+    }
+  }
+}

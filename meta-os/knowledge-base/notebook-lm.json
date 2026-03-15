@@ -1,0 +1,12 @@
+{
+  "name": "NotebookLM",
+  "type": "research",
+  "description": "AI-powered research and document analysis",
+  "version": "1.0.0",
+  "provider": "google",
+  "capabilities": [
+    "document_qa",
+    "summarization",
+    "source_citation"
+  ]
+}

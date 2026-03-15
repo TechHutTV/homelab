@@ -1,0 +1,36 @@
+{
+  "name": "OpenRouter",
+  "type": "llm_gateway",
+  "description": "Multi-model AI routing for content generation",
+  "version": "1.0.0",
+  "base_url": "https://openrouter.ai/api/v1",
+  "auth_config": {
+    "api_key": "${OPENROUTER_API_KEY}"
+  },
+  "models": [
+    {
+      "id": "anthropic/claude-opus",
+      "cost_per_1k_input": 0.015,
+      "cost_per_1k_output": 0.075,
+      "use_case": "Complex analysis, strategic planning, long-form content"
+    },
+    {
+      "id": "anthropic/claude-sonnet",
+      "cost_per_1k_input": 0.003,
+      "cost_per_1k_output": 0.015,
+      "use_case": "General tasks, summaries, everyday content generation"
+    },
+    {
+      "id": "openai/gpt-4o",
+      "cost_per_1k_input": 0.005,
+      "cost_per_1k_output": 0.015,
+      "use_case": "Vision, creative writing, image analysis"
+    },
+    {
+      "id": "google/gemini-flash",
+      "cost_per_1k_input": 0.0001,
+      "cost_per_1k_output": 0.0004,
+      "use_case": "High-speed simple queries, classification, triage"
+    }
+  ]
+}

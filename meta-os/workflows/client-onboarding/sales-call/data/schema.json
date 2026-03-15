@@ -1,0 +1,200 @@
+{
+  "schema": {
+    "task_id": "sales-call",
+    "version": "1.0.0",
+    "input": {
+      "description": "Meeting recording and associated GHL contact data for a sales call.",
+      "type": "object",
+      "required": ["ghl_contact_id", "meeting_source"],
+      "properties": {
+        "ghl_contact_id": {
+          "type": "string",
+          "description": "GoHighLevel contact ID for the lead on the call."
+        },
+        "ghl_contact_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Direct URL to the GHL contact record."
+        },
+        "meeting_source": {
+          "type": "string",
+          "enum": ["lark", "zoom", "upload"],
+          "description": "Where the meeting is being recorded from."
+        },
+        "meeting_id": {
+          "type": "string",
+          "description": "Lark or Zoom meeting ID, if applicable.",
+          "nullable": true
+        },
+        "recording_file_path": {
+          "type": "string",
+          "description": "File path for uploaded recordings (when meeting_source is 'upload').",
+          "nullable": true
+        },
+        "attendees": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "email": { "type": "string" },
+              "role": {
+                "type": "string",
+                "enum": ["client", "eevl_sales", "eevl_team", "other"]
+              }
+            }
+          },
+          "description": "List of call attendees with roles."
+        },
+        "client_name": {
+          "type": "string",
+          "description": "Client's name for file/page naming."
+        },
+        "lead_score_tier": {
+          "type": "string",
+          "enum": ["hot", "warm", "cool"],
+          "description": "Current lead score tier from the lead-capture task."
+        },
+        "service_interest": {
+          "type": "string",
+          "enum": ["ai-automation", "web-dev", "consulting", "full-stack", "other"],
+          "description": "Primary service interest from lead capture."
+        },
+        "call_date": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Scheduled or actual start time of the call."
+        }
+      }
+    },
+    "output": {
+      "description": "Processed outputs from the sales call: transcription, Notion summary, ClickUp tasks, proposal draft, and updated pipeline stage.",
+      "type": "object",
+      "properties": {
+        "transcription": {
+          "type": "object",
+          "description": "MeetingScribe transcription output.",
+          "properties": {
+            "recording_id": {
+              "type": "string",
+              "description": "MeetingScribe recording identifier."
+            },
+            "full_text": {
+              "type": "string",
+              "description": "Complete transcription text with speaker labels."
+            },
+            "duration_seconds": {
+              "type": "number",
+              "description": "Total call duration in seconds."
+            },
+            "speaker_count": {
+              "type": "integer",
+              "description": "Number of distinct speakers identified."
+            },
+            "key_topics": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "AI-extracted key topics from the call."
+            }
+          }
+        },
+        "notion_summary": {
+          "type": "object",
+          "description": "Notion page created for the call summary.",
+          "properties": {
+            "page_id": {
+              "type": "string",
+              "description": "Notion page ID."
+            },
+            "page_url": {
+              "type": "string",
+              "format": "uri",
+              "description": "URL to the Notion summary page."
+            },
+            "executive_summary": {
+              "type": "string",
+              "description": "2-3 paragraph overview of the call."
+            }
+          }
+        },
+        "clickup_tasks": {
+          "type": "array",
+          "description": "Follow-up tasks created in ClickUp.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "description": "ClickUp task ID."
+              },
+              "task_url": {
+                "type": "string",
+                "format": "uri",
+                "description": "URL to the ClickUp task."
+              },
+              "name": {
+                "type": "string",
+                "description": "Task name."
+              },
+              "assignee": {
+                "type": "string",
+                "description": "Assigned team member."
+              },
+              "due_date": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Task due date."
+              },
+              "priority": {
+                "type": "string",
+                "enum": ["urgent", "high", "normal", "low"]
+              }
+            }
+          }
+        },
+        "proposal_draft": {
+          "type": "object",
+          "description": "Proposal draft created in Notion (only for leads moving to Proposal stage).",
+          "nullable": true,
+          "properties": {
+            "page_id": {
+              "type": "string",
+              "description": "Notion page ID for the proposal."
+            },
+            "page_url": {
+              "type": "string",
+              "format": "uri",
+              "description": "URL to the proposal draft."
+            },
+            "estimated_deal_value": {
+              "type": "number",
+              "description": "Estimated deal value based on call discussion."
+            }
+          }
+        },
+        "pipeline_stage": {
+          "type": "object",
+          "description": "Updated GHL pipeline stage after the call.",
+          "properties": {
+            "stage_name": {
+              "type": "string",
+              "enum": ["Proposal", "Nurturing", "Disqualified"],
+              "description": "New pipeline stage."
+            },
+            "outcome_tag": {
+              "type": "string",
+              "enum": ["outcome:proposal", "outcome:nurture", "outcome:disqualified", "outcome:no-show"],
+              "description": "Call outcome tag applied to the contact."
+            },
+            "updated_lead_score": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Adjusted lead score based on call signals."
+            }
+          }
+        }
+      }
+    }
+  }
+}

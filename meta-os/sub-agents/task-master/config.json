@@ -1,0 +1,22 @@
+{
+  "name": "TaskMaster AI",
+  "description": "Reads ClickUp board, auto-assigns tasks by skill/workload",
+  "trigger": "daily_scheduled | clickup_overdue",
+  "model": "claude-haiku-4-5",
+  "version": "1.0.0",
+  "enabled": true,
+  "retry": {
+    "max_attempts": 3,
+    "backoff_seconds": 10
+  },
+  "timeout_seconds": 120,
+  "schedule": {
+    "daily_digest": "09:00",
+    "timezone": "Asia/Manila"
+  },
+  "paths": {
+    "prompt": "prompts/prompt.md",
+    "tools": "tools/tools.json",
+    "schema": "data/schema.json"
+  }
+}

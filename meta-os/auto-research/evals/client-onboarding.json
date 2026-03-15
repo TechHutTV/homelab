@@ -1,0 +1,51 @@
+{
+  "skill_name": "client-onboarding",
+  "description": "Evaluates the completeness of the client onboarding workflow, ensuring all touchpoints from lead capture through kickoff meeting are present and properly sequenced.",
+  "target_score": 90,
+  "batch_size": 10,
+  "max_iterations": 20,
+  "criteria": [
+    {
+      "criteria_id": "sms-within-60-seconds",
+      "question": "Is SMS sent within 60 seconds of lead capture? (yes/no)",
+      "weight": 1,
+      "category": "timing"
+    },
+    {
+      "criteria_id": "clickup-template-project",
+      "question": "Does the ClickUp project use a template? (yes/no)",
+      "weight": 1,
+      "category": "integration"
+    },
+    {
+      "criteria_id": "lark-channel-format",
+      "question": "Is a Lark channel created with #client-name format? (yes/no)",
+      "weight": 1,
+      "category": "integration"
+    },
+    {
+      "criteria_id": "kickoff-email-content",
+      "question": "Does the kickoff email include timeline and deliverables? (yes/no)",
+      "weight": 1,
+      "category": "completeness"
+    },
+    {
+      "criteria_id": "notion-workspace-pages",
+      "question": "Is Notion workspace created with standard pages? (yes/no)",
+      "weight": 1,
+      "category": "integration"
+    },
+    {
+      "criteria_id": "team-assignment-by-scope",
+      "question": "Are team members assigned based on project scope? (yes/no)",
+      "weight": 1,
+      "category": "completeness"
+    },
+    {
+      "criteria_id": "kickoff-meeting-scheduled",
+      "question": "Is a kickoff meeting scheduled? (yes/no)",
+      "weight": 1,
+      "category": "completeness"
+    }
+  ]
+}

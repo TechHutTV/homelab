@@ -1,0 +1,128 @@
+{
+  "task_id": "pre-production",
+  "tools": [
+    {
+      "id": "clickup",
+      "provider": "clickup",
+      "description": "Create and manage project tasks, set dependencies, assign crew, and track pre-production milestones.",
+      "actions": [
+        {
+          "action": "create_task",
+          "description": "Create a new task in the EEVL Production space for each project milestone.",
+          "parameters": {
+            "space_id": "eevl-production",
+            "list_id": "active-projects",
+            "name": "string — task name (e.g., 'Pre-Production Complete')",
+            "description": "string — task details and requirements",
+            "assignees": "array — crew member user IDs",
+            "due_date": "string — ISO 8601 date",
+            "tags": ["project-code", "client-name", "pillar"],
+            "dependencies": "array — task IDs this task depends on",
+            "priority": "integer — 1 (urgent) to 4 (low)"
+          }
+        },
+        {
+          "action": "update_task",
+          "description": "Update task status, assignees, or due dates as pre-production progresses.",
+          "parameters": {
+            "task_id": "string",
+            "status": "string — open | in-progress | complete",
+            "custom_fields": "object — key-value pairs for pillar, shoot-date, etc."
+          }
+        }
+      ]
+    },
+    {
+      "id": "lark",
+      "provider": "lark",
+      "description": "Create the project Lark channel, add members, and post the project summary as a pinned message.",
+      "actions": [
+        {
+          "action": "create_channel",
+          "description": "Create a dedicated project channel named #proj-{client-slug}-{date}.",
+          "parameters": {
+            "name": "string — channel name following EEVL naming convention",
+            "description": "string — channel purpose and project summary",
+            "members": "array — Lark user IDs for crew and project manager",
+            "is_private": "boolean — true for client projects"
+          }
+        },
+        {
+          "action": "send_message",
+          "description": "Post the project summary and pin it in the channel.",
+          "parameters": {
+            "channel_id": "string",
+            "content": "string — markdown-formatted project summary",
+            "pin": "boolean — true to pin the message"
+          }
+        }
+      ]
+    },
+    {
+      "id": "google-drive",
+      "provider": "google-drive",
+      "description": "Store the client brief, create the project folder structure, and upload the shot list and checklists.",
+      "actions": [
+        {
+          "action": "create_folder",
+          "description": "Create the project folder hierarchy under EEVL Productions.",
+          "parameters": {
+            "parent_folder": "string — 'EEVL Productions' base folder ID",
+            "name": "string — '{ClientName}_{ProjectCode}_{Date}'",
+            "subfolders": [
+              "01_Brief",
+              "02_Shot_List",
+              "03_Raw_Video",
+              "04_Raw_Drone",
+              "05_Raw_Photo",
+              "06_Edited",
+              "07_Delivery"
+            ]
+          }
+        },
+        {
+          "action": "upload_file",
+          "description": "Upload the client brief and generated documents to the project folder.",
+          "parameters": {
+            "folder_id": "string",
+            "file_name": "string",
+            "content_type": "string — application/pdf, application/json, text/markdown",
+            "content": "string | binary"
+          }
+        }
+      ]
+    },
+    {
+      "id": "notion",
+      "provider": "notion",
+      "description": "Create or update the client workspace page in Notion with project details, contacts, and timeline.",
+      "actions": [
+        {
+          "action": "create_page",
+          "description": "Create a new client workspace page under the EEVL Clients database.",
+          "parameters": {
+            "database_id": "string — EEVL Clients database ID",
+            "properties": {
+              "Client Name": "string",
+              "Project Code": "string",
+              "Pillars": "array — ['video', 'drone', 'photo']",
+              "Shoot Date": "string — ISO 8601 date",
+              "Status": "string — pre-production | shoot-day | post-production | delivered",
+              "Google Drive Link": "string — URL to project folder",
+              "Lark Channel": "string — channel name",
+              "ClickUp Task Link": "string — URL to main ClickUp task"
+            }
+          }
+        },
+        {
+          "action": "update_page",
+          "description": "Update the client workspace page as the project progresses.",
+          "parameters": {
+            "page_id": "string",
+            "properties": "object — fields to update"
+          }
+        }
+      ]
+    }
+  ]
+}

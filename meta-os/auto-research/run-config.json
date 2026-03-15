@@ -1,0 +1,14 @@
+{
+  "default_batch_size": 10,
+  "default_max_iterations": 20,
+  "default_target_score": 90,
+  "run_interval_minutes": 5,
+  "eval_model": "claude-sonnet-4-6",
+  "generation_model": "claude-sonnet-4-6",
+  "log_level": "detailed",
+  "auto_save_winner": true,
+  "changelog_enabled": true,
+  "anti_gaming_checks": true,
+  "max_prompt_length_chars": 5000,
+  "score_history_retention_days": 90
+}

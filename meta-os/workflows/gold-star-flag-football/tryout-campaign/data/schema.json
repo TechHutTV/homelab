@@ -1,0 +1,121 @@
+{
+  "schema": {
+    "task_id": "tryout-campaign",
+    "input": {
+      "season_details": {
+        "type": "object",
+        "required": true,
+        "properties": {
+          "season_name": {
+            "type": "string",
+            "description": "Name of the upcoming season (e.g., 'Fall 2026')."
+          },
+          "tryout_dates": {
+            "type": "array",
+            "items": { "type": "string", "format": "date" },
+            "description": "List of tryout dates."
+          },
+          "tryout_times": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Time slots for each tryout date."
+          },
+          "tryout_location": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "address": { "type": "string" },
+              "city": { "type": "string" },
+              "state": { "type": "string" },
+              "zip": { "type": "string" }
+            }
+          },
+          "age_divisions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "division_name": { "type": "string" },
+                "age_min": { "type": "integer" },
+                "age_max": { "type": "integer" }
+              }
+            },
+            "description": "Age group divisions for the season."
+          },
+          "registration_fee": {
+            "type": "number",
+            "description": "Base registration fee in USD."
+          },
+          "early_bird_discount": {
+            "type": "number",
+            "description": "Early-bird discount amount in USD."
+          },
+          "campaign_budget": {
+            "type": "number",
+            "description": "Total approved ad spend budget in USD."
+          }
+        }
+      },
+      "target_demographics": {
+        "type": "object",
+        "required": true,
+        "properties": {
+          "geographic_radius_miles": {
+            "type": "integer",
+            "description": "Radius in miles around the tryout location for ad targeting."
+          },
+          "parent_age_range": {
+            "type": "object",
+            "properties": {
+              "min": { "type": "integer" },
+              "max": { "type": "integer" }
+            }
+          },
+          "interests": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Interest targeting keywords (e.g., 'youth sports', 'flag football', 'NFL Flag')."
+          },
+          "past_registrant_segments": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "GHL contact segments to target (e.g., 'Fall 2025 Players', 'Waitlisted')."
+          }
+        }
+      }
+    },
+    "output": {
+      "flyer_assets": {
+        "type": "object",
+        "properties": {
+          "instagram_square_url": { "type": "string", "format": "uri" },
+          "facebook_cover_url": { "type": "string", "format": "uri" },
+          "story_url": { "type": "string", "format": "uri" },
+          "print_flyer_url": { "type": "string", "format": "uri" },
+          "google_drive_folder_url": { "type": "string", "format": "uri" }
+        },
+        "description": "URLs to all generated flyer variants stored in Google Drive."
+      },
+      "campaign_schedule": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "week": { "type": "integer" },
+            "platform": { "type": "string" },
+            "post_type": { "type": "string" },
+            "copy": { "type": "string" },
+            "asset_url": { "type": "string", "format": "uri" },
+            "scheduled_datetime": { "type": "string", "format": "date-time" }
+          }
+        },
+        "description": "Full campaign schedule with post details per platform."
+      },
+      "registration_page_url": {
+        "type": "string",
+        "format": "uri",
+        "description": "Live registration page URL with embedded form and Stripe payment."
+      }
+    }
+  }
+}

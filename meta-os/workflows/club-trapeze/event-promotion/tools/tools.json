@@ -1,0 +1,114 @@
+{
+  "task_id": "event-promotion",
+  "tools": [
+    {
+      "id": "canva-api",
+      "name": "Canva API",
+      "type": "mcp",
+      "description": "Design platform for generating event flyers, social graphics, and email banners using Club Trapeze branded templates.",
+      "capabilities": [
+        "create_design",
+        "apply_template",
+        "export_image",
+        "export_pdf",
+        "list_brand_assets",
+        "resize_design",
+        "batch_export"
+      ],
+      "auth": {
+        "method": "oauth2",
+        "env_var": "CANVA_API_CREDENTIALS"
+      }
+    },
+    {
+      "id": "gmail",
+      "name": "Gmail",
+      "type": "mcp",
+      "description": "Email campaign delivery — announcement blasts, reminder sequences, and last-call emails to segmented mailing lists.",
+      "capabilities": [
+        "send_email",
+        "send_bulk_email",
+        "send_email_with_attachment",
+        "create_draft",
+        "list_contacts",
+        "get_send_stats"
+      ],
+      "auth": {
+        "method": "oauth2",
+        "env_var": "GMAIL_CREDENTIALS"
+      }
+    },
+    {
+      "id": "instagram-api",
+      "name": "Instagram API",
+      "type": "mcp",
+      "description": "Social media publishing for event countdown posts, Reels, Stories, and engagement tracking.",
+      "capabilities": [
+        "publish_post",
+        "publish_reel",
+        "publish_story",
+        "schedule_post",
+        "get_insights",
+        "get_comments"
+      ],
+      "auth": {
+        "method": "oauth2",
+        "env_var": "INSTAGRAM_API_CREDENTIALS"
+      }
+    },
+    {
+      "id": "facebook-api",
+      "name": "Facebook API",
+      "type": "mcp",
+      "description": "Event page creation, social posts, and audience engagement on the Club Trapeze Facebook page.",
+      "capabilities": [
+        "create_event",
+        "update_event",
+        "publish_post",
+        "schedule_post",
+        "get_event_responses",
+        "get_page_insights"
+      ],
+      "auth": {
+        "method": "oauth2",
+        "env_var": "FACEBOOK_API_CREDENTIALS"
+      }
+    },
+    {
+      "id": "ghl",
+      "name": "GoHighLevel (GHL)",
+      "type": "mcp",
+      "description": "SMS marketing platform for targeted text blasts — event announcements, day-of reminders, and flash promotions.",
+      "capabilities": [
+        "send_sms",
+        "send_bulk_sms",
+        "list_contacts",
+        "create_campaign",
+        "get_campaign_stats",
+        "check_opt_out_status"
+      ],
+      "auth": {
+        "method": "api_key",
+        "env_var": "GHL_API_KEY"
+      }
+    },
+    {
+      "id": "stripe",
+      "name": "Stripe",
+      "type": "mcp",
+      "description": "Ticket sales and payment processing — create payment links, monitor sales velocity, and track revenue per event.",
+      "capabilities": [
+        "create_payment_link",
+        "list_transactions",
+        "get_transaction",
+        "list_charges",
+        "create_product",
+        "create_price"
+      ],
+      "auth": {
+        "method": "api_key",
+        "env_var": "STRIPE_API_KEY"
+      }
+    }
+  ]
+}

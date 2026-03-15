@@ -1,0 +1,231 @@
+{
+  "task_id": "client-delivery",
+  "schema_version": "1.0.0",
+  "input": {
+    "description": "Approved edited deliverables from post-production, ready for client packaging and invoicing.",
+    "type": "object",
+    "required": ["edited_deliverables", "client_brief", "project_code"],
+    "properties": {
+      "edited_deliverables": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "deliverable_id": {
+              "type": "string",
+              "description": "Unique deliverable identifier."
+            },
+            "deliverable_type": {
+              "type": "string",
+              "enum": ["video_reel", "drone_flyover", "photo_set", "highlight_video"],
+              "description": "Type of deliverable."
+            },
+            "pillar": {
+              "type": "string",
+              "enum": ["video", "drone", "photo"]
+            },
+            "file_name": {
+              "type": "string",
+              "description": "Final file name."
+            },
+            "format": {
+              "type": "string",
+              "description": "File format (e.g., H.264, ProRes, JPEG, TIFF)."
+            },
+            "resolution": {
+              "type": "string",
+              "description": "Output resolution."
+            },
+            "google_drive_file_id": {
+              "type": "string",
+              "description": "Google Drive file ID in the 07_Delivery folder."
+            },
+            "google_drive_url": {
+              "type": "string",
+              "format": "uri",
+              "description": "Direct link to the file."
+            },
+            "approved": {
+              "type": "boolean",
+              "description": "Must be true — only approved deliverables proceed to client delivery."
+            }
+          }
+        },
+        "description": "All approved deliverables from post-production."
+      },
+      "client_brief": {
+        "type": "object",
+        "properties": {
+          "client_name": { "type": "string" },
+          "client_email": { "type": "string", "format": "email" },
+          "project_type": { "type": "array", "items": { "type": "string" } },
+          "requirements": {
+            "type": "object",
+            "properties": {
+              "budget_tier": { "type": "string", "enum": ["standard", "premium", "enterprise"] },
+              "deliverables": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "type": { "type": "string" },
+                    "quantity": { "type": "integer" },
+                    "specs": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Original client brief for invoice generation and email personalization."
+      },
+      "project_code": {
+        "type": "string",
+        "description": "EEVL internal project code."
+      },
+      "shoot_date": {
+        "type": "string",
+        "format": "date",
+        "description": "Original shoot date for invoice metadata."
+      },
+      "revision_rounds_used": {
+        "type": "integer",
+        "description": "Number of revision rounds used (affects billing if over 2)."
+      },
+      "google_drive_folder_id": {
+        "type": "string",
+        "description": "Google Drive project folder ID."
+      },
+      "lark_channel_id": {
+        "type": "string",
+        "description": "Project Lark channel ID for archival."
+      },
+      "clickup_task_ids": {
+        "type": "object",
+        "properties": {
+          "final_delivery": { "type": "string" },
+          "pre_production": { "type": "string" },
+          "shoot_day": { "type": "string" },
+          "post_production": { "type": "string" },
+          "sparrow_handoff": { "type": "string" },
+          "client_review": { "type": "string" }
+        },
+        "description": "ClickUp task IDs for all project milestones."
+      }
+    }
+  },
+  "output": {
+    "description": "Final delivery confirmation including invoice, email status, and archive location.",
+    "type": "object",
+    "properties": {
+      "invoice_id": {
+        "type": "string",
+        "description": "Stripe invoice ID (e.g., in_1234567890)."
+      },
+      "invoice_url": {
+        "type": "string",
+        "format": "uri",
+        "description": "Stripe hosted invoice URL for client payment."
+      },
+      "invoice_amount_cents": {
+        "type": "integer",
+        "description": "Total invoice amount in cents."
+      },
+      "invoice_status": {
+        "type": "string",
+        "enum": ["draft", "open", "paid", "void"],
+        "description": "Current invoice status."
+      },
+      "delivery_email_confirmation": {
+        "type": "object",
+        "properties": {
+          "message_id": {
+            "type": "string",
+            "description": "Gmail message ID."
+          },
+          "sent_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the delivery email was sent."
+          },
+          "recipient": {
+            "type": "string",
+            "format": "email",
+            "description": "Client email address the delivery was sent to."
+          },
+          "status": {
+            "type": "string",
+            "enum": ["sent", "failed", "bounced"],
+            "description": "Email delivery status."
+          }
+        },
+        "description": "Confirmation that the delivery email was sent successfully."
+      },
+      "shared_folder_url": {
+        "type": "string",
+        "format": "uri",
+        "description": "Google Drive shared folder URL sent to the client."
+      },
+      "archive_location": {
+        "type": "object",
+        "properties": {
+          "google_drive_folder_id": {
+            "type": "string",
+            "description": "Google Drive folder ID in the archive location."
+          },
+          "archive_path": {
+            "type": "string",
+            "description": "Full archive path (e.g., 'EEVL Productions/Archive/2026/{ClientName}_{ProjectCode}')."
+          },
+          "archived_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the project was archived."
+          }
+        },
+        "description": "Where the project files were archived for long-term storage."
+      },
+      "clickup_completion": {
+        "type": "object",
+        "properties": {
+          "all_tasks_complete": {
+            "type": "boolean",
+            "description": "Whether all project tasks in ClickUp are marked complete."
+          },
+          "project_moved_to_archive": {
+            "type": "boolean",
+            "description": "Whether the project was moved to the Completed Projects space."
+          }
+        },
+        "description": "ClickUp task completion status."
+      },
+      "project_metrics": {
+        "type": "object",
+        "properties": {
+          "total_project_days": {
+            "type": "integer",
+            "description": "Total days from brief intake to final delivery."
+          },
+          "pillars_delivered": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["video", "drone", "photo"] },
+            "description": "Which pillars were included in the final delivery."
+          },
+          "total_deliverables": {
+            "type": "integer",
+            "description": "Total number of deliverable files sent to the client."
+          },
+          "revision_rounds_used": {
+            "type": "integer",
+            "description": "Total revision rounds consumed."
+          },
+          "total_storage_gb": {
+            "type": "number",
+            "description": "Total project storage in gigabytes."
+          }
+        },
+        "description": "Final project metrics for reporting and analysis."
+      }
+    }
+  }
+}

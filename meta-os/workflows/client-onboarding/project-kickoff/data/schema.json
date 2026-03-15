@@ -1,0 +1,308 @@
+{
+  "schema": {
+    "task_id": "project-kickoff",
+    "version": "1.0.0",
+    "input": {
+      "description": "Signed contract, client details, and project scope required for project kickoff and workspace provisioning.",
+      "type": "object",
+      "required": ["ghl_contact_id", "client_name", "project_name", "pandadoc_contract_id", "engagement_type"],
+      "properties": {
+        "ghl_contact_id": {
+          "type": "string",
+          "description": "GoHighLevel contact ID for the client."
+        },
+        "client_name": {
+          "type": "string",
+          "description": "Client's name or company name."
+        },
+        "project_name": {
+          "type": "string",
+          "description": "Name of the project for workspace naming."
+        },
+        "pandadoc_contract_id": {
+          "type": "string",
+          "description": "PandaDoc document ID of the signed contract."
+        },
+        "stripe_invoice_id": {
+          "type": "string",
+          "description": "Stripe invoice ID confirming payment or payment setup."
+        },
+        "engagement_type": {
+          "type": "string",
+          "enum": ["project", "retainer", "consulting"],
+          "description": "Type of engagement determining ClickUp template and workspace structure."
+        },
+        "client_contacts": {
+          "type": "array",
+          "description": "Client stakeholders for communication and email distribution.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "email": { "type": "string", "format": "email" },
+              "role": { "type": "string" },
+              "is_decision_maker": { "type": "boolean" }
+            }
+          }
+        },
+        "project_scope": {
+          "type": "object",
+          "description": "Detailed project scope from the signed contract.",
+          "properties": {
+            "summary": {
+              "type": "string",
+              "description": "Brief project scope summary."
+            },
+            "deliverables": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "description": { "type": "string" },
+                  "acceptance_criteria": { "type": "string" },
+                  "due_date": { "type": "string", "format": "date" }
+                }
+              },
+              "description": "Agreed-upon deliverables with acceptance criteria."
+            },
+            "service_type": {
+              "type": "string",
+              "enum": ["ai-automation", "web-dev", "consulting", "full-stack"],
+              "description": "Primary EEVL service category."
+            }
+          }
+        },
+        "timeline": {
+          "type": "object",
+          "description": "Project timeline from the signed contract.",
+          "properties": {
+            "start_date": {
+              "type": "string",
+              "format": "date",
+              "description": "Project start date."
+            },
+            "end_date": {
+              "type": "string",
+              "format": "date",
+              "description": "Projected project end date.",
+              "nullable": true
+            },
+            "milestones": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "target_date": { "type": "string", "format": "date" },
+                  "description": { "type": "string" }
+                }
+              },
+              "description": "Key project milestones."
+            }
+          }
+        },
+        "project_value_cents": {
+          "type": "number",
+          "description": "Total project value in cents for priority and resource allocation."
+        },
+        "eevl_account_lead": {
+          "type": "object",
+          "description": "EEVL account lead who closed the deal.",
+          "properties": {
+            "name": { "type": "string" },
+            "email": { "type": "string", "format": "email" },
+            "lark_user_id": { "type": "string" },
+            "clickup_user_id": { "type": "string" }
+          }
+        },
+        "eevl_team_assignments": {
+          "type": "array",
+          "description": "EEVL team members to be assigned to this project.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "email": { "type": "string", "format": "email" },
+              "role": {
+                "type": "string",
+                "enum": ["project_manager", "lead_developer", "developer", "consultant", "designer", "qa"]
+              },
+              "lark_user_id": { "type": "string" },
+              "clickup_user_id": { "type": "string" },
+              "allocation_percentage": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100,
+                "description": "Percentage of time allocated to this project."
+              }
+            }
+          }
+        },
+        "requires_client_lark_channel": {
+          "type": "boolean",
+          "description": "Whether to create a client-facing Lark channel in addition to the internal one.",
+          "default": false
+        }
+      }
+    },
+    "output": {
+      "description": "Results of the project kickoff sequence executed by the onboarding-agent.",
+      "type": "object",
+      "properties": {
+        "clickup_project": {
+          "type": "object",
+          "description": "ClickUp project creation results.",
+          "properties": {
+            "project_id": {
+              "type": "string",
+              "description": "ClickUp project (folder) ID."
+            },
+            "project_url": {
+              "type": "string",
+              "format": "uri",
+              "description": "URL to the ClickUp project."
+            },
+            "tasks_created": {
+              "type": "integer",
+              "description": "Number of tasks auto-created from the template."
+            },
+            "team_assignments_made": {
+              "type": "integer",
+              "description": "Number of task assignments made."
+            }
+          }
+        },
+        "lark_channel": {
+          "type": "object",
+          "description": "Lark channel creation results.",
+          "properties": {
+            "channel_id": {
+              "type": "string",
+              "description": "Internal Lark channel ID."
+            },
+            "channel_name": {
+              "type": "string",
+              "description": "Channel name (e.g., #client-acme-corp)."
+            },
+            "members_added": {
+              "type": "integer",
+              "description": "Number of team members added to the channel."
+            },
+            "external_channel_id": {
+              "type": "string",
+              "description": "Client-facing channel ID, if created.",
+              "nullable": true
+            }
+          }
+        },
+        "notion_workspace": {
+          "type": "object",
+          "description": "Notion workspace provisioning results.",
+          "properties": {
+            "workspace_url": {
+              "type": "string",
+              "format": "uri",
+              "description": "URL to the client's Notion project hub."
+            },
+            "workspace_page_id": {
+              "type": "string",
+              "description": "Notion page ID for the workspace root."
+            },
+            "wiki_url": {
+              "type": "string",
+              "format": "uri",
+              "description": "URL to the client wiki section."
+            },
+            "meeting_notes_db_id": {
+              "type": "string",
+              "description": "Notion database ID for meeting notes."
+            },
+            "deliverables_db_id": {
+              "type": "string",
+              "description": "Notion database ID for deliverables tracker."
+            }
+          }
+        },
+        "kickoff_email": {
+          "type": "object",
+          "description": "Kickoff email delivery results.",
+          "properties": {
+            "message_id": {
+              "type": "string",
+              "description": "Gmail message ID."
+            },
+            "sent_at": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Timestamp when the email was sent."
+            },
+            "recipients": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Email addresses that received the kickoff email."
+            },
+            "delivery_confirmed": {
+              "type": "boolean",
+              "description": "Whether email delivery was confirmed."
+            }
+          }
+        },
+        "team_assignments": {
+          "type": "array",
+          "description": "Team member assignment and notification results.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Team member name."
+              },
+              "role": {
+                "type": "string",
+                "description": "Assigned role on the project."
+              },
+              "lark_notified": {
+                "type": "boolean",
+                "description": "Whether the team member was notified via Lark DM."
+              },
+              "clickup_tasks_assigned": {
+                "type": "integer",
+                "description": "Number of ClickUp tasks assigned to this member."
+              }
+            }
+          }
+        },
+        "onboarding_agent_status": {
+          "type": "object",
+          "description": "Overall status report from the onboarding-agent sub-agent.",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": ["completed", "partial", "failed"],
+              "description": "Overall kickoff status."
+            },
+            "steps_completed": {
+              "type": "integer",
+              "description": "Number of steps successfully completed."
+            },
+            "steps_total": {
+              "type": "integer",
+              "description": "Total number of steps in the kickoff sequence."
+            },
+            "errors": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "List of errors encountered, if any."
+            },
+            "completed_at": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Timestamp when the kickoff sequence completed."
+            }
+          }
+        }
+      }
+    }
+  }
+}

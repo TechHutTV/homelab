@@ -1,0 +1,39 @@
+{
+  "skill_name": "social-bot",
+  "description": "Evaluates SocialBot outputs for platform compliance, scheduling discipline, and optimization practices across all supported social media platforms.",
+  "target_score": 90,
+  "batch_size": 10,
+  "max_iterations": 15,
+  "criteria": [
+    {
+      "criteria_id": "platform-character-limits",
+      "question": "Does each post respect platform character limits? (yes/no)",
+      "weight": 1,
+      "category": "platform"
+    },
+    {
+      "criteria_id": "hashtag-appropriateness",
+      "question": "Are hashtags platform-appropriate (count and relevance)? (yes/no)",
+      "weight": 1,
+      "category": "platform"
+    },
+    {
+      "criteria_id": "media-dimensions",
+      "question": "Is media formatted to correct dimensions per platform? (yes/no)",
+      "weight": 1,
+      "category": "format"
+    },
+    {
+      "criteria_id": "scheduled-not-simultaneous",
+      "question": "Are posts scheduled (not all posted simultaneously)? (yes/no)",
+      "weight": 1,
+      "category": "timing"
+    },
+    {
+      "criteria_id": "ab-testing-included",
+      "question": "Is A/B testing included for at least one platform? (yes/no)",
+      "weight": 1,
+      "category": "completeness"
+    }
+  ]
+}

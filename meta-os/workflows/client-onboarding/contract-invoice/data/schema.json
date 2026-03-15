@@ -1,0 +1,270 @@
+{
+  "schema": {
+    "task_id": "contract-invoice",
+    "version": "1.0.0",
+    "input": {
+      "description": "Approved proposal and client information required for contract generation and invoicing.",
+      "type": "object",
+      "required": ["ghl_contact_id", "client_name", "client_email", "proposal_url", "engagement_type"],
+      "properties": {
+        "ghl_contact_id": {
+          "type": "string",
+          "description": "GoHighLevel contact ID for the client."
+        },
+        "client_name": {
+          "type": "string",
+          "description": "Client's full legal name or company name for the contract."
+        },
+        "client_email": {
+          "type": "string",
+          "format": "email",
+          "description": "Client's email address for contract delivery and invoicing."
+        },
+        "client_company": {
+          "type": "string",
+          "description": "Client's company or organization name.",
+          "nullable": true
+        },
+        "client_address": {
+          "type": "string",
+          "description": "Client's billing address for contract and invoicing.",
+          "nullable": true
+        },
+        "proposal_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Notion URL of the approved proposal."
+        },
+        "engagement_type": {
+          "type": "string",
+          "enum": ["project", "retainer", "consulting"],
+          "description": "Type of engagement determining contract template and invoicing structure."
+        },
+        "scope_of_work": {
+          "type": "string",
+          "description": "Detailed scope of work from the approved proposal."
+        },
+        "deliverables": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "description": { "type": "string" },
+              "acceptance_criteria": { "type": "string" }
+            }
+          },
+          "description": "List of deliverables with acceptance criteria."
+        },
+        "pricing": {
+          "type": "object",
+          "description": "Pricing details from the approved proposal.",
+          "properties": {
+            "total_amount_cents": {
+              "type": "number",
+              "description": "Total contract value in cents."
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            },
+            "payment_structure": {
+              "type": "string",
+              "enum": ["one-time", "milestone", "monthly-retainer"],
+              "description": "How payments are structured."
+            },
+            "milestones": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "amount_cents": { "type": "number" },
+                  "due_trigger": { "type": "string" }
+                }
+              },
+              "description": "Milestone payment schedule (for milestone-based projects).",
+              "nullable": true
+            },
+            "retainer_amount_cents": {
+              "type": "number",
+              "description": "Monthly retainer amount in cents (for retainer engagements).",
+              "nullable": true
+            }
+          }
+        },
+        "timeline": {
+          "type": "object",
+          "description": "Project timeline from the approved proposal.",
+          "properties": {
+            "start_date": {
+              "type": "string",
+              "format": "date",
+              "description": "Projected project start date."
+            },
+            "end_date": {
+              "type": "string",
+              "format": "date",
+              "description": "Projected project end date.",
+              "nullable": true
+            },
+            "milestones": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "target_date": { "type": "string", "format": "date" }
+                }
+              },
+              "nullable": true
+            }
+          }
+        },
+        "decision_maker": {
+          "type": "object",
+          "description": "Primary signer for the contract.",
+          "properties": {
+            "name": { "type": "string" },
+            "email": { "type": "string", "format": "email" },
+            "title": { "type": "string" }
+          }
+        },
+        "eevl_account_lead": {
+          "type": "object",
+          "description": "EEVL team member managing this account.",
+          "properties": {
+            "name": { "type": "string" },
+            "email": { "type": "string", "format": "email" }
+          }
+        },
+        "requires_nda": {
+          "type": "boolean",
+          "description": "Whether an NDA is required before or alongside the main contract.",
+          "default": false
+        }
+      }
+    },
+    "output": {
+      "description": "Results of contract generation, invoicing, and payment processing.",
+      "type": "object",
+      "properties": {
+        "contract_id": {
+          "type": "string",
+          "description": "PandaDoc document ID for the generated contract."
+        },
+        "contract_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "PandaDoc URL for the contract document."
+        },
+        "signature_status": {
+          "type": "object",
+          "description": "Current signature status of the contract.",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": ["sent", "viewed", "client_signed", "fully_executed", "expired", "declined"],
+              "description": "Current document status."
+            },
+            "client_signed_at": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Timestamp when the client signed.",
+              "nullable": true
+            },
+            "eevl_countersigned_at": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Timestamp when EEVL countersigned.",
+              "nullable": true
+            },
+            "sent_at": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Timestamp when the contract was sent for signature."
+            }
+          }
+        },
+        "invoice_id": {
+          "type": "string",
+          "description": "Stripe invoice ID."
+        },
+        "invoice_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Stripe-hosted invoice URL for client payment."
+        },
+        "invoice_amount_cents": {
+          "type": "number",
+          "description": "Invoice amount in cents."
+        },
+        "invoice_due_date": {
+          "type": "string",
+          "format": "date",
+          "description": "Invoice due date."
+        },
+        "quickbooks_entry": {
+          "type": "object",
+          "description": "QuickBooks accounting entry details.",
+          "properties": {
+            "qb_customer_id": {
+              "type": "string",
+              "description": "QuickBooks customer ID."
+            },
+            "qb_invoice_id": {
+              "type": "string",
+              "description": "QuickBooks invoice ID."
+            },
+            "income_category": {
+              "type": "string",
+              "enum": ["Consulting", "Development", "Automation", "Retainer"],
+              "description": "Revenue category for P&L reporting."
+            },
+            "synced_at": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Timestamp when the QuickBooks entry was created."
+            }
+          }
+        },
+        "payment_confirmation": {
+          "type": "object",
+          "description": "Payment status and confirmation details.",
+          "nullable": true,
+          "properties": {
+            "paid": {
+              "type": "boolean",
+              "description": "Whether payment has been received."
+            },
+            "paid_at": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Timestamp of successful payment.",
+              "nullable": true
+            },
+            "payment_method": {
+              "type": "string",
+              "description": "Payment method used (e.g., 'Visa ending in 4242').",
+              "nullable": true
+            },
+            "receipt_email_sent": {
+              "type": "boolean",
+              "description": "Whether the receipt email was sent via Gmail."
+            },
+            "receipt_message_id": {
+              "type": "string",
+              "description": "Gmail message ID for the receipt email.",
+              "nullable": true
+            }
+          }
+        },
+        "nda_document_id": {
+          "type": "string",
+          "description": "PandaDoc document ID for the NDA, if applicable.",
+          "nullable": true
+        }
+      }
+    }
+  }
+}

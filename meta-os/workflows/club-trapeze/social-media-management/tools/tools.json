@@ -1,0 +1,80 @@
+{
+  "task_id": "social-media-management",
+  "tools": [
+    {
+      "name": "canva_api",
+      "type": "mcp",
+      "description": "Design tool for creating social media graphics, event promo images, Stories templates, and branded visual assets for Club Trapeze.",
+      "operations": [
+        "create_design",
+        "apply_template",
+        "export_image",
+        "export_video",
+        "list_brand_templates",
+        "update_design"
+      ],
+      "auth": "oauth2",
+      "required": true
+    },
+    {
+      "name": "facebook_api",
+      "type": "mcp",
+      "description": "Facebook page management for Club Trapeze — post publishing, event creation, audience engagement, and analytics.",
+      "operations": [
+        "create_post",
+        "schedule_post",
+        "create_event",
+        "update_event",
+        "get_page_insights",
+        "reply_to_comment",
+        "get_messages"
+      ],
+      "auth": "oauth2",
+      "required": true
+    },
+    {
+      "name": "instagram_api",
+      "type": "mcp",
+      "description": "Instagram account management — feed posts, Stories, Reels publishing, engagement tracking, and audience analytics.",
+      "operations": [
+        "create_media",
+        "publish_media",
+        "create_story",
+        "create_reel",
+        "get_insights",
+        "get_comments",
+        "reply_to_comment",
+        "get_mentions"
+      ],
+      "auth": "oauth2",
+      "required": true
+    },
+    {
+      "name": "lark",
+      "type": "mcp",
+      "description": "Approval workflow platform. All content is submitted for Fred's review and approval before publishing.",
+      "operations": [
+        "create_approval",
+        "check_approval_status",
+        "send_notification",
+        "get_approval_history"
+      ],
+      "auth": "api_key",
+      "required": true
+    },
+    {
+      "name": "google_drive",
+      "type": "mcp",
+      "description": "Asset library for brand guidelines, approved graphics, photo/video archives, and content calendar storage.",
+      "operations": [
+        "upload_file",
+        "list_files",
+        "download_file",
+        "share_file",
+        "search_files"
+      ],
+      "auth": "oauth2",
+      "required": true
+    }
+  ]
+}

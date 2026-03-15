@@ -1,0 +1,18 @@
+{
+  "name": "EEVL Creative",
+  "description": "Brand-kit design generation and asset management",
+  "trigger": "design_request | manual",
+  "model": "gpt-4o",
+  "version": "1.0.0",
+  "enabled": true,
+  "retry": {
+    "max_attempts": 2,
+    "backoff_seconds": 30
+  },
+  "timeout_seconds": 300,
+  "paths": {
+    "prompt": "prompts/prompt.md",
+    "tools": "tools/tools.json",
+    "schema": "data/schema.json"
+  }
+}

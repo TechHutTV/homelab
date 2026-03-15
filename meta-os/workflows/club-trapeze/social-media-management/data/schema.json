@@ -1,0 +1,113 @@
+{
+  "task_id": "social-media-management",
+  "input": {
+    "description": "Content calendar, brand guidelines, and upcoming event schedule used to drive social media content creation and scheduling.",
+    "fields": {
+      "content_calendar": {
+        "type": "object",
+        "description": "Weekly content calendar specifying planned posts, platforms, content pillars, and scheduling targets.",
+        "properties": {
+          "week_start": { "type": "string", "format": "date" },
+          "week_end": { "type": "string", "format": "date" },
+          "planned_posts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "date": { "type": "string", "format": "date" },
+                "platform": { "type": "string", "enum": ["instagram_feed", "instagram_story", "instagram_reel", "facebook_feed", "facebook_event"] },
+                "content_pillar": { "type": "string", "enum": ["events", "behind_the_scenes", "customer_spotlights", "promotions", "local_partnerships"] },
+                "topic": { "type": "string" },
+                "notes": { "type": "string" }
+              }
+            }
+          }
+        },
+        "required": true
+      },
+      "brand_guidelines": {
+        "type": "object",
+        "description": "Club Trapeze brand standards including colors, fonts, logo usage, tone of voice, and approved visual styles.",
+        "properties": {
+          "primary_colors": { "type": "array", "items": { "type": "string" } },
+          "fonts": { "type": "array", "items": { "type": "string" } },
+          "logo_url": { "type": "string", "format": "uri" },
+          "tone_keywords": { "type": "array", "items": { "type": "string" } },
+          "dos_and_donts": { "type": "object" }
+        },
+        "required": true
+      },
+      "event_schedule": {
+        "type": "array",
+        "description": "Upcoming events at Club Trapeze with details needed for promotional content.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "event_name": { "type": "string" },
+            "date": { "type": "string", "format": "date-time" },
+            "theme": { "type": "string" },
+            "talent": { "type": "array", "items": { "type": "string" } },
+            "ticket_url": { "type": "string", "format": "uri" },
+            "dress_code": { "type": "string" },
+            "special_notes": { "type": "string" }
+          }
+        },
+        "required": true
+      }
+    }
+  },
+  "output": {
+    "description": "Designed social media posts, scheduled post identifiers, and weekly engagement metrics.",
+    "fields": {
+      "designed_posts": {
+        "type": "array",
+        "description": "Completed post assets with copy, visuals, and platform-specific formatting.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "post_id": { "type": "string" },
+            "platform": { "type": "string" },
+            "content_type": { "type": "string", "enum": ["image", "video", "carousel", "story", "reel", "event"] },
+            "caption": { "type": "string" },
+            "hashtags": { "type": "array", "items": { "type": "string" } },
+            "media_urls": { "type": "array", "items": { "type": "string", "format": "uri" } },
+            "canva_design_id": { "type": "string" },
+            "approval_status": { "type": "string", "enum": ["pending", "approved", "revision_requested", "rejected"] }
+          }
+        }
+      },
+      "scheduled_post_ids": {
+        "type": "array",
+        "description": "Platform-issued post IDs for all successfully scheduled content.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "platform": { "type": "string" },
+            "platform_post_id": { "type": "string" },
+            "scheduled_time": { "type": "string", "format": "date-time" }
+          }
+        }
+      },
+      "engagement_metrics": {
+        "type": "object",
+        "description": "Weekly engagement performance summary across all platforms.",
+        "properties": {
+          "period": { "type": "string" },
+          "total_impressions": { "type": "integer" },
+          "total_reach": { "type": "integer" },
+          "total_engagements": { "type": "integer" },
+          "engagement_rate": { "type": "number" },
+          "follower_growth": { "type": "integer" },
+          "top_performing_post": { "type": "string" },
+          "platform_breakdown": {
+            "type": "object",
+            "properties": {
+              "instagram": { "type": "object" },
+              "facebook": { "type": "object" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

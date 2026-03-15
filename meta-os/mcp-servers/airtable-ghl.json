@@ -1,0 +1,48 @@
+{
+  "name": "airtable-ghl",
+  "description": "CRM, lead management, roster tracking",
+  "version": "1.0.0",
+  "services": {
+    "airtable": {
+      "auth_type": "api_key",
+      "auth_config": {
+        "api_key": "${AIRTABLE_API_KEY}"
+      },
+      "base_url": "https://api.airtable.com/v0",
+      "capabilities": [
+        "read_records",
+        "create_record",
+        "update_record",
+        "list_bases",
+        "query_view"
+      ]
+    },
+    "ghl": {
+      "auth_type": "api_key",
+      "auth_config": {
+        "api_key": "${GHL_API_KEY}",
+        "location_id": "${GHL_LOCATION_ID}"
+      },
+      "base_url": "https://rest.gohighlevel.com/v1",
+      "capabilities": [
+        "create_contact",
+        "update_contact",
+        "send_sms",
+        "create_opportunity",
+        "trigger_workflow"
+      ]
+    }
+  },
+  "used_by": {
+    "workflows": [
+      "lead-nurture",
+      "roster-sync",
+      "client-directory-update"
+    ],
+    "sub_agents": [
+      "ledger",
+      "atlas",
+      "sentinel"
+    ]
+  }
+}

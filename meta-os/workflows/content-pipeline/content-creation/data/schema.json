@@ -1,0 +1,243 @@
+{
+  "task": "content-creation",
+  "schema_version": "1.0.0",
+  "input": {
+    "description": "Content idea from the Idea Harvest stage plus EEVL brand guidelines for content generation.",
+    "type": "object",
+    "properties": {
+      "content_idea": {
+        "type": "object",
+        "description": "A prioritized content idea from the idea-harvest output.",
+        "properties": {
+          "idea_title": {
+            "type": "string",
+            "description": "Title of the content idea."
+          },
+          "trend_score": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "suggested_angle": {
+            "type": "string",
+            "description": "EEVL-specific angle for approaching this topic."
+          },
+          "source_data": {
+            "type": "array",
+            "description": "Raw data and references from the harvesting stage.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "platform": { "type": "string" },
+                "url": { "type": "string" },
+                "key_points": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                }
+              }
+            }
+          },
+          "target_formats": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["blog", "social_post", "email_newsletter", "video", "carousel", "infographic"]
+            },
+            "description": "Which content formats to generate for this idea."
+          },
+          "target_keywords": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "SEO keywords identified during harvesting."
+          }
+        },
+        "required": ["idea_title", "suggested_angle", "target_formats"]
+      },
+      "brand_guidelines": {
+        "type": "object",
+        "description": "EEVL brand voice and style parameters.",
+        "properties": {
+          "brand_name": {
+            "type": "string",
+            "default": "Eagle Eye Vision Labz"
+          },
+          "brand_abbreviation": {
+            "type": "string",
+            "default": "EEVL"
+          },
+          "tone": {
+            "type": "array",
+            "items": { "type": "string" },
+            "default": ["authoritative", "approachable", "action-oriented"]
+          },
+          "voice_perspective": {
+            "type": "string",
+            "default": "first-person plural (we/our) for EEVL, second-person (you/your) for audience"
+          },
+          "key_services": {
+            "type": "array",
+            "items": { "type": "string" },
+            "default": [
+              "AI automation",
+              "computer vision analytics",
+              "digital marketing",
+              "social media management",
+              "local business solutions"
+            ]
+          },
+          "branded_hashtags": {
+            "type": "array",
+            "items": { "type": "string" },
+            "default": ["#EagleEyeVisionLabz", "#EEVL"]
+          },
+          "website_url": {
+            "type": "string"
+          },
+          "cta_defaults": {
+            "type": "object",
+            "properties": {
+              "blog": { "type": "string", "default": "Book a free strategy call" },
+              "social": { "type": "string", "default": "Link in bio" },
+              "email": { "type": "string", "default": "Read the full post" }
+            }
+          }
+        }
+      }
+    },
+    "required": ["content_idea", "brand_guidelines"]
+  },
+  "output": {
+    "description": "Complete content package: blog draft, per-platform captions, hashtags, SEO metadata, newsletter copy, and video script outlines.",
+    "type": "object",
+    "properties": {
+      "blog_draft": {
+        "type": "object",
+        "description": "Full blog post in Markdown format with SEO metadata.",
+        "properties": {
+          "title": { "type": "string", "maxLength": 70 },
+          "slug": { "type": "string" },
+          "meta_description": { "type": "string", "maxLength": 160 },
+          "primary_keyword": { "type": "string" },
+          "secondary_keywords": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "body_markdown": {
+            "type": "string",
+            "description": "Full blog post content in Markdown."
+          },
+          "word_count": { "type": "integer" },
+          "readability_score": {
+            "type": "number",
+            "description": "Flesch-Kincaid readability score (target: 60-70)."
+          },
+          "internal_link_suggestions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "anchor_text": { "type": "string" },
+                "target_url": { "type": "string" }
+              }
+            }
+          },
+          "schema_markup": {
+            "type": "string",
+            "enum": ["Article", "HowTo", "FAQ", "BlogPosting"],
+            "description": "Suggested schema.org markup type."
+          },
+          "notion_draft_id": { "type": "string" }
+        }
+      },
+      "captions": {
+        "type": "object",
+        "description": "Platform-specific social media captions.",
+        "properties": {
+          "instagram": {
+            "type": "object",
+            "properties": {
+              "caption_text": { "type": "string" },
+              "hashtags": { "type": "array", "items": { "type": "string" }, "maxItems": 25 },
+              "character_count": { "type": "integer" }
+            }
+          },
+          "facebook": {
+            "type": "object",
+            "properties": {
+              "caption_text": { "type": "string" },
+              "hashtags": { "type": "array", "items": { "type": "string" }, "maxItems": 4 },
+              "character_count": { "type": "integer" }
+            }
+          },
+          "twitter_x": {
+            "type": "object",
+            "properties": {
+              "primary_tweet": { "type": "string", "maxLength": 280 },
+              "thread_tweets": {
+                "type": "array",
+                "items": { "type": "string", "maxLength": 280 }
+              },
+              "hashtags": { "type": "array", "items": { "type": "string" }, "maxItems": 3 }
+            }
+          },
+          "linkedin": {
+            "type": "object",
+            "properties": {
+              "caption_text": { "type": "string" },
+              "hashtags": { "type": "array", "items": { "type": "string" }, "maxItems": 5 },
+              "character_count": { "type": "integer" }
+            }
+          },
+          "google_my_business": {
+            "type": "object",
+            "properties": {
+              "post_text": { "type": "string" },
+              "cta_type": { "type": "string", "enum": ["LEARN_MORE", "BOOK", "SIGN_UP", "CALL"] },
+              "character_count": { "type": "integer" }
+            }
+          }
+        }
+      },
+      "hashtag_sets": {
+        "type": "object",
+        "properties": {
+          "primary": { "type": "array", "items": { "type": "string" } },
+          "secondary": { "type": "array", "items": { "type": "string" } },
+          "branded": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "newsletter_copy": {
+        "type": "object",
+        "properties": {
+          "subject_line_options": {
+            "type": "array",
+            "items": { "type": "string" },
+            "minItems": 3,
+            "maxItems": 3
+          },
+          "preview_text": { "type": "string", "maxLength": 90 },
+          "body_html": { "type": "string" },
+          "word_count": { "type": "integer" },
+          "cta_button_text": { "type": "string" },
+          "cta_button_url": { "type": "string" }
+        }
+      },
+      "video_script_outline": {
+        "type": "object",
+        "properties": {
+          "format": { "type": "string", "enum": ["short_form", "long_form"] },
+          "duration_seconds": { "type": "integer" },
+          "hook": { "type": "string" },
+          "problem": { "type": "string" },
+          "solution": { "type": "string" },
+          "proof": { "type": "string" },
+          "cta": { "type": "string" },
+          "on_screen_text": { "type": "array", "items": { "type": "string" } },
+          "b_roll_suggestions": { "type": "array", "items": { "type": "string" } },
+          "recommended_audio": { "type": "string" }
+        }
+      }
+    },
+    "required": ["blog_draft", "captions", "hashtag_sets"]
+  }
+}

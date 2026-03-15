@@ -1,0 +1,214 @@
+{
+  "task_id": "post-production",
+  "schema_version": "1.0.0",
+  "input": {
+    "description": "Raw file manifest from the shoot day, used to organize files, hand off to Sparrow, and track edits through delivery.",
+    "type": "object",
+    "required": ["raw_file_manifest", "shot_list", "client_brief"],
+    "properties": {
+      "raw_file_manifest": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "file_name": {
+              "type": "string",
+              "description": "File name following EEVL naming convention."
+            },
+            "file_size_bytes": {
+              "type": "integer",
+              "description": "File size in bytes."
+            },
+            "pillar": {
+              "type": "string",
+              "enum": ["video", "drone", "photo"]
+            },
+            "shot_id": {
+              "type": "string",
+              "description": "Associated shot ID from the shot list."
+            },
+            "google_drive_file_id": {
+              "type": "string",
+              "description": "Google Drive file ID."
+            }
+          }
+        },
+        "description": "Complete manifest of every raw file captured during the shoot."
+      },
+      "shot_list": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "shot_id": { "type": "string" },
+            "pillar": { "type": "string", "enum": ["video", "drone", "photo"] },
+            "description": { "type": "string" },
+            "notes": { "type": "string" }
+          }
+        },
+        "description": "Original shot list from pre-production for Sparrow reference."
+      },
+      "client_brief": {
+        "type": "object",
+        "properties": {
+          "client_name": { "type": "string" },
+          "project_type": { "type": "array", "items": { "type": "string" } },
+          "requirements": {
+            "type": "object",
+            "properties": {
+              "creative_direction": { "type": "string" },
+              "deliverables": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "type": { "type": "string" },
+                    "quantity": { "type": "integer" },
+                    "specs": { "type": "string" }
+                  }
+                }
+              },
+              "budget_tier": { "type": "string" }
+            }
+          }
+        },
+        "description": "Original client brief so Sparrow understands deliverable expectations."
+      },
+      "lark_channel_id": {
+        "type": "string",
+        "description": "Project Lark channel ID for team updates."
+      },
+      "google_drive_folder_id": {
+        "type": "string",
+        "description": "Google Drive project folder ID."
+      }
+    }
+  },
+  "output": {
+    "description": "Edited deliverables, revision history, and Sparrow handoff confirmation.",
+    "type": "object",
+    "properties": {
+      "edited_deliverables": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "deliverable_id": {
+              "type": "string",
+              "description": "Unique deliverable identifier."
+            },
+            "deliverable_type": {
+              "type": "string",
+              "enum": ["video_reel", "drone_flyover", "photo_set", "highlight_video"],
+              "description": "Type of deliverable."
+            },
+            "pillar": {
+              "type": "string",
+              "enum": ["video", "drone", "photo"]
+            },
+            "file_name": {
+              "type": "string",
+              "description": "Final file name."
+            },
+            "format": {
+              "type": "string",
+              "description": "File format (e.g., ProRes 422 HQ, H.264, JPEG, TIFF)."
+            },
+            "resolution": {
+              "type": "string",
+              "description": "Output resolution (e.g., 3840x2160, 1920x1080)."
+            },
+            "google_drive_file_id": {
+              "type": "string",
+              "description": "Google Drive file ID for the final export."
+            },
+            "google_drive_url": {
+              "type": "string",
+              "format": "uri",
+              "description": "Direct Google Drive link to the file."
+            },
+            "current_revision": {
+              "type": "string",
+              "description": "Current revision number (e.g., R0 for original, R1, R2)."
+            },
+            "approved": {
+              "type": "boolean",
+              "description": "Whether this deliverable has received final approval."
+            }
+          }
+        },
+        "description": "All edited deliverables with their final export details."
+      },
+      "revision_log": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "revision_number": {
+              "type": "string",
+              "description": "Revision identifier (R1, R2, R3, ...)."
+            },
+            "deliverable_id": {
+              "type": "string",
+              "description": "Which deliverable this revision applies to."
+            },
+            "requested_by": {
+              "type": "string",
+              "enum": ["client", "internal"],
+              "description": "Who requested the revision."
+            },
+            "description": {
+              "type": "string",
+              "description": "Detailed description of changes requested."
+            },
+            "requested_at": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Timestamp of the revision request."
+            },
+            "completed_at": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Timestamp when the revision was delivered."
+            },
+            "status": {
+              "type": "string",
+              "enum": ["pending", "in-progress", "complete"],
+              "description": "Current status of this revision."
+            },
+            "file_link": {
+              "type": "string",
+              "format": "uri",
+              "description": "Google Drive link to the revised version."
+            }
+          }
+        },
+        "description": "Complete revision history for all deliverables."
+      },
+      "sparrow_handoff_confirmation": {
+        "type": "object",
+        "properties": {
+          "sparrow_task_id": {
+            "type": "string",
+            "description": "Sparrow's internal task ID."
+          },
+          "handoff_timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the handoff was posted to #edited-by-sparrow."
+          },
+          "lark_message_id": {
+            "type": "string",
+            "description": "Message ID of the handoff post in #edited-by-sparrow."
+          },
+          "status": {
+            "type": "string",
+            "enum": ["confirmed", "failed", "retrying"],
+            "description": "Handoff delivery status."
+          }
+        },
+        "description": "Confirmation that raw files were successfully handed off to Sparrow."
+      }
+    }
+  }
+}

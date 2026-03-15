@@ -9,6 +9,7 @@ Homelab stacks, templates, and more fun resources! This is a *work in progress*.
 * [Surveillance System](https://github.com/TechHutTV/homelab/tree/main/surveillance) - Frigate NVR Solution with Coral TPU.
 * [Storage](https://github.com/TechHutTV/homelab/tree/main/storage) - Current Storage and Backup Solution.
 * [Proxy Managment](https://github.com/TechHutTV/homelab/tree/main/proxy) - NGINX Proxy Manager, DDNS with Cloudflare, Local Domains, and more.
+* [M3TA OS](meta-os/) - File-Tree Agent Architecture for Eagle Eye Vision Labz (5 workflow pillars, 8 sub-agents, Auto Research).
 
 ## Hardware
 

@@ -1,0 +1,88 @@
+{
+  "name": "M3TA OS",
+  "version": "1.0.0",
+  "organization": "Eagle Eye Vision Labz, LLC",
+  "framework": "Agents as Folders (Jake Van Clief)",
+  "description": "Master orchestrator governing all EEVL workflows, sub-agents, MCP servers, and automation engines as a unified file-tree agent architecture.",
+  "model_preference": ["claude-opus-4-6", "claude-sonnet-4-6", "gpt-4o", "gemini-2.0-flash"],
+  "workflows": [
+    {
+      "id": "media-production",
+      "name": "Media Production",
+      "path": "workflows/media-production/",
+      "trigger": "manual | clickup_task | lark_message",
+      "tasks": ["pre-production", "shoot-day", "post-production", "client-delivery"],
+      "execution": "sequential"
+    },
+    {
+      "id": "content-pipeline",
+      "name": "Content Pipeline",
+      "path": "workflows/content-pipeline/",
+      "trigger": "scheduled | manual",
+      "tasks": ["idea-harvest", "content-creation", "design-assets", "multi-platform-distribution"],
+      "execution": "sequential"
+    },
+    {
+      "id": "gold-star-flag-football",
+      "name": "Gold Star Flag Football",
+      "path": "workflows/gold-star-flag-football/",
+      "trigger": "seasonal | ghl_form | manual",
+      "tasks": ["tryout-campaign", "registrations", "event-coverage", "season-report"],
+      "execution": "sequential"
+    },
+    {
+      "id": "club-trapeze",
+      "name": "Club Trapeze",
+      "path": "workflows/club-trapeze/",
+      "trigger": "weekly | manual",
+      "tasks": ["ops-strategy", "social-media-management", "revenue-reporting", "event-promotion"],
+      "execution": "parallel-capable"
+    },
+    {
+      "id": "client-onboarding",
+      "name": "Client Onboarding",
+      "path": "workflows/client-onboarding/",
+      "trigger": "ghl_lead_capture | manual",
+      "tasks": ["lead-capture", "sales-call", "contract-invoice", "project-kickoff"],
+      "execution": "sequential"
+    }
+  ],
+  "sub_agents": [
+    {"id": "meeting-scribe", "path": "sub-agents/meeting-scribe/"},
+    {"id": "docu-mind", "path": "sub-agents/docu-mind/"},
+    {"id": "code-review", "path": "sub-agents/code-review/"},
+    {"id": "task-master", "path": "sub-agents/task-master/"},
+    {"id": "eevl-creative", "path": "sub-agents/eevl-creative/"},
+    {"id": "social-bot", "path": "sub-agents/social-bot/"},
+    {"id": "sparrow-handoff", "path": "sub-agents/sparrow-handoff/"},
+    {"id": "onboarding-agent", "path": "sub-agents/onboarding-agent/"}
+  ],
+  "mcp_servers": [
+    "mcp-servers/google-drive.json",
+    "mcp-servers/gmail.json",
+    "mcp-servers/stripe.json",
+    "mcp-servers/clickup.json",
+    "mcp-servers/notion.json",
+    "mcp-servers/llm-router.json",
+    "mcp-servers/airtable-ghl.json",
+    "mcp-servers/lark.json",
+    "mcp-servers/web-scrape.json"
+  ],
+  "engines": [
+    "engines/n8n.json",
+    "engines/make.json",
+    "engines/ghl.json",
+    "engines/clickup-ai.json",
+    "engines/lark-bot.json",
+    "engines/airtable-automations.json"
+  ],
+  "knowledge_base": [
+    "knowledge-base/kortex-ai.json",
+    "knowledge-base/notion-kb.json",
+    "knowledge-base/airtable-data.json",
+    "knowledge-base/google-drive-assets.json",
+    "knowledge-base/notebook-lm.json",
+    "knowledge-base/openrouter.json",
+    "knowledge-base/github-repos.json"
+  ]
+}

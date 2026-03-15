@@ -1,0 +1,39 @@
+{
+  "skill_name": "club-trapeze-social",
+  "description": "Evaluates social media content generated for Club Trapeze, ensuring upscale tone, posting frequency, local relevance, format variety, and event integration for the Tamarac FL venue.",
+  "target_score": 90,
+  "batch_size": 10,
+  "max_iterations": 15,
+  "criteria": [
+    {
+      "criteria_id": "upscale-tamarac-tone",
+      "question": "Does content maintain upscale Tamarac FL tone? (yes/no)",
+      "weight": 1,
+      "category": "brand"
+    },
+    {
+      "criteria_id": "minimum-post-frequency",
+      "question": "Are at least 5 posts per week generated? (yes/no)",
+      "weight": 1,
+      "category": "completeness"
+    },
+    {
+      "criteria_id": "local-hashtags",
+      "question": "Do posts include local hashtags (#TamaracFL, #BrowardNightlife)? (yes/no)",
+      "weight": 1,
+      "category": "platform"
+    },
+    {
+      "criteria_id": "reels-stories-included",
+      "question": "Are Instagram Reels/Stories included? (yes/no)",
+      "weight": 1,
+      "category": "format"
+    },
+    {
+      "criteria_id": "event-promotion-integration",
+      "question": "Is event promotion integrated with upcoming events? (yes/no)",
+      "weight": 1,
+      "category": "integration"
+    }
+  ]
+}

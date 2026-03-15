@@ -1,0 +1,16 @@
+{
+  "name": "Airtable Automations",
+  "type": "data_automation",
+  "description": "Database-triggered automations for roster, inventory, and reporting",
+  "version": "1.0.0",
+  "base_url": "https://api.airtable.com/v0",
+  "auth_config": {
+    "api_key": "${AIRTABLE_API_KEY}"
+  },
+  "capabilities": [
+    "record_trigger",
+    "email_notification",
+    "slack_integration",
+    "script_execution"
+  ]
+}

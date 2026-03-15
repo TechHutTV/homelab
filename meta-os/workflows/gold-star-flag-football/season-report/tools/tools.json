@@ -1,0 +1,90 @@
+{
+  "tools": [
+    {
+      "id": "airtable",
+      "name": "Airtable",
+      "type": "database",
+      "description": "Season data aggregation including player stats, team standings, attendance records, coach comments, and award nomination data from the Gold Star Flag Football base.",
+      "actions": [
+        "query_records",
+        "aggregate_stats",
+        "filter_by_division",
+        "calculate_rankings",
+        "validate_data_integrity",
+        "export_data"
+      ],
+      "config": {
+        "base": "Gold Star Flag Football",
+        "tables": ["Players", "Teams", "Games", "Attendance", "Stats", "Awards"],
+        "views": ["Season Summary", "Division Standings", "Player Rankings"]
+      }
+    },
+    {
+      "id": "pdf-generator",
+      "name": "PDF Generator",
+      "type": "document_generation",
+      "description": "Creates branded individual player season report PDFs with stats, attendance, coach comments, award nominations, and Gold Star branding.",
+      "actions": [
+        "generate_pdf",
+        "apply_template",
+        "insert_stats_table",
+        "insert_player_photo",
+        "batch_generate",
+        "upload_to_drive"
+      ],
+      "config": {
+        "template": "gold-star-player-report",
+        "branding": {
+          "logo": "gold-star-flag-football-logo.png",
+          "colors": {
+            "primary": "#FFD700",
+            "secondary": "#000000"
+          },
+          "media_credit": "Eagle Eye Vision Labz"
+        },
+        "output_format": "pdf",
+        "page_size": "letter"
+      }
+    },
+    {
+      "id": "gmail",
+      "name": "Gmail",
+      "type": "email",
+      "description": "Delivers individual player PDF reports to parents, sends end-of-season communications, shares highlight reel and gallery links, and distributes award announcements.",
+      "actions": [
+        "send_email",
+        "attach_file",
+        "send_bulk_email",
+        "use_template",
+        "track_delivery"
+      ],
+      "config": {
+        "from_address": "reports@goldstarflagfootball.com",
+        "templates": ["season-report-delivery", "end-of-season-thankyou", "award-announcement"],
+        "attachment_max_size_mb": 25
+      }
+    },
+    {
+      "id": "ghl-crm",
+      "name": "GoHighLevel CRM",
+      "type": "crm",
+      "description": "Next season early registration promotion campaigns — SMS/email blasts to current families with returning player discounts, automated reminder sequences, and conversion tracking.",
+      "actions": [
+        "send_sms_blast",
+        "send_email_blast",
+        "segment_contacts",
+        "create_automation_sequence",
+        "apply_discount_code",
+        "track_conversions",
+        "create_survey"
+      ],
+      "config": {
+        "pipeline": "gold-star-registrations",
+        "campaign": "next-season-early-bird",
+        "segments": ["returning_players", "waitlisted", "siblings", "all_current_families"],
+        "sms_compliance": "tcpa",
+        "opt_out_required": true
+      }
+    }
+  ]
+}

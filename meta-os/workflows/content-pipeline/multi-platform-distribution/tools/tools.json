@@ -1,0 +1,235 @@
+{
+  "task": "multi-platform-distribution",
+  "tools": [
+    {
+      "name": "Facebook Graph API",
+      "type": "api",
+      "provider": "facebook",
+      "description": "Publishing posts, photos, and link shares to the EEVL Facebook Page. Reading engagement metrics.",
+      "base_url": "https://graph.facebook.com/v19.0",
+      "endpoints": {
+        "publish_post": {
+          "method": "POST",
+          "path": "/{page_id}/feed",
+          "description": "Publish a text or link post to the EEVL Facebook Page."
+        },
+        "publish_photo": {
+          "method": "POST",
+          "path": "/{page_id}/photos",
+          "description": "Publish a photo post with caption."
+        },
+        "get_post_insights": {
+          "method": "GET",
+          "path": "/{post_id}/insights",
+          "description": "Retrieve engagement metrics for a published post."
+        },
+        "schedule_post": {
+          "method": "POST",
+          "path": "/{page_id}/feed",
+          "description": "Schedule a post for future publication using the scheduled_publish_time parameter."
+        }
+      },
+      "auth": {
+        "type": "oauth2",
+        "env_var": "FACEBOOK_PAGE_ACCESS_TOKEN"
+      }
+    },
+    {
+      "name": "Instagram Graph API",
+      "type": "api",
+      "provider": "instagram",
+      "description": "Publishing feed posts, carousels, stories, and reels to the EEVL Instagram account. Reading engagement metrics.",
+      "base_url": "https://graph.facebook.com/v19.0",
+      "endpoints": {
+        "create_media_container": {
+          "method": "POST",
+          "path": "/{ig_user_id}/media",
+          "description": "Create a media container for a single image or carousel item."
+        },
+        "publish_media": {
+          "method": "POST",
+          "path": "/{ig_user_id}/media_publish",
+          "description": "Publish a prepared media container to the feed."
+        },
+        "create_carousel": {
+          "method": "POST",
+          "path": "/{ig_user_id}/media",
+          "description": "Create a carousel container from multiple media containers."
+        },
+        "get_media_insights": {
+          "method": "GET",
+          "path": "/{media_id}/insights",
+          "description": "Retrieve engagement metrics for a published post."
+        }
+      },
+      "auth": {
+        "type": "oauth2",
+        "env_var": "INSTAGRAM_ACCESS_TOKEN"
+      }
+    },
+    {
+      "name": "Twitter/X API v2",
+      "type": "api",
+      "provider": "twitter",
+      "description": "Publishing tweets, threads, and media to the EEVL Twitter/X account. Reading engagement metrics.",
+      "base_url": "https://api.twitter.com/2",
+      "endpoints": {
+        "create_tweet": {
+          "method": "POST",
+          "path": "/tweets",
+          "description": "Publish a tweet with optional media attachment."
+        },
+        "upload_media": {
+          "method": "POST",
+          "path": "https://upload.twitter.com/1.1/media/upload.json",
+          "description": "Upload an image for attachment to a tweet."
+        },
+        "get_tweet_metrics": {
+          "method": "GET",
+          "path": "/tweets/{tweet_id}",
+          "description": "Retrieve engagement metrics for a published tweet using tweet.fields=public_metrics."
+        }
+      },
+      "config": {
+        "thread_delay_ms": 30000,
+        "max_media_size_bytes": 5242880
+      },
+      "auth": {
+        "type": "oauth2",
+        "env_var": "TWITTER_BEARER_TOKEN"
+      }
+    },
+    {
+      "name": "LinkedIn API",
+      "type": "api",
+      "provider": "linkedin",
+      "description": "Publishing posts, articles, and document (carousel) posts to the EEVL LinkedIn Company Page. Reading engagement metrics.",
+      "base_url": "https://api.linkedin.com/v2",
+      "endpoints": {
+        "create_post": {
+          "method": "POST",
+          "path": "/ugcPosts",
+          "description": "Create and publish a post with text, image, or document attachment."
+        },
+        "upload_image": {
+          "method": "POST",
+          "path": "/assets?action=registerUpload",
+          "description": "Register and upload an image asset for post attachment."
+        },
+        "get_post_stats": {
+          "method": "GET",
+          "path": "/organizationalEntityShareStatistics",
+          "description": "Retrieve engagement statistics for company page posts."
+        }
+      },
+      "auth": {
+        "type": "oauth2",
+        "env_var": "LINKEDIN_ACCESS_TOKEN"
+      }
+    },
+    {
+      "name": "Google My Business API",
+      "type": "api",
+      "provider": "google-my-business",
+      "description": "Publishing local posts to the EEVL Google My Business listing. Reading post views and action metrics.",
+      "base_url": "https://mybusiness.googleapis.com/v4",
+      "endpoints": {
+        "create_local_post": {
+          "method": "POST",
+          "path": "/accounts/{account_id}/locations/{location_id}/localPosts",
+          "description": "Create a 'What's New' or 'Offer' post on the EEVL GMB listing."
+        },
+        "get_local_post_metrics": {
+          "method": "GET",
+          "path": "/accounts/{account_id}/locations/{location_id}/localPosts/{post_id}",
+          "description": "Retrieve views, clicks, and action metrics for a GMB post."
+        }
+      },
+      "auth": {
+        "type": "oauth2",
+        "env_var": "GOOGLE_SERVICE_ACCOUNT_KEY"
+      }
+    },
+    {
+      "name": "Email Distribution Service",
+      "type": "api",
+      "provider": "email-service",
+      "description": "Newsletter distribution to the EEVL subscriber list with A/B testing, open/click tracking, and subscriber management.",
+      "base_url": "https://api.emailservice.com/v3",
+      "endpoints": {
+        "send_campaign": {
+          "method": "POST",
+          "path": "/campaigns",
+          "description": "Create and send an email campaign to a subscriber list."
+        },
+        "create_ab_test": {
+          "method": "POST",
+          "path": "/campaigns/ab-test",
+          "description": "Set up an A/B test with two subject line variants and automatic winner selection."
+        },
+        "get_campaign_stats": {
+          "method": "GET",
+          "path": "/campaigns/{campaign_id}/stats",
+          "description": "Retrieve open rate, click-through rate, bounce rate, and unsubscribe rate."
+        },
+        "get_subscriber_count": {
+          "method": "GET",
+          "path": "/lists/{list_id}/stats",
+          "description": "Get the current subscriber count for the EEVL newsletter list."
+        }
+      },
+      "config": {
+        "list_id": "EEVL_NEWSLETTER_LIST_ID",
+        "from_name": "Eagle Eye Vision Labz",
+        "from_email": "hello@eagleeyevisionlabz.com",
+        "ab_test_duration_hours": 4,
+        "ab_test_split_percent": 50
+      },
+      "auth": {
+        "type": "api_key",
+        "env_var": "EMAIL_SERVICE_API_KEY"
+      }
+    },
+    {
+      "name": "SocialBot Sub-Agent",
+      "type": "sub_agent",
+      "provider": "meta-os",
+      "description": "The SocialBot sub-agent orchestrates the entire distribution workflow — sequencing posts, managing timing, handling retries, and coordinating engagement monitoring.",
+      "capabilities": [
+        "post_scheduling",
+        "multi_platform_publishing",
+        "engagement_monitoring",
+        "ab_test_management",
+        "retry_on_failure",
+        "rate_limit_management",
+        "metric_aggregation"
+      ],
+      "config": {
+        "max_concurrent_posts": 2,
+        "retry_attempts": 3,
+        "retry_delay_ms": 60000,
+        "monitoring_intervals_hours": [1, 4, 24, 72],
+        "rate_limit_buffer_ms": 15000
+      }
+    },
+    {
+      "name": "Analytics Aggregator",
+      "type": "internal",
+      "provider": "meta-os",
+      "description": "Aggregates engagement metrics from all platforms into a unified dashboard and generates distribution performance reports.",
+      "capabilities": [
+        "cross_platform_metric_aggregation",
+        "engagement_rate_calculation",
+        "trend_comparison_vs_30day_average",
+        "breakout_detection",
+        "underperformance_flagging",
+        "ab_test_winner_declaration"
+      ],
+      "config": {
+        "breakout_threshold_multiplier": 2.0,
+        "underperform_threshold_multiplier": 0.5,
+        "baseline_window_days": 30
+      }
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "name": "DocuMind",
+  "description": "Reads contracts/docs, extracts key terms, flags risks",
+  "trigger": "document_upload | manual",
+  "model": "claude-opus-4-6",
+  "version": "1.0.0",
+  "enabled": true,
+  "retry": {
+    "max_attempts": 2,
+    "backoff_seconds": 60
+  },
+  "timeout_seconds": 600,
+  "paths": {
+    "prompt": "prompts/prompt.md",
+    "tools": "tools/tools.json",
+    "schema": "data/schema.json"
+  }
+}

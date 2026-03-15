@@ -1,0 +1,146 @@
+{
+  "task": "design-assets",
+  "tools": [
+    {
+      "name": "Canva API",
+      "type": "api",
+      "provider": "canva",
+      "description": "Programmatic design generation using EEVL brand kit templates. Supports creating, editing, and exporting designs in multiple formats and sizes.",
+      "base_url": "https://api.canva.com/rest/v1",
+      "endpoints": {
+        "create_design": {
+          "method": "POST",
+          "path": "/designs",
+          "description": "Create a new design from a template or blank canvas with specified dimensions."
+        },
+        "add_elements": {
+          "method": "POST",
+          "path": "/designs/{design_id}/elements",
+          "description": "Add text, images, shapes, and brand elements to a design."
+        },
+        "apply_brand_kit": {
+          "method": "POST",
+          "path": "/designs/{design_id}/brand-kit",
+          "description": "Apply the EEVL brand kit (colors, fonts, logos) to a design."
+        },
+        "resize_design": {
+          "method": "POST",
+          "path": "/designs/{design_id}/resize",
+          "description": "Resize an existing design to new platform-specific dimensions."
+        },
+        "export_design": {
+          "method": "POST",
+          "path": "/designs/{design_id}/exports",
+          "description": "Export a design as PNG, JPG, or PDF at specified quality settings."
+        },
+        "list_templates": {
+          "method": "GET",
+          "path": "/templates",
+          "description": "List available EEVL-branded templates for different content types."
+        },
+        "get_brand_kit": {
+          "method": "GET",
+          "path": "/brand-kits/{brand_kit_id}",
+          "description": "Retrieve EEVL brand kit details (colors, fonts, logos) for consistency checks."
+        }
+      },
+      "config": {
+        "brand_kit_id": "EEVL_CANVA_BRAND_KIT_ID",
+        "default_export_format": "png",
+        "default_export_quality": 1.0,
+        "template_ids": {
+          "instagram_feed": "EEVL_TEMPLATE_IG_FEED",
+          "instagram_story": "EEVL_TEMPLATE_IG_STORY",
+          "instagram_carousel": "EEVL_TEMPLATE_IG_CAROUSEL",
+          "facebook_feed": "EEVL_TEMPLATE_FB_FEED",
+          "twitter_post": "EEVL_TEMPLATE_TW_POST",
+          "linkedin_feed": "EEVL_TEMPLATE_LI_FEED",
+          "youtube_thumbnail": "EEVL_TEMPLATE_YT_THUMB",
+          "gmb_post": "EEVL_TEMPLATE_GMB_POST",
+          "email_header": "EEVL_TEMPLATE_EMAIL_HEADER"
+        }
+      },
+      "auth": {
+        "type": "oauth2",
+        "env_var": "CANVA_API_TOKEN"
+      }
+    },
+    {
+      "name": "Google Drive",
+      "type": "api",
+      "provider": "google-drive",
+      "description": "Asset storage and sharing. All generated design assets are uploaded to organized folders in Google Drive with shareable links.",
+      "base_url": "https://www.googleapis.com/drive/v3",
+      "endpoints": {
+        "create_folder": {
+          "method": "POST",
+          "path": "/files",
+          "description": "Create organized folder structure for content assets (by month and content slug)."
+        },
+        "upload_file": {
+          "method": "POST",
+          "path": "/files",
+          "description": "Upload exported design assets to the appropriate folder."
+        },
+        "create_permission": {
+          "method": "POST",
+          "path": "/files/{file_id}/permissions",
+          "description": "Generate shareable links for assets to be used in distribution."
+        },
+        "list_files": {
+          "method": "GET",
+          "path": "/files",
+          "description": "List existing assets to prevent duplicate uploads."
+        }
+      },
+      "config": {
+        "root_folder_id": "EEVL_GDRIVE_CONTENT_ASSETS_FOLDER_ID",
+        "default_share_permission": "reader",
+        "folder_structure": "{YYYY-MM}/{content-slug}/{platform}/"
+      },
+      "auth": {
+        "type": "oauth2",
+        "env_var": "GOOGLE_SERVICE_ACCOUNT_KEY"
+      }
+    },
+    {
+      "name": "Brand Kit Reference",
+      "type": "static",
+      "provider": "internal",
+      "description": "Static reference data for the EEVL brand kit. Used for brand consistency validation checks on all generated assets.",
+      "data": {
+        "colors": {
+          "primary": {
+            "eevl_blue": "#1A3A5C",
+            "eevl_gold": "#D4A843",
+            "white": "#FFFFFF"
+          },
+          "secondary": {
+            "dark_charcoal": "#2D2D2D",
+            "light_gray": "#F4F4F4",
+            "accent_teal": "#2ABFBF"
+          },
+          "approved_gradients": [
+            { "from": "#1A3A5C", "to": "#2ABFBF", "direction": "135deg" }
+          ]
+        },
+        "typography": {
+          "headline": { "family": "Montserrat", "weight": "Bold", "transform": "uppercase" },
+          "subheadline": { "family": "Montserrat", "weight": "SemiBold" },
+          "body": { "family": "Open Sans", "weight": "Regular" },
+          "cta": { "family": "Open Sans", "weight": "SemiBold" }
+        },
+        "logo": {
+          "full_horizontal_url": "EEVL_LOGO_FULL_GDRIVE_URL",
+          "icon_only_url": "EEVL_LOGO_ICON_GDRIVE_URL",
+          "min_clear_space": "1x icon height on all sides"
+        },
+        "minimum_text_size_pt": 14,
+        "wcag_contrast": {
+          "normal_text": 4.5,
+          "large_text": 3.0
+        }
+      }
+    }
+  ]
+}

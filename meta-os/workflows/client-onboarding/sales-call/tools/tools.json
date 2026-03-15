@@ -1,0 +1,268 @@
+{
+  "tools": [
+    {
+      "id": "lark_meeting",
+      "name": "Lark Meeting",
+      "mcp_connection": "lark",
+      "capability": "meetings",
+      "description": "Access Lark meeting sessions for sales calls, including scheduling and audio stream access for MeetingScribe.",
+      "operations": [
+        {
+          "name": "get_meeting",
+          "description": "Retrieve details of a scheduled or active Lark meeting.",
+          "input": {
+            "meeting_id": "string"
+          },
+          "output": {
+            "meeting_id": "string",
+            "title": "string",
+            "start_time": "ISO8601 timestamp",
+            "end_time": "ISO8601 timestamp | null",
+            "attendees": ["string"],
+            "recording_url": "string | null"
+          }
+        },
+        {
+          "name": "schedule_meeting",
+          "description": "Schedule a follow-up Lark meeting with the client.",
+          "input": {
+            "title": "string",
+            "start_time": "ISO8601 timestamp",
+            "duration_minutes": "number",
+            "attendees": ["string"],
+            "description": "string"
+          },
+          "output": {
+            "meeting_id": "string",
+            "join_url": "string",
+            "calendar_event_id": "string"
+          }
+        }
+      ]
+    },
+    {
+      "id": "meeting_scribe",
+      "name": "MeetingScribe Sub-Agent",
+      "type": "sub_agent",
+      "description": "Records, transcribes, and generates initial summaries of sales calls. Produces raw transcript and AI-generated summary within 5 minutes of call end.",
+      "operations": [
+        {
+          "name": "start_recording",
+          "description": "Begin recording and live transcription of a meeting.",
+          "input": {
+            "meeting_id": "string",
+            "source": "lark | zoom | upload",
+            "audio_url": "string | null"
+          },
+          "output": {
+            "recording_id": "string",
+            "status": "recording | queued"
+          }
+        },
+        {
+          "name": "get_transcription",
+          "description": "Retrieve the completed transcription and AI summary after a call ends.",
+          "input": {
+            "recording_id": "string"
+          },
+          "output": {
+            "transcription": "string",
+            "summary": "string",
+            "duration_seconds": "number",
+            "speaker_labels": [
+              {
+                "speaker": "string",
+                "segments": ["string"]
+              }
+            ],
+            "action_items": ["string"],
+            "key_topics": ["string"]
+          }
+        },
+        {
+          "name": "upload_recording",
+          "description": "Upload an external recording file for transcription (for non-Lark calls).",
+          "input": {
+            "file_path": "string",
+            "format": "mp3 | wav | m4a | mp4",
+            "meeting_metadata": {
+              "title": "string",
+              "date": "ISO8601 timestamp",
+              "attendees": ["string"]
+            }
+          },
+          "output": {
+            "recording_id": "string",
+            "status": "processing"
+          }
+        }
+      ]
+    },
+    {
+      "id": "notion_sales_notes",
+      "name": "Notion Sales Notes",
+      "mcp_connection": "notion",
+      "capability": "pages",
+      "description": "Create and manage structured sales call summaries in the EEVL Client Pipeline Notion workspace.",
+      "operations": [
+        {
+          "name": "create_call_summary",
+          "description": "Create a new sales call summary page in the Sales Call Notes database.",
+          "input": {
+            "database_id": "string",
+            "title": "string",
+            "properties": {
+              "client_name": "string",
+              "call_date": "ISO8601 date",
+              "duration_minutes": "number",
+              "attendees": ["string"],
+              "ghl_contact_id": "string",
+              "lead_score_tier": "hot | warm | cool",
+              "call_outcome": "proposal | nurture | disqualified | no-show"
+            },
+            "content_blocks": [
+              {
+                "type": "heading | paragraph | bulleted_list | toggle",
+                "content": "string"
+              }
+            ]
+          },
+          "output": {
+            "page_id": "string",
+            "page_url": "string"
+          }
+        },
+        {
+          "name": "create_proposal_draft",
+          "description": "Create a proposal draft page in the client's Notion workspace.",
+          "input": {
+            "parent_page_id": "string",
+            "title": "string",
+            "sections": {
+              "executive_summary": "string",
+              "scope_of_work": "string",
+              "deliverables": ["string"],
+              "timeline": "string",
+              "investment": "string",
+              "terms": "string"
+            }
+          },
+          "output": {
+            "page_id": "string",
+            "page_url": "string"
+          }
+        }
+      ]
+    },
+    {
+      "id": "clickup_followups",
+      "name": "ClickUp Follow-Up Tasks",
+      "mcp_connection": "clickup",
+      "capability": "task_management",
+      "description": "Create and manage follow-up tasks in the EEVL Sales ClickUp space after sales calls.",
+      "operations": [
+        {
+          "name": "create_task",
+          "description": "Create a follow-up task in the Sales Follow-Ups list.",
+          "input": {
+            "list_id": "string",
+            "name": "string",
+            "description": "string",
+            "assignee_id": "string",
+            "due_date": "ISO8601 timestamp",
+            "priority": "urgent | high | normal | low",
+            "tags": ["string"],
+            "custom_fields": {
+              "ghl_contact_id": "string",
+              "call_date": "ISO8601 date",
+              "notion_summary_url": "string"
+            }
+          },
+          "output": {
+            "task_id": "string",
+            "task_url": "string"
+          }
+        },
+        {
+          "name": "create_task_batch",
+          "description": "Create multiple follow-up tasks at once from extracted action items.",
+          "input": {
+            "list_id": "string",
+            "tasks": [
+              {
+                "name": "string",
+                "description": "string",
+                "assignee_id": "string",
+                "due_date": "ISO8601 timestamp",
+                "priority": "string",
+                "tags": ["string"]
+              }
+            ]
+          },
+          "output": {
+            "created_tasks": [
+              {
+                "task_id": "string",
+                "task_url": "string"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "ghl_pipeline_update",
+      "name": "GHL Pipeline Update",
+      "mcp_connection": "ghl",
+      "capability": "pipeline",
+      "description": "Update the lead's pipeline stage and contact record in GoHighLevel after a sales call.",
+      "operations": [
+        {
+          "name": "update_pipeline_stage",
+          "description": "Move a contact to a new pipeline stage based on call outcome.",
+          "input": {
+            "contact_id": "string",
+            "pipeline_id": "string",
+            "stage_name": "string",
+            "outcome_tag": "string"
+          },
+          "output": {
+            "opportunity_id": "string",
+            "new_stage": "string",
+            "updated_at": "ISO8601 timestamp"
+          }
+        },
+        {
+          "name": "update_contact_post_call",
+          "description": "Update the GHL contact record with call details and adjusted lead score.",
+          "input": {
+            "contact_id": "string",
+            "fields": {
+              "last_call_date": "ISO8601 date",
+              "call_duration_minutes": "number",
+              "call_outcome": "string",
+              "notes_summary": "string",
+              "updated_lead_score": "number"
+            },
+            "tags": ["string"]
+          },
+          "output": {
+            "success": "boolean"
+          }
+        },
+        {
+          "name": "send_noshow_followup",
+          "description": "Send a no-show follow-up SMS to the client via GHL.",
+          "input": {
+            "contact_id": "string",
+            "message": "string"
+          },
+          "output": {
+            "message_id": "string",
+            "status": "sent | failed"
+          }
+        }
+      ]
+    }
+  ]
+}

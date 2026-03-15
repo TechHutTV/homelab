@@ -1,0 +1,296 @@
+{
+  "task": "multi-platform-distribution",
+  "schema_version": "1.0.0",
+  "input": {
+    "description": "Finalized content, designed assets, and posting schedule for distribution across all platforms and email.",
+    "type": "object",
+    "properties": {
+      "content": {
+        "type": "object",
+        "description": "Written content from the content-creation stage.",
+        "properties": {
+          "idea_title": {
+            "type": "string"
+          },
+          "blog_post_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Published blog post URL for link sharing."
+          },
+          "captions": {
+            "type": "object",
+            "properties": {
+              "instagram": { "type": "string" },
+              "facebook": { "type": "string" },
+              "twitter_x": {
+                "type": "object",
+                "properties": {
+                  "primary_tweet": { "type": "string", "maxLength": 280 },
+                  "thread_tweets": {
+                    "type": "array",
+                    "items": { "type": "string", "maxLength": 280 }
+                  }
+                }
+              },
+              "linkedin": { "type": "string" },
+              "gmb": {
+                "type": "object",
+                "properties": {
+                  "post_text": { "type": "string" },
+                  "cta_type": { "type": "string", "enum": ["LEARN_MORE", "BOOK", "SIGN_UP", "CALL"] },
+                  "cta_url": { "type": "string", "format": "uri" }
+                }
+              }
+            }
+          },
+          "hashtags": {
+            "type": "object",
+            "properties": {
+              "instagram": { "type": "array", "items": { "type": "string" } },
+              "facebook": { "type": "array", "items": { "type": "string" } },
+              "twitter_x": { "type": "array", "items": { "type": "string" } },
+              "linkedin": { "type": "array", "items": { "type": "string" } }
+            }
+          },
+          "newsletter": {
+            "type": "object",
+            "properties": {
+              "subject_line_a": { "type": "string" },
+              "subject_line_b": { "type": "string" },
+              "preview_text": { "type": "string" },
+              "body_html": { "type": "string" },
+              "cta_button_text": { "type": "string" },
+              "cta_button_url": { "type": "string", "format": "uri" }
+            }
+          },
+          "ab_test_variant_b_caption": {
+            "type": "object",
+            "description": "Alternative captions for A/B testing (only for trend_score 80+ content).",
+            "properties": {
+              "instagram": { "type": "string" },
+              "facebook": { "type": "string" },
+              "twitter_x": { "type": "string" },
+              "linkedin": { "type": "string" }
+            }
+          }
+        },
+        "required": ["idea_title", "captions"]
+      },
+      "assets": {
+        "type": "object",
+        "description": "Designed visual assets from the design-assets stage with Google Drive URLs.",
+        "properties": {
+          "instagram_feed": { "type": "string", "format": "uri" },
+          "instagram_story": { "type": "string", "format": "uri" },
+          "instagram_carousel": {
+            "type": "array",
+            "items": { "type": "string", "format": "uri" },
+            "description": "Ordered list of carousel slide image URLs."
+          },
+          "facebook": { "type": "string", "format": "uri" },
+          "twitter_x": { "type": "string", "format": "uri" },
+          "linkedin": { "type": "string", "format": "uri" },
+          "gmb": { "type": "string", "format": "uri" },
+          "email_header": { "type": "string", "format": "uri" }
+        }
+      },
+      "schedule": {
+        "type": "object",
+        "description": "Posting schedule specifying when each platform post should go live.",
+        "properties": {
+          "timezone": {
+            "type": "string",
+            "default": "America/New_York"
+          },
+          "posts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "platform": {
+                  "type": "string",
+                  "enum": ["instagram", "facebook", "twitter_x", "linkedin", "gmb", "email"]
+                },
+                "scheduled_time": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "ISO 8601 timestamp for when the post should be published."
+                },
+                "post_type": {
+                  "type": "string",
+                  "enum": ["feed_post", "story", "carousel", "thread", "document", "local_post", "newsletter"],
+                  "description": "Type of post for this platform."
+                }
+              },
+              "required": ["platform", "scheduled_time", "post_type"]
+            }
+          }
+        }
+      },
+      "trend_score": {
+        "type": "number",
+        "minimum": 1,
+        "maximum": 100,
+        "description": "Original trend score from idea harvest. Scores 80+ trigger A/B testing."
+      }
+    },
+    "required": ["content", "assets", "schedule"]
+  },
+  "output": {
+    "description": "Distribution results including post IDs per platform, engagement metrics, and newsletter send confirmation.",
+    "type": "object",
+    "properties": {
+      "distribution_summary": {
+        "type": "object",
+        "properties": {
+          "total_posts_published": { "type": "integer" },
+          "total_platforms": { "type": "integer" },
+          "distribution_timestamp": { "type": "string", "format": "date-time" },
+          "errors": { "type": "integer" }
+        }
+      },
+      "post_ids": {
+        "type": "array",
+        "description": "Published post references for each platform.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "platform": {
+              "type": "string",
+              "enum": ["instagram", "facebook", "twitter_x", "linkedin", "gmb"]
+            },
+            "post_id": {
+              "type": "string",
+              "description": "Native platform post ID."
+            },
+            "post_url": {
+              "type": "string",
+              "format": "uri",
+              "description": "Direct URL to the published post."
+            },
+            "post_type": {
+              "type": "string",
+              "enum": ["feed_post", "story", "carousel", "thread", "document", "local_post"]
+            },
+            "published_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "status": {
+              "type": "string",
+              "enum": ["published", "scheduled", "failed", "retrying"]
+            }
+          },
+          "required": ["platform", "post_id", "status"]
+        }
+      },
+      "engagement_metrics": {
+        "type": "object",
+        "description": "Aggregated engagement metrics across all platforms.",
+        "properties": {
+          "snapshot_time": {
+            "type": "string",
+            "enum": ["1h", "4h", "24h", "72h"],
+            "description": "Which monitoring interval this snapshot represents."
+          },
+          "by_platform": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "platform": { "type": "string" },
+                "impressions": { "type": "integer" },
+                "reach": { "type": "integer" },
+                "engagement_rate": { "type": "number", "description": "Percentage (e.g., 3.5 = 3.5%)" },
+                "likes": { "type": "integer" },
+                "comments": { "type": "integer" },
+                "shares": { "type": "integer" },
+                "clicks": { "type": "integer" },
+                "saves": { "type": "integer" },
+                "vs_30day_avg": {
+                  "type": "string",
+                  "enum": ["breakout", "above_average", "average", "below_average", "underperforming"],
+                  "description": "Performance relative to the 30-day engagement average."
+                }
+              }
+            }
+          },
+          "total_impressions": { "type": "integer" },
+          "total_engagement": { "type": "integer" },
+          "overall_engagement_rate": { "type": "number" }
+        }
+      },
+      "newsletter_confirmation": {
+        "type": "object",
+        "properties": {
+          "campaign_id": { "type": "string" },
+          "total_recipients": { "type": "integer" },
+          "sent_count": { "type": "integer" },
+          "send_time": { "type": "string", "format": "date-time" },
+          "ab_test": {
+            "type": "object",
+            "properties": {
+              "enabled": { "type": "boolean" },
+              "variant_a_subject": { "type": "string" },
+              "variant_b_subject": { "type": "string" },
+              "variant_a_recipients": { "type": "integer" },
+              "variant_b_recipients": { "type": "integer" },
+              "winner": { "type": "string", "enum": ["A", "B", "pending"] },
+              "winner_open_rate": { "type": "number" }
+            }
+          },
+          "status": {
+            "type": "string",
+            "enum": ["sent", "partially_sent", "failed", "scheduled"]
+          }
+        }
+      },
+      "ab_test_results": {
+        "type": "object",
+        "description": "Social caption A/B test details (only populated for trend_score 80+ content).",
+        "properties": {
+          "enabled": { "type": "boolean" },
+          "variant_a": {
+            "type": "object",
+            "properties": {
+              "caption_preview": { "type": "string" },
+              "published_at": { "type": "string", "format": "date-time" },
+              "engagement_rate": { "type": "number" }
+            }
+          },
+          "variant_b": {
+            "type": "object",
+            "properties": {
+              "caption_preview": { "type": "string" },
+              "scheduled_at": { "type": "string", "format": "date-time" },
+              "engagement_rate": { "type": "number" }
+            }
+          },
+          "winner": { "type": "string", "enum": ["A", "B", "pending"] },
+          "learning": {
+            "type": "string",
+            "description": "Key takeaway from the A/B test to apply to future content."
+          }
+        }
+      },
+      "errors": {
+        "type": "array",
+        "description": "Any failures encountered during distribution.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "platform": { "type": "string" },
+            "error_code": { "type": "string" },
+            "error_message": { "type": "string" },
+            "retry_status": {
+              "type": "string",
+              "enum": ["retried_success", "retried_failed", "max_retries_exceeded", "not_retried"]
+            },
+            "timestamp": { "type": "string", "format": "date-time" }
+          }
+        }
+      }
+    },
+    "required": ["distribution_summary", "post_ids", "newsletter_confirmation"]
+  }
+}

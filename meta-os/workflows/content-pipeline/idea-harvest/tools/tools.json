@@ -1,0 +1,101 @@
+{
+  "tools": [
+    {
+      "id": "apify-tiktok-scraper",
+      "name": "Apify TikTok Scraper",
+      "type": "mcp",
+      "mcp_server": "apify-mcp",
+      "actor": "apify/tiktok-scraper",
+      "description": "Scrapes trending TikTok videos by hashtag, region, and time range. Returns video metadata, engagement metrics, captions, and audio information.",
+      "config": {
+        "default_hashtags": ["#AI", "#automation", "#digitalmarketing", "#techstartup", "#SaaS", "#contentcreator"],
+        "regions": ["US", "CA", "UK", "AU"],
+        "min_views": 10000,
+        "min_likes": 500,
+        "max_results_per_hashtag": 50
+      },
+      "auth": {
+        "type": "api_key",
+        "env_var": "APIFY_API_TOKEN"
+      }
+    },
+    {
+      "id": "apify-reddit-scraper",
+      "name": "Apify Reddit Scraper",
+      "type": "mcp",
+      "mcp_server": "apify-mcp",
+      "actor": "apify/reddit-scraper",
+      "description": "Mines Reddit threads from targeted subreddits. Extracts thread titles, body text, upvotes, comments, and top replies for topic discovery.",
+      "config": {
+        "default_subreddits": [
+          "r/artificial",
+          "r/machinelearning",
+          "r/smallbusiness",
+          "r/marketing",
+          "r/SaaS",
+          "r/Entrepreneur",
+          "r/socialmedia",
+          "r/technology",
+          "r/content_marketing"
+        ],
+        "sort_by": ["hot", "top"],
+        "time_filter": "week",
+        "max_threads_per_subreddit": 25,
+        "top_comments_count": 3
+      },
+      "auth": {
+        "type": "api_key",
+        "env_var": "APIFY_API_TOKEN"
+      }
+    },
+    {
+      "id": "kortex-ai",
+      "name": "Kortex.ai Knowledge Base",
+      "type": "api",
+      "description": "Persistent knowledge base for storing harvested content ideas, trend data, scored entries, and historical topic indexes. Supports deduplication, tagging, and retrieval.",
+      "endpoints": {
+        "create_entry": "POST /api/v1/entries",
+        "update_entry": "PUT /api/v1/entries/{entry_id}",
+        "search_entries": "GET /api/v1/entries/search",
+        "list_tags": "GET /api/v1/tags"
+      },
+      "auth": {
+        "type": "api_key",
+        "env_var": "KORTEX_API_KEY"
+      }
+    },
+    {
+      "id": "clickup",
+      "name": "ClickUp Content Calendar",
+      "type": "api",
+      "description": "Project management tool used for the EEVL content calendar. Creates tasks for approved content ideas, sets custom fields, assigns team members, and manages publishing schedules.",
+      "endpoints": {
+        "create_task": "POST /api/v2/list/{list_id}/task",
+        "get_tasks": "GET /api/v2/list/{list_id}/task",
+        "update_task": "PUT /api/v2/task/{task_id}",
+        "add_comment": "POST /api/v2/task/{task_id}/comment"
+      },
+      "config": {
+        "workspace_id_env": "CLICKUP_WORKSPACE_ID",
+        "content_calendar_list_id_env": "CLICKUP_CONTENT_CALENDAR_LIST_ID"
+      },
+      "auth": {
+        "type": "api_key",
+        "env_var": "CLICKUP_API_TOKEN"
+      }
+    },
+    {
+      "id": "web-scrape-mcp",
+      "name": "Web Scrape MCP",
+      "type": "mcp",
+      "mcp_server": "web-scrape-mcp",
+      "description": "General-purpose web scraper for competitor blog analysis, social profile scraping, and page content extraction. Used for content gap analysis and competitive intelligence.",
+      "capabilities": [
+        "html_extraction",
+        "structured_data_parsing",
+        "pagination_handling",
+        "rate_limited_crawling"
+      ]
+    }
+  ]
+}

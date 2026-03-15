@@ -1,0 +1,103 @@
+{
+  "task_id": "post-production",
+  "tools": [
+    {
+      "id": "lark",
+      "provider": "lark",
+      "description": "Post to the #edited-by-sparrow channel for Sparrow handoff and revision requests, and to the project channel for team updates.",
+      "actions": [
+        {
+          "action": "send_message",
+          "description": "Post a structured handoff message or revision request to #edited-by-sparrow, or post status updates to the project channel.",
+          "parameters": {
+            "channel_id": "string — either #edited-by-sparrow channel ID or project channel ID",
+            "content": "string — markdown-formatted message (handoff details, revision instructions, status updates)",
+            "mention_users": "array — Lark user IDs to notify",
+            "attachments": "array — Google Drive links or file references to include",
+            "pin": "boolean — true for handoff messages to keep them visible"
+          }
+        },
+        {
+          "action": "read_messages",
+          "description": "Monitor #edited-by-sparrow for Sparrow's completed edit notifications.",
+          "parameters": {
+            "channel_id": "string — #edited-by-sparrow channel ID",
+            "since": "string — ISO 8601 timestamp to read messages from",
+            "filter": "string — keyword filter (e.g., 'edit complete', 'revision ready')"
+          }
+        }
+      ]
+    },
+    {
+      "id": "google-drive",
+      "provider": "google-drive",
+      "description": "Organize raw files into selects, receive edited files from Sparrow, and structure the final delivery folder.",
+      "actions": [
+        {
+          "action": "create_folder",
+          "description": "Create subfolders for selects, edited files, and final delivery within the project folder.",
+          "parameters": {
+            "parent_folder": "string — parent folder ID within the project structure",
+            "name": "string — folder name (e.g., '_selects', 'video', 'drone', 'photo')"
+          }
+        },
+        {
+          "action": "move_file",
+          "description": "Move selected or edited files into the appropriate folder.",
+          "parameters": {
+            "file_id": "string — Google Drive file ID",
+            "destination_folder_id": "string — target folder ID"
+          }
+        },
+        {
+          "action": "list_files",
+          "description": "List files in a folder to verify organization and completeness.",
+          "parameters": {
+            "folder_id": "string",
+            "fields": "array — ['name', 'size', 'mimeType', 'modifiedTime']"
+          }
+        },
+        {
+          "action": "upload_file",
+          "description": "Upload final exports and revision logs to the delivery folder.",
+          "parameters": {
+            "folder_id": "string — 07_Delivery subfolder ID",
+            "file_name": "string",
+            "file_path": "string",
+            "content_type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "id": "sparrow-handoff",
+      "type": "sub_agent",
+      "description": "The sparrow-handoff sub-agent packages raw select files and posts a structured handoff to #edited-by-sparrow for Sparrow to pick up and edit. This is the bridge between EEVL's shoot output and Sparrow's editing pipeline.",
+      "actions": [
+        {
+          "action": "execute_handoff",
+          "description": "Trigger the Sparrow handoff with raw files, shot list, and client brief. The sub-agent handles packaging, task sheet generation, and Lark notification.",
+          "parameters": {
+            "raw_file_manifest": "array — complete file manifest from shoot day",
+            "shot_list": "array — original shot list from pre-production",
+            "client_brief": "object — original client brief with deliverable specs"
+          },
+          "returns": {
+            "handoff_confirmation": {
+              "type": "object",
+              "properties": {
+                "timestamp": "string — ISO 8601 handoff timestamp",
+                "lark_message_id": "string — message ID in #edited-by-sparrow",
+                "google_drive_selects_link": "string — URL to the selects folder"
+              }
+            },
+            "sparrow_task_id": {
+              "type": "string",
+              "description": "Sparrow's internal task ID for tracking the edit."
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

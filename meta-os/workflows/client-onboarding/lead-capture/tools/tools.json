@@ -1,0 +1,206 @@
+{
+  "tools": [
+    {
+      "id": "ghl_forms",
+      "name": "GHL Form Capture",
+      "mcp_connection": "ghl",
+      "capability": "forms",
+      "description": "Detects and captures lead submissions from GHL-connected web forms and landing pages.",
+      "operations": [
+        {
+          "name": "detect_submission",
+          "description": "Listen for new form submissions via GHL webhook (ghl_lead_capture trigger).",
+          "input": "webhook_payload",
+          "output": "parsed_lead_data"
+        },
+        {
+          "name": "get_form_fields",
+          "description": "Retrieve the field mapping for a specific GHL form to normalize incoming data.",
+          "input": "form_id",
+          "output": "field_definitions"
+        }
+      ]
+    },
+    {
+      "id": "ghl_sms",
+      "name": "GHL SMS",
+      "mcp_connection": "ghl",
+      "capability": "sms",
+      "description": "Send SMS messages via GHL. Used for the critical 60-second auto-response SLA.",
+      "operations": [
+        {
+          "name": "send_sms",
+          "description": "Send an SMS to a lead's phone number. Must fire within 60 seconds of lead capture.",
+          "input": {
+            "phone": "string",
+            "message": "string",
+            "contact_id": "string"
+          },
+          "output": {
+            "message_id": "string",
+            "sent_at": "ISO8601 timestamp",
+            "status": "sent | failed"
+          },
+          "sla": {
+            "max_latency_seconds": 60,
+            "critical": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "ghl_crm",
+      "name": "GHL CRM",
+      "mcp_connection": "ghl",
+      "capability": "crm",
+      "description": "Create and manage contact records in GoHighLevel CRM.",
+      "operations": [
+        {
+          "name": "create_contact",
+          "description": "Create a new CRM contact record with standard and custom fields.",
+          "input": {
+            "first_name": "string",
+            "last_name": "string",
+            "email": "string",
+            "phone": "string",
+            "company": "string | null",
+            "custom_fields": "object"
+          },
+          "output": {
+            "contact_id": "string",
+            "contact_url": "string"
+          }
+        },
+        {
+          "name": "update_contact",
+          "description": "Update an existing contact record with additional data.",
+          "input": {
+            "contact_id": "string",
+            "fields": "object"
+          },
+          "output": {
+            "success": "boolean"
+          }
+        },
+        {
+          "name": "add_to_pipeline",
+          "description": "Place a contact into a specific pipeline stage.",
+          "input": {
+            "contact_id": "string",
+            "pipeline_id": "string",
+            "stage_name": "string"
+          },
+          "output": {
+            "opportunity_id": "string"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ghl_auto_tagging",
+      "name": "GHL Auto-Tagging",
+      "mcp_connection": "ghl",
+      "capability": "auto-tagging",
+      "description": "Apply automated tags to GHL contacts based on source, service interest, budget tier, and lead score.",
+      "operations": [
+        {
+          "name": "apply_tags",
+          "description": "Apply one or more tags to a GHL contact.",
+          "input": {
+            "contact_id": "string",
+            "tags": ["string"]
+          },
+          "output": {
+            "applied_tags": ["string"],
+            "success": "boolean"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ghl_nurture",
+      "name": "GHL Nurture Sequences",
+      "mcp_connection": "ghl",
+      "capability": "workflows",
+      "description": "Trigger GHL nurture/drip sequences based on lead score tier.",
+      "operations": [
+        {
+          "name": "trigger_sequence",
+          "description": "Enroll a contact into a specific nurture sequence.",
+          "input": {
+            "contact_id": "string",
+            "sequence_id": "string"
+          },
+          "output": {
+            "enrollment_id": "string",
+            "sequence_name": "string",
+            "started_at": "ISO8601 timestamp"
+          }
+        }
+      ]
+    },
+    {
+      "id": "lark_sales_notification",
+      "name": "Lark Sales Notification",
+      "mcp_connection": "lark",
+      "capability": "messaging",
+      "description": "Send new lead notifications to the EEVL sales team via Lark channels and direct messages.",
+      "operations": [
+        {
+          "name": "send_channel_message",
+          "description": "Post a lead notification to the #sales-leads Lark channel.",
+          "input": {
+            "channel": "string",
+            "message": "string",
+            "priority": "normal | urgent"
+          },
+          "output": {
+            "message_id": "string",
+            "sent_at": "ISO8601 timestamp"
+          }
+        },
+        {
+          "name": "send_direct_message",
+          "description": "Send a direct message to a specific sales rep (used for hot lead alerts).",
+          "input": {
+            "user_id": "string",
+            "message": "string"
+          },
+          "output": {
+            "message_id": "string"
+          }
+        }
+      ]
+    },
+    {
+      "id": "airtable_lead_tracking",
+      "name": "Airtable Lead Tracking",
+      "mcp_connection": "airtable",
+      "capability": "database",
+      "description": "Track lead capture metrics and SLA compliance in Airtable for reporting and auditing.",
+      "operations": [
+        {
+          "name": "create_record",
+          "description": "Create a new lead tracking record in the EEVL Lead Tracker base.",
+          "input": {
+            "base_id": "string",
+            "table": "string",
+            "fields": {
+              "lead_name": "string",
+              "capture_timestamp": "ISO8601 timestamp",
+              "sms_sent_timestamp": "ISO8601 timestamp",
+              "sla_met": "boolean",
+              "lead_score": "number",
+              "source": "string",
+              "ghl_contact_id": "string",
+              "nurture_sequence": "string"
+            }
+          },
+          "output": {
+            "record_id": "string"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "name": "Airtable Data Layer",
+  "type": "structured_data",
+  "description": "Rosters, inventories, CRM supplements, analytics",
+  "version": "1.0.0",
+  "auth_config": {
+    "api_key": "${AIRTABLE_API_KEY}"
+  },
+  "key_bases": [
+    {
+      "id": "gold-star-roster",
+      "description": "Gold Star talent roster and availability tracking"
+    },
+    {
+      "id": "client-directory",
+      "description": "Client contact information and project history"
+    },
+    {
+      "id": "content-calendar",
+      "description": "Content planning, scheduling, and status tracking"
+    },
+    {
+      "id": "revenue-tracker",
+      "description": "Revenue tracking, invoicing status, and financial metrics"
+    }
+  ]
+}

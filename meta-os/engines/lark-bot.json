@@ -1,0 +1,17 @@
+{
+  "name": "Lark Bot",
+  "type": "messaging_automation",
+  "description": "Automated Lark channel management and notifications",
+  "version": "1.0.0",
+  "base_url": "https://open.larksuite.com/open-apis",
+  "auth_config": {
+    "app_id": "${LARK_APP_ID}",
+    "app_secret": "${LARK_APP_SECRET}"
+  },
+  "capabilities": [
+    "channel_creation",
+    "message_routing",
+    "meeting_scheduling",
+    "file_sharing"
+  ]
+}

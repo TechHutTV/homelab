@@ -1,0 +1,248 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Idea Harvest Schema",
+  "description": "Input and output schema for the EEVL Content Pipeline Idea Harvest stage.",
+  "type": "object",
+  "properties": {
+    "input": {
+      "type": "object",
+      "description": "Scraping targets, keywords, and configuration for the idea harvest run.",
+      "properties": {
+        "run_type": {
+          "type": "string",
+          "enum": ["daily", "weekly", "manual"],
+          "description": "Type of harvest run, determines scraping depth and time range."
+        },
+        "keywords": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Target keywords and hashtags for TikTok and Reddit scraping.",
+          "examples": [["AI", "automation", "digital marketing", "SaaS", "content creator", "tech startup"]]
+        },
+        "tiktok_targets": {
+          "type": "object",
+          "properties": {
+            "hashtags": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "TikTok hashtags to scrape (with or without # prefix)."
+            },
+            "regions": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "ISO country codes for regional filtering."
+            },
+            "time_range_days": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 30,
+              "description": "Number of days back to scrape."
+            }
+          },
+          "required": ["hashtags"]
+        },
+        "reddit_targets": {
+          "type": "object",
+          "properties": {
+            "subreddits": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Subreddit names to mine (with or without r/ prefix)."
+            },
+            "sort_by": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["hot", "top", "new", "rising"]
+              }
+            },
+            "time_filter": {
+              "type": "string",
+              "enum": ["day", "week", "month"],
+              "description": "Time filter for top-sorted results."
+            }
+          },
+          "required": ["subreddits"]
+        },
+        "competitor_targets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Competitor name."
+              },
+              "blog_url": {
+                "type": "string",
+                "format": "uri",
+                "description": "Competitor blog or content hub URL."
+              },
+              "social_profiles": {
+                "type": "object",
+                "properties": {
+                  "instagram": { "type": "string" },
+                  "tiktok": { "type": "string" },
+                  "twitter": { "type": "string" },
+                  "linkedin": { "type": "string" },
+                  "youtube": { "type": "string" }
+                }
+              }
+            },
+            "required": ["name"]
+          },
+          "description": "List of competitors to analyze."
+        },
+        "scoring_config": {
+          "type": "object",
+          "properties": {
+            "priority_threshold": {
+              "type": "number",
+              "default": 70,
+              "description": "Minimum composite score (out of 110) to auto-approve an idea."
+            },
+            "backlog_threshold": {
+              "type": "number",
+              "default": 40,
+              "description": "Scores below this are sent to backlog."
+            },
+            "max_priority_ideas": {
+              "type": "integer",
+              "default": 20,
+              "description": "Maximum number of ideas to mark as priority per run."
+            }
+          }
+        }
+      },
+      "required": ["run_type", "keywords"]
+    },
+    "output": {
+      "type": "object",
+      "description": "Ranked content ideas with scores, sources, and downstream references.",
+      "properties": {
+        "harvest_id": {
+          "type": "string",
+          "description": "Unique identifier for this harvest run."
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of when the harvest completed."
+        },
+        "run_type": {
+          "type": "string",
+          "enum": ["daily", "weekly", "manual"]
+        },
+        "total_ideas_harvested": {
+          "type": "integer",
+          "description": "Total number of raw ideas discovered across all sources."
+        },
+        "ideas": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "idea_id": {
+                "type": "string",
+                "description": "Unique identifier for the idea."
+              },
+              "title": {
+                "type": "string",
+                "description": "Concise title summarizing the content idea."
+              },
+              "source": {
+                "type": "string",
+                "enum": ["tiktok", "reddit", "competitor", "manual"],
+                "description": "Where this idea was discovered."
+              },
+              "source_urls": {
+                "type": "array",
+                "items": { "type": "string", "format": "uri" },
+                "description": "Links to the original source content."
+              },
+              "trend_score": {
+                "type": "object",
+                "properties": {
+                  "relevance": { "type": "number", "minimum": 1, "maximum": 10 },
+                  "timeliness": { "type": "number", "minimum": 1, "maximum": 10 },
+                  "engagement_potential": { "type": "number", "minimum": 1, "maximum": 10 },
+                  "competition_saturation": { "type": "number", "minimum": 1, "maximum": 10 },
+                  "content_adaptability": { "type": "number", "minimum": 1, "maximum": 10 },
+                  "brand_fit": { "type": "number", "minimum": 1, "maximum": 10 },
+                  "composite": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 110,
+                    "description": "Weighted composite: relevance*3 + timeliness*2 + engagement*2 + saturation*1 + adaptability*1 + brand_fit*2."
+                  }
+                },
+                "required": ["composite"]
+              },
+              "priority": {
+                "type": "string",
+                "enum": ["priority", "needs_review", "backlog"],
+                "description": "Classification based on composite score thresholds."
+              },
+              "rationale": {
+                "type": "string",
+                "description": "2-3 sentence explanation of why this idea scored the way it did."
+              },
+              "suggested_angles": {
+                "type": "array",
+                "items": { "type": "string" },
+                "description": "2-3 angles EEVL could take when producing content on this topic."
+              },
+              "suggested_content_types": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": ["blog", "social_post", "email_newsletter", "video", "carousel", "story"]
+                }
+              },
+              "suggested_platforms": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": ["facebook", "instagram", "twitter_x", "linkedin", "google_my_business", "email", "blog"]
+                }
+              },
+              "tags": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "raw_data": {
+                "type": "object",
+                "description": "Full scraped data payload from the source."
+              },
+              "kortex_entry_id": {
+                "type": "string",
+                "description": "ID of the corresponding entry in Kortex.ai knowledge base."
+              },
+              "clickup_task_id": {
+                "type": "string",
+                "description": "ID of the ClickUp task created for this idea (priority ideas only)."
+              }
+            },
+            "required": ["idea_id", "title", "source", "trend_score", "priority", "suggested_angles"]
+          }
+        },
+        "summary": {
+          "type": "object",
+          "properties": {
+            "priority_count": { "type": "integer" },
+            "needs_review_count": { "type": "integer" },
+            "backlog_count": { "type": "integer" },
+            "top_trending_topics": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Top 5 trending topic clusters identified in this run."
+            },
+            "competitor_gaps_found": { "type": "integer" }
+          }
+        }
+      },
+      "required": ["harvest_id", "timestamp", "ideas", "summary"]
+    }
+  },
+  "required": ["input", "output"]
+}

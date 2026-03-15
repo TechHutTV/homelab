@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TaskMaster AI Agent Schema",
+  "description": "Input and output schemas for the TaskMaster AI sub-agent",
+  "input": {
+    "type": "object",
+    "required": ["clickup_workspace_id", "team_roster"],
+    "properties": {
+      "clickup_workspace_id": {
+        "type": "string",
+        "description": "ClickUp workspace ID to scan"
+      },
+      "team_roster": {
+        "type": "array",
+        "description": "List of team members available for assignment",
+        "items": {
+          "type": "object",
+          "required": ["name", "clickup_user_id"],
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Team member name"
+            },
+            "clickup_user_id": {
+              "type": "string",
+              "description": "ClickUp user ID"
+            },
+            "email": {
+              "type": "string",
+              "format": "email"
+            },
+            "lark_user_id": {
+              "type": "string",
+              "description": "Lark user ID for notifications"
+            }
+          }
+        }
+      },
+      "trigger_type": {
+        "type": "string",
+        "enum": ["daily_scheduled", "clickup_overdue"],
+        "description": "What triggered this agent run"
+      }
+    }
+  },
+  "output": {
+    "type": "object",
+    "required": ["assignment_changes", "escalation_alerts", "daily_digest"],
+    "properties": {
+      "assignment_changes": {
+        "type": "array",
+        "description": "Tasks that were assigned or reassigned",
+        "items": {
+          "type": "object",
+          "required": ["task_id", "task_name", "assigned_to", "reason"],
+          "properties": {
+            "task_id": {
+              "type": "string"
+            },
+            "task_name": {
+              "type": "string"
+            },
+            "assigned_to": {
+              "type": "string",
+              "description": "Name of the team member assigned"
+            },
+            "previous_assignee": {
+              "type": "string",
+              "description": "Previous assignee if reassigned, null if new assignment"
+            },
+            "reason": {
+              "type": "string",
+              "description": "Reasoning for the assignment decision"
+            },
+            "matched_skills": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        }
+      },
+      "escalation_alerts": {
+        "type": "array",
+        "description": "Overdue or blocked tasks requiring attention",
+        "items": {
+          "type": "object",
+          "required": ["task_id", "task_name", "alert_type"],
+          "properties": {
+            "task_id": {
+              "type": "string"
+            },
+            "task_name": {
+              "type": "string"
+            },
+            "alert_type": {
+              "type": "string",
+              "enum": ["overdue_1day", "overdue_3days", "overdue_1week", "blocked", "workload_critical"]
+            },
+            "assignee": {
+              "type": "string"
+            },
+            "days_overdue": {
+              "type": "integer"
+            },
+            "escalated_to": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "daily_digest": {
+        "type": "object",
+        "description": "Daily digest summary sent via Lark",
+        "properties": {
+          "total_open_tasks": { "type": "integer" },
+          "completed_yesterday": { "type": "integer" },
+          "due_today": { "type": "integer" },
+          "overdue_count": { "type": "integer" },
+          "workload_summary": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "member": { "type": "string" },
+                "active_tasks": { "type": "integer" },
+                "status": {
+                  "type": "string",
+                  "enum": ["underloaded", "balanced", "overloaded", "critical"]
+                }
+              }
+            }
+          },
+          "lark_message_id": {
+            "type": "string",
+            "description": "ID of the sent Lark digest message"
+          }
+        }
+      }
+    }
+  }
+}

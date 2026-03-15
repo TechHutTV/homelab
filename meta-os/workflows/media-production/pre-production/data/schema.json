@@ -1,0 +1,219 @@
+{
+  "task_id": "pre-production",
+  "schema_version": "1.0.0",
+  "input": {
+    "description": "Client brief containing all project details needed to plan a shoot.",
+    "type": "object",
+    "required": ["client_name", "project_type", "shoot_date", "location", "requirements"],
+    "properties": {
+      "client_name": {
+        "type": "string",
+        "description": "Full name of the client or business."
+      },
+      "client_email": {
+        "type": "string",
+        "format": "email",
+        "description": "Primary contact email for the client."
+      },
+      "client_phone": {
+        "type": "string",
+        "description": "Client phone number."
+      },
+      "project_type": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "enum": ["video", "drone", "photo"]
+        },
+        "minItems": 1,
+        "description": "Which EEVL pillars this project requires."
+      },
+      "shoot_date": {
+        "type": "string",
+        "format": "date",
+        "description": "Planned shoot date in ISO 8601 format (YYYY-MM-DD)."
+      },
+      "shoot_duration_hours": {
+        "type": "number",
+        "description": "Estimated shoot duration in hours."
+      },
+      "delivery_deadline": {
+        "type": "string",
+        "format": "date",
+        "description": "Final delivery deadline."
+      },
+      "location": {
+        "type": "object",
+        "required": ["address", "type"],
+        "properties": {
+          "address": {
+            "type": "string",
+            "description": "Full street address of the shoot location."
+          },
+          "type": {
+            "type": "string",
+            "enum": ["indoor", "outdoor", "mixed"],
+            "description": "Whether the location is indoor, outdoor, or a mix."
+          },
+          "notes": {
+            "type": "string",
+            "description": "Access instructions, gate codes, parking info, etc."
+          },
+          "coordinates": {
+            "type": "object",
+            "properties": {
+              "lat": { "type": "number" },
+              "lng": { "type": "number" }
+            },
+            "description": "GPS coordinates for drone flight planning."
+          }
+        }
+      },
+      "requirements": {
+        "type": "object",
+        "properties": {
+          "creative_direction": {
+            "type": "string",
+            "description": "Mood, style references, brand guidelines, must-have shots."
+          },
+          "deliverables": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": ["video_reel", "drone_flyover", "photo_set", "highlight_video", "raw_footage"]
+                },
+                "quantity": {
+                  "type": "integer",
+                  "description": "Number of deliverables of this type."
+                },
+                "specs": {
+                  "type": "string",
+                  "description": "Resolution, duration, aspect ratio, format, etc."
+                }
+              }
+            },
+            "description": "List of expected deliverables with specs."
+          },
+          "budget_tier": {
+            "type": "string",
+            "enum": ["standard", "premium", "enterprise"],
+            "description": "Budget tier determines crew size, equipment, and editing scope."
+          }
+        }
+      }
+    }
+  },
+  "output": {
+    "description": "All pre-production artifacts needed to proceed to shoot day.",
+    "type": "object",
+    "properties": {
+      "shot_list": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "shot_id": {
+              "type": "string",
+              "description": "Unique shot identifier (e.g., V-001, D-003, P-012)."
+            },
+            "pillar": {
+              "type": "string",
+              "enum": ["video", "drone", "photo"]
+            },
+            "description": {
+              "type": "string",
+              "description": "What this shot captures."
+            },
+            "angle": {
+              "type": "string",
+              "description": "Camera angle or drone altitude."
+            },
+            "movement": {
+              "type": "string",
+              "description": "Camera/drone movement type."
+            },
+            "duration_seconds": {
+              "type": "integer",
+              "description": "Estimated duration for video/drone shots."
+            },
+            "notes": {
+              "type": "string",
+              "description": "Special requirements, lighting, audio, lens choice."
+            }
+          }
+        },
+        "description": "Complete shot list organized by pillar with sequential IDs."
+      },
+      "equipment_checklist": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "item": {
+              "type": "string",
+              "description": "Equipment name."
+            },
+            "pillar": {
+              "type": "string",
+              "enum": ["video", "drone", "photo", "shared"]
+            },
+            "quantity": {
+              "type": "integer"
+            },
+            "status": {
+              "type": "string",
+              "enum": ["available", "needs-charge", "needs-rental", "unavailable"],
+              "description": "Current availability status."
+            }
+          }
+        },
+        "description": "Equipment checklist with availability status for each item."
+      },
+      "schedule": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "clickup_task_id": {
+              "type": "string",
+              "description": "ClickUp task ID for this milestone."
+            },
+            "milestone": {
+              "type": "string",
+              "description": "Milestone name (e.g., 'Shoot Day', 'Sparrow Handoff')."
+            },
+            "due_date": {
+              "type": "string",
+              "format": "date"
+            },
+            "assignees": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "status": {
+              "type": "string",
+              "enum": ["open", "in-progress", "complete"]
+            }
+          }
+        },
+        "description": "Project schedule with ClickUp task references."
+      },
+      "lark_channel_id": {
+        "type": "string",
+        "description": "ID of the created Lark project channel (e.g., #proj-acme-corp-2026-03-20)."
+      },
+      "google_drive_folder_id": {
+        "type": "string",
+        "description": "ID of the created Google Drive project folder."
+      },
+      "open_flags": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "Any unresolved issues that must be addressed before shoot day."
+      }
+    }
+  }
+}

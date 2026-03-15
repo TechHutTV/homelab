@@ -1,0 +1,99 @@
+{
+  "tools": [
+    {
+      "id": "ghl-crm",
+      "name": "GoHighLevel CRM",
+      "type": "crm",
+      "description": "Real-time form submission processing, lead auto-tagging within 60 seconds, contact deduplication, SMS/email welcome messages, and automated parent communication sequences.",
+      "actions": [
+        "process_form_submission",
+        "auto_tag_contact",
+        "send_sms",
+        "send_email",
+        "create_automation_sequence",
+        "pull_contact_list",
+        "deduplicate_contact",
+        "merge_contact",
+        "update_pipeline_stage"
+      ],
+      "config": {
+        "pipeline": "gold-star-registrations",
+        "form_id": "gold-star-registration",
+        "tag_sla_seconds": 60,
+        "sms_sla_seconds": 60,
+        "sms_compliance": "tcpa",
+        "opt_out_required": true
+      }
+    },
+    {
+      "id": "clickup",
+      "name": "ClickUp",
+      "type": "project_management",
+      "description": "Task creation for each registrant with player details, payment status, subtasks for verification and team assignment, and roster finalization tracking.",
+      "actions": [
+        "create_task",
+        "add_subtasks",
+        "assign_task",
+        "set_due_date",
+        "update_task_status",
+        "add_custom_fields"
+      ],
+      "config": {
+        "space": "Gold Star Flag Football",
+        "list": "Registrations",
+        "task_template": "player-registration"
+      }
+    },
+    {
+      "id": "airtable",
+      "name": "Airtable",
+      "type": "database",
+      "description": "Master roster management with linked tables for Players, Teams, and Payments. Handles player record creation, team linking, attendance defaults, and payment tracking.",
+      "actions": [
+        "create_record",
+        "update_record",
+        "link_records",
+        "query_records",
+        "deduplicate_check"
+      ],
+      "config": {
+        "base": "Gold Star Flag Football",
+        "tables": ["Players", "Teams", "Payments", "Attendance"],
+        "primary_table": "Players"
+      }
+    },
+    {
+      "id": "stripe",
+      "name": "Stripe",
+      "type": "payments",
+      "description": "Registration fee processing, discount code validation, payment status verification, failed payment retry notifications, and refund handling.",
+      "actions": [
+        "verify_payment",
+        "create_payment_link",
+        "apply_discount",
+        "process_refund",
+        "check_payment_status",
+        "send_payment_reminder"
+      ],
+      "config": {
+        "product": "gold-star-registration-fee",
+        "discount_types": ["early_bird", "sibling", "returning_player"],
+        "retry_intervals_hours": [24, 72, 168]
+      }
+    },
+    {
+      "id": "lark",
+      "name": "Lark",
+      "type": "messaging",
+      "description": "Internal notifications to the EEVL team when new registrations are received, payment issues arise, or roster milestones are reached.",
+      "actions": [
+        "send_channel_message",
+        "send_notification"
+      ],
+      "config": {
+        "channel": "#gold-star",
+        "notification_events": ["new_registration", "payment_failed", "roster_threshold_met", "team_assignment_complete"]
+      }
+    }
+  ]
+}

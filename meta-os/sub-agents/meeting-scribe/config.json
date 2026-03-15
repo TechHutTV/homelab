@@ -1,0 +1,18 @@
+{
+  "name": "MeetingScribe",
+  "description": "Reads Lark meeting audio, writes Notion summary, creates ClickUp tasks",
+  "trigger": "lark_meeting_end",
+  "model": "claude-sonnet-4-6",
+  "version": "1.0.0",
+  "enabled": true,
+  "retry": {
+    "max_attempts": 3,
+    "backoff_seconds": 30
+  },
+  "timeout_seconds": 300,
+  "paths": {
+    "prompt": "prompts/prompt.md",
+    "tools": "tools/tools.json",
+    "schema": "data/schema.json"
+  }
+}

@@ -1,0 +1,175 @@
+{
+  "task_id": "client-delivery",
+  "tools": [
+    {
+      "id": "stripe",
+      "provider": "stripe",
+      "description": "Generate invoices for completed projects, manage customer records, and track payment status.",
+      "actions": [
+        {
+          "action": "get_or_create_customer",
+          "description": "Look up an existing Stripe customer by email, or create a new customer record if one does not exist.",
+          "parameters": {
+            "email": "string — client's primary email address",
+            "name": "string — client or business name",
+            "metadata": {
+              "eevl_client_code": "string — internal client code",
+              "source": "string — 'eevl-media-production'"
+            }
+          }
+        },
+        {
+          "action": "create_invoice",
+          "description": "Create a draft invoice with line items for the completed project.",
+          "parameters": {
+            "customer_id": "string — Stripe customer ID",
+            "line_items": [
+              {
+                "description": "string — line item description (e.g., 'Premium Video Production')",
+                "amount_cents": "integer — amount in cents",
+                "quantity": "integer — defaults to 1"
+              }
+            ],
+            "metadata": {
+              "project_code": "string",
+              "client_name": "string",
+              "shoot_date": "string — ISO 8601 date",
+              "deliverable_summary": "string",
+              "google_drive_link": "string — delivery folder URL"
+            },
+            "payment_terms_days": "integer — defaults to 15 (Net 15)",
+            "memo": "string — invoice memo with late fee policy and project reference",
+            "auto_finalize": "boolean — false (finalize after delivery email is sent)"
+          }
+        },
+        {
+          "action": "finalize_invoice",
+          "description": "Finalize a draft invoice and generate the hosted payment link.",
+          "parameters": {
+            "invoice_id": "string — Stripe invoice ID"
+          },
+          "returns": {
+            "invoice_id": "string",
+            "invoice_url": "string — Stripe hosted invoice URL for client payment",
+            "invoice_pdf": "string — URL to download invoice PDF",
+            "amount_due_cents": "integer",
+            "status": "string — open | paid | void"
+          }
+        }
+      ]
+    },
+    {
+      "id": "gmail",
+      "provider": "gmail",
+      "description": "Send the client delivery email with download links, invoice, and delivery manifest.",
+      "actions": [
+        {
+          "action": "send_email",
+          "description": "Send the delivery notification email to the client with all project deliverables and invoice.",
+          "parameters": {
+            "from": "string — delivery@eagleeyevisionlabz.com",
+            "to": "string — client's primary email address",
+            "subject": "string — 'Your EEVL Project is Ready — {ProjectName}'",
+            "body_html": "string — HTML-formatted email body with delivery details, Drive link, invoice summary, and EEVL branding",
+            "attachments": [
+              {
+                "file_name": "string — e.g., 'Delivery_Manifest.pdf'",
+                "content_type": "string — application/pdf",
+                "source": "string — Google Drive file ID or local path"
+              }
+            ],
+            "reply_to": "string — projects@eagleeyevisionlabz.com"
+          },
+          "returns": {
+            "message_id": "string — Gmail message ID",
+            "thread_id": "string — Gmail thread ID",
+            "sent_at": "string — ISO 8601 timestamp",
+            "status": "string — sent | failed | bounced"
+          }
+        }
+      ]
+    },
+    {
+      "id": "google-drive",
+      "provider": "google-drive",
+      "description": "Create the client-facing shared delivery folder, copy final deliverables, and manage project archival.",
+      "actions": [
+        {
+          "action": "create_folder",
+          "description": "Create the client delivery shared folder with appropriate structure.",
+          "parameters": {
+            "parent_folder": "string — EEVL Productions base folder ID",
+            "name": "string — 'EEVL_Delivery_{ClientName}_{ProjectCode}_{Date}'"
+          }
+        },
+        {
+          "action": "copy_file",
+          "description": "Copy a final deliverable from the internal folder to the client-facing shared folder.",
+          "parameters": {
+            "source_file_id": "string — Google Drive file ID of the deliverable",
+            "destination_folder_id": "string — client shared folder ID",
+            "new_name": "string — client-friendly file name (no internal codes)"
+          }
+        },
+        {
+          "action": "share_folder",
+          "description": "Share the delivery folder with the client and set access permissions.",
+          "parameters": {
+            "folder_id": "string — shared folder ID",
+            "email": "string — client's email address",
+            "role": "string — reader (viewer access)",
+            "link_sharing": "string — 'anyone_with_link' or 'restricted'",
+            "expiration_date": "string — ISO 8601 date (30 days from delivery)"
+          }
+        },
+        {
+          "action": "move_folder",
+          "description": "Move the project folder to the archive location after delivery.",
+          "parameters": {
+            "folder_id": "string — project folder ID",
+            "destination_folder_id": "string — Archive/{Year}/ folder ID"
+          }
+        }
+      ]
+    },
+    {
+      "id": "clickup",
+      "provider": "clickup",
+      "description": "Complete all project tasks, log final metrics, and move the project to the Completed Projects space.",
+      "actions": [
+        {
+          "action": "update_task",
+          "description": "Mark the Final Delivery task as complete and log delivery details.",
+          "parameters": {
+            "task_id": "string — Final Delivery ClickUp task ID",
+            "status": "string — complete",
+            "custom_fields": {
+              "invoice_id": "string — Stripe invoice ID",
+              "delivery_link": "string — Google Drive shared folder URL",
+              "total_project_days": "integer — days from brief to delivery",
+              "revision_rounds": "integer — number of revision rounds used",
+              "pillars_delivered": "array — ['video', 'drone', 'photo']",
+              "invoice_amount_cents": "integer — total invoice amount in cents"
+            }
+          }
+        },
+        {
+          "action": "add_comment",
+          "description": "Add a completion comment to the Final Delivery task with summary details.",
+          "parameters": {
+            "task_id": "string",
+            "comment": "string — delivery summary with invoice ID, Drive link, and email confirmation"
+          }
+        },
+        {
+          "action": "move_list",
+          "description": "Move the project task list to the Completed Projects space for archival.",
+          "parameters": {
+            "list_id": "string — project list ID",
+            "destination_space_id": "string — Completed Projects space ID"
+          }
+        }
+      ]
+    }
+  ]
+}

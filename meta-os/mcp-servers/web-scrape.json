@@ -1,0 +1,37 @@
+{
+  "name": "web-scrape",
+  "description": "Apify, content harvesting, trend monitoring",
+  "version": "1.0.0",
+  "providers": {
+    "apify": {
+      "auth_type": "api_key",
+      "auth_config": {
+        "api_key": "${APIFY_API_KEY}"
+      },
+      "base_url": "https://api.apify.com/v2"
+    }
+  },
+  "capabilities": [
+    "scrape_url",
+    "tiktok_trends",
+    "reddit_threads",
+    "competitor_analysis"
+  ],
+  "rate_limits": {
+    "requests_per_minute": 30,
+    "concurrent_requests": 5,
+    "daily_limit": 5000,
+    "cooldown_ms": 2000
+  },
+  "used_by": {
+    "workflows": [
+      "content-scheduler",
+      "trend-monitoring",
+      "competitor-watch"
+    ],
+    "sub_agents": [
+      "echo",
+      "atlas"
+    ]
+  }
+}

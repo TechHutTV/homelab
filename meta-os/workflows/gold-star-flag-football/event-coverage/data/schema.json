@@ -1,0 +1,133 @@
+{
+  "schema": {
+    "task_id": "event-coverage",
+    "input": {
+      "game_schedule": {
+        "type": "array",
+        "required": true,
+        "description": "List of games scheduled for the coverage date.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "game_id": { "type": "string" },
+            "game_date": { "type": "string", "format": "date" },
+            "game_time": { "type": "string", "description": "Start time of the game." },
+            "field_name": { "type": "string" },
+            "field_number": { "type": "integer" },
+            "home_team": {
+              "type": "object",
+              "properties": {
+                "team_id": { "type": "string" },
+                "team_name": { "type": "string" },
+                "division": { "type": "string" }
+              }
+            },
+            "away_team": {
+              "type": "object",
+              "properties": {
+                "team_id": { "type": "string" },
+                "team_name": { "type": "string" },
+                "division": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "team_rosters": {
+        "type": "array",
+        "required": true,
+        "description": "Rosters for all teams being covered, used for player identification and tagging.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "team_id": { "type": "string" },
+            "team_name": { "type": "string" },
+            "players": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "player_id": { "type": "string" },
+                  "player_name": { "type": "string" },
+                  "jersey_number": { "type": "integer" },
+                  "media_consent": { "type": "boolean" }
+                }
+              }
+            },
+            "coaches": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "role": { "type": "string" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "output": {
+      "media_assets": {
+        "type": "object",
+        "description": "All captured and organized media from the game day.",
+        "properties": {
+          "google_drive_folder_url": { "type": "string", "format": "uri" },
+          "total_photos": { "type": "integer" },
+          "total_videos": { "type": "integer" },
+          "teams_covered": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "team_folders": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "team_name": { "type": "string" },
+                "folder_url": { "type": "string", "format": "uri" },
+                "photo_count": { "type": "integer" },
+                "video_count": { "type": "integer" }
+              }
+            }
+          }
+        }
+      },
+      "sparrow_handoff_confirmation": {
+        "type": "object",
+        "description": "Confirmation that the Sparrow handoff was posted to #gold-star.",
+        "properties": {
+          "handoff_posted": { "type": "boolean" },
+          "lark_channel": {
+            "type": "string",
+            "const": "#gold-star"
+          },
+          "lark_message_id": { "type": "string" },
+          "handoff_timestamp": { "type": "string", "format": "date-time" },
+          "google_drive_link": { "type": "string", "format": "uri" },
+          "file_count": { "type": "integer" },
+          "priority_edits": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "reel_specs_attached": { "type": "boolean" }
+        }
+      },
+      "gallery_urls": {
+        "type": "array",
+        "description": "Password-protected gallery links per team, distributed to parents within 48 hours.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "team_name": { "type": "string" },
+            "gallery_url": { "type": "string", "format": "uri" },
+            "password": { "type": "string" },
+            "distributed": { "type": "boolean" },
+            "distribution_timestamp": { "type": "string", "format": "date-time" }
+          }
+        }
+      }
+    }
+  }
+}

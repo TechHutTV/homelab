@@ -1,0 +1,36 @@
+{
+  "name": "Google Drive Assets",
+  "type": "file_storage",
+  "description": "Raw media, deliverables, brand assets, contracts",
+  "version": "1.0.0",
+  "auth_config": {
+    "client_id": "${GOOGLE_CLIENT_ID}",
+    "client_secret": "${GOOGLE_CLIENT_SECRET}"
+  },
+  "folder_structure": [
+    {
+      "name": "clients",
+      "description": "Per-client folders with project deliverables"
+    },
+    {
+      "name": "media-raw",
+      "description": "Raw media files, footage, and photography"
+    },
+    {
+      "name": "deliverables",
+      "description": "Final deliverables ready for client handoff"
+    },
+    {
+      "name": "brand-kit",
+      "description": "Logos, fonts, color palettes, brand guidelines"
+    },
+    {
+      "name": "contracts",
+      "description": "Client contracts, NDAs, and legal documents"
+    },
+    {
+      "name": "templates",
+      "description": "Reusable document and design templates"
+    }
+  ]
+}

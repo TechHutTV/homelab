@@ -1,0 +1,29 @@
+{
+  "name": "Notion Knowledge Base",
+  "type": "wiki",
+  "description": "Client workspaces, SOPs, project documentation",
+  "version": "1.0.0",
+  "auth_config": {
+    "integration_token": "${NOTION_INTEGRATION_TOKEN}"
+  },
+  "structure": {
+    "spaces": [
+      {
+        "name": "clients",
+        "description": "Individual client workspaces and project pages"
+      },
+      {
+        "name": "internal",
+        "description": "Internal EEVL operations and planning"
+      },
+      {
+        "name": "templates",
+        "description": "Reusable page and database templates"
+      },
+      {
+        "name": "sops",
+        "description": "Standard operating procedures and playbooks"
+      }
+    ]
+  }
+}

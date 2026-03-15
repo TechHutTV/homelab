@@ -1,0 +1,108 @@
+{
+  "tools": [
+    {
+      "name": "canva",
+      "type": "api",
+      "description": "Generate and edit designs using Canva API",
+      "endpoints": {
+        "create_design": {
+          "method": "POST",
+          "path": "/v1/designs",
+          "description": "Create a new design from template or blank canvas"
+        },
+        "list_templates": {
+          "method": "GET",
+          "path": "/v1/brand-templates",
+          "description": "List available brand templates"
+        },
+        "export_design": {
+          "method": "POST",
+          "path": "/v1/designs/{design_id}/exports",
+          "description": "Export design to PNG, JPG, PDF, or SVG"
+        },
+        "get_export": {
+          "method": "GET",
+          "path": "/v1/exports/{export_id}",
+          "description": "Check export status and get download URL"
+        },
+        "upload_asset": {
+          "method": "POST",
+          "path": "/v1/assets",
+          "description": "Upload images or assets to use in designs"
+        }
+      },
+      "auth": {
+        "type": "oauth2",
+        "credentials_ref": "vault://canva/eevl-creative"
+      },
+      "config": {
+        "brand_kit_id": "{{CANVA_BRAND_KIT_ID}}",
+        "team_id": "{{CANVA_TEAM_ID}}"
+      }
+    },
+    {
+      "name": "google_drive",
+      "type": "api",
+      "description": "Manage and organize creative assets in Google Drive",
+      "endpoints": {
+        "upload_file": {
+          "method": "POST",
+          "path": "/upload/drive/v3/files",
+          "description": "Upload generated design files"
+        },
+        "create_folder": {
+          "method": "POST",
+          "path": "/drive/v3/files",
+          "description": "Create organized folders for asset types"
+        },
+        "list_files": {
+          "method": "GET",
+          "path": "/drive/v3/files",
+          "description": "List existing assets to avoid duplicates"
+        },
+        "update_metadata": {
+          "method": "PATCH",
+          "path": "/drive/v3/files/{file_id}",
+          "description": "Update file name and metadata"
+        }
+      },
+      "auth": {
+        "type": "oauth2",
+        "credentials_ref": "vault://google/drive-eevl-creative"
+      },
+      "config": {
+        "assets_root_folder_id": "{{GDRIVE_CREATIVE_ASSETS_FOLDER}}"
+      }
+    },
+    {
+      "name": "notion",
+      "type": "api",
+      "description": "Reference brand guidelines and log generated assets",
+      "endpoints": {
+        "get_page": {
+          "method": "GET",
+          "path": "/v1/pages/{page_id}",
+          "description": "Read brand guidelines page"
+        },
+        "query_database": {
+          "method": "POST",
+          "path": "/v1/databases/{database_id}/query",
+          "description": "Query asset library database"
+        },
+        "create_page": {
+          "method": "POST",
+          "path": "/v1/pages",
+          "description": "Log new asset in the asset library"
+        }
+      },
+      "auth": {
+        "type": "bearer_token",
+        "credentials_ref": "vault://notion/eevl-creative"
+      },
+      "config": {
+        "brand_guidelines_page_id": "{{NOTION_BRAND_GUIDELINES_PAGE}}",
+        "asset_library_db_id": "{{NOTION_ASSET_LIBRARY_DB}}"
+      }
+    }
+  ]
+}

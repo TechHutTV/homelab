@@ -1,0 +1,45 @@
+{
+  "skill_name": "content-pipeline",
+  "description": "Evaluates the content pipeline workflow from ideation through publication and monitoring, ensuring SEO, brand, and platform standards are maintained at every stage.",
+  "target_score": 85,
+  "batch_size": 10,
+  "max_iterations": 25,
+  "criteria": [
+    {
+      "criteria_id": "trend-relevance-scoring",
+      "question": "Are content ideas scored by trend relevance? (yes/no)",
+      "weight": 1,
+      "category": "completeness"
+    },
+    {
+      "criteria_id": "seo-best-practices",
+      "question": "Does blog copy follow SEO best practices? (yes/no)",
+      "weight": 1,
+      "category": "format"
+    },
+    {
+      "criteria_id": "platform-specific-captions",
+      "question": "Are social captions platform-specific in tone and length? (yes/no)",
+      "weight": 1,
+      "category": "platform"
+    },
+    {
+      "criteria_id": "brand-colors-assets",
+      "question": "Do design assets use EEVL brand colors? (yes/no)",
+      "weight": 1,
+      "category": "brand"
+    },
+    {
+      "criteria_id": "optimal-scheduling",
+      "question": "Are posts scheduled at platform-optimal times? (yes/no)",
+      "weight": 1,
+      "category": "timing"
+    },
+    {
+      "criteria_id": "early-engagement-monitoring",
+      "question": "Is engagement monitored within first 2 hours? (yes/no)",
+      "weight": 1,
+      "category": "timing"
+    }
+  ]
+}

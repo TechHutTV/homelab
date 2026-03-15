@@ -1,0 +1,114 @@
+{
+  "tools": [
+    {
+      "name": "lark",
+      "type": "api",
+      "description": "Access Lark meeting recordings and metadata",
+      "endpoints": {
+        "get_recording": {
+          "method": "GET",
+          "path": "/open-apis/vc/v1/meetings/{meeting_id}/recording",
+          "description": "Retrieve meeting recording audio/video file"
+        },
+        "get_meeting_info": {
+          "method": "GET",
+          "path": "/open-apis/vc/v1/meetings/{meeting_id}",
+          "description": "Retrieve meeting metadata including attendees and duration"
+        },
+        "get_attendees": {
+          "method": "GET",
+          "path": "/open-apis/vc/v1/meetings/{meeting_id}/participants",
+          "description": "List all meeting participants"
+        }
+      },
+      "auth": {
+        "type": "oauth2",
+        "credentials_ref": "vault://lark/meeting-scribe"
+      }
+    },
+    {
+      "name": "notion",
+      "type": "api",
+      "description": "Create and manage meeting summary pages in Notion",
+      "endpoints": {
+        "create_page": {
+          "method": "POST",
+          "path": "/v1/pages",
+          "description": "Create a new meeting summary page"
+        },
+        "append_blocks": {
+          "method": "PATCH",
+          "path": "/v1/blocks/{block_id}/children",
+          "description": "Append content blocks to existing page"
+        },
+        "get_database": {
+          "method": "GET",
+          "path": "/v1/databases/{database_id}",
+          "description": "Query the meetings database for linking"
+        }
+      },
+      "auth": {
+        "type": "bearer_token",
+        "credentials_ref": "vault://notion/meeting-scribe"
+      },
+      "config": {
+        "meetings_database_id": "{{NOTION_MEETINGS_DB_ID}}",
+        "parent_page_id": "{{NOTION_MEETINGS_PARENT_PAGE}}"
+      }
+    },
+    {
+      "name": "clickup",
+      "type": "api",
+      "description": "Create tasks for action items from meetings",
+      "endpoints": {
+        "create_task": {
+          "method": "POST",
+          "path": "/api/v2/list/{list_id}/task",
+          "description": "Create a new task in the designated list"
+        },
+        "get_members": {
+          "method": "GET",
+          "path": "/api/v2/team/{team_id}/member",
+          "description": "Get team members for task assignment"
+        },
+        "get_lists": {
+          "method": "GET",
+          "path": "/api/v2/folder/{folder_id}/list",
+          "description": "Get available lists for task placement"
+        }
+      },
+      "auth": {
+        "type": "api_key",
+        "credentials_ref": "vault://clickup/meeting-scribe"
+      },
+      "config": {
+        "default_list_id": "{{CLICKUP_MEETING_ACTIONS_LIST}}",
+        "team_id": "{{CLICKUP_TEAM_ID}}"
+      }
+    },
+    {
+      "name": "google_drive",
+      "type": "api",
+      "description": "Archive meeting recordings to Google Drive",
+      "endpoints": {
+        "upload_file": {
+          "method": "POST",
+          "path": "/upload/drive/v3/files",
+          "description": "Upload recording file to archive folder"
+        },
+        "create_folder": {
+          "method": "POST",
+          "path": "/drive/v3/files",
+          "description": "Create date-based folder if not exists"
+        }
+      },
+      "auth": {
+        "type": "oauth2",
+        "credentials_ref": "vault://google/drive-meeting-scribe"
+      },
+      "config": {
+        "archive_root_folder_id": "{{GDRIVE_MEETINGS_ARCHIVE_FOLDER}}"
+      }
+    }
+  ]
+}

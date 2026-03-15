@@ -1,0 +1,34 @@
+{
+  "name": "gmail",
+  "description": "Email automation, invoice delivery, notifications",
+  "version": "1.0.0",
+  "auth_type": "oauth2",
+  "auth_config": {
+    "client_id": "${GOOGLE_CLIENT_ID}",
+    "client_secret": "${GOOGLE_CLIENT_SECRET}",
+    "redirect_uri": "http://localhost:3000/auth/google/callback",
+    "token_uri": "https://oauth2.googleapis.com/token"
+  },
+  "scopes": [
+    "https://www.googleapis.com/auth/gmail.send",
+    "https://www.googleapis.com/auth/gmail.compose"
+  ],
+  "capabilities": [
+    "send",
+    "draft",
+    "template",
+    "attachment"
+  ],
+  "used_by": {
+    "workflows": [
+      "invoice-reminder",
+      "client-onboarding",
+      "notification-dispatch"
+    ],
+    "sub_agents": [
+      "sparrow",
+      "ledger",
+      "echo"
+    ]
+  }
+}

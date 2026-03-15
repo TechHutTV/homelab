@@ -1,0 +1,18 @@
+{
+  "name": "GoHighLevel",
+  "type": "crm_automation",
+  "description": "CRM workflows, SMS sequences, funnel automation",
+  "version": "1.0.0",
+  "base_url": "https://rest.gohighlevel.com/v1",
+  "auth_config": {
+    "api_key": "${GHL_API_KEY}",
+    "location_id": "${GHL_LOCATION_ID}"
+  },
+  "capabilities": [
+    "sms_sequence",
+    "email_drip",
+    "pipeline_automation",
+    "form_processing",
+    "appointment_booking"
+  ]
+}

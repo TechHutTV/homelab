@@ -1,0 +1,145 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DocuMind Agent Schema",
+  "description": "Input and output schemas for the DocuMind sub-agent",
+  "input": {
+    "type": "object",
+    "required": ["document_url", "document_type"],
+    "properties": {
+      "document_url": {
+        "type": "string",
+        "format": "uri",
+        "description": "URL to the document (Google Drive link or direct upload URL)"
+      },
+      "document_type": {
+        "type": "string",
+        "enum": ["service_agreement", "nda", "sow", "lease", "vendor_contract", "employment", "partnership", "other"],
+        "description": "Type of document being analyzed"
+      },
+      "compare_to_standards": {
+        "type": "boolean",
+        "default": true,
+        "description": "Whether to compare against EEVL standard terms"
+      },
+      "priority": {
+        "type": "string",
+        "enum": ["urgent", "normal", "low"],
+        "default": "normal",
+        "description": "Analysis priority level"
+      }
+    }
+  },
+  "output": {
+    "type": "object",
+    "required": ["key_terms", "risk_flags", "summary", "comparison_notes"],
+    "properties": {
+      "key_terms": {
+        "type": "object",
+        "description": "Extracted key terms from the document",
+        "properties": {
+          "financial": {
+            "type": "object",
+            "properties": {
+              "total_value": { "type": "string" },
+              "payment_terms": { "type": "string" },
+              "penalties": { "type": "string" }
+            }
+          },
+          "dates": {
+            "type": "object",
+            "properties": {
+              "effective_date": { "type": "string", "format": "date" },
+              "term_length": { "type": "string" },
+              "renewal_date": { "type": "string", "format": "date" },
+              "notice_period_days": { "type": "integer" }
+            }
+          },
+          "obligations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "party": { "type": "string" },
+                "obligation": { "type": "string" },
+                "section_ref": { "type": "string" }
+              }
+            }
+          },
+          "parties": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string" },
+                "role": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "risk_flags": {
+        "type": "array",
+        "description": "Identified risk areas",
+        "items": {
+          "type": "object",
+          "required": ["category", "severity", "description"],
+          "properties": {
+            "category": {
+              "type": "string",
+              "enum": ["liability", "auto_renewal", "exclusivity", "ip_ownership", "termination", "data_privacy", "force_majeure", "non_standard"]
+            },
+            "severity": {
+              "type": "string",
+              "enum": ["critical", "high", "medium", "low"]
+            },
+            "description": {
+              "type": "string"
+            },
+            "section_ref": {
+              "type": "string"
+            },
+            "quoted_text": {
+              "type": "string"
+            },
+            "recommendation": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "summary": {
+        "type": "object",
+        "properties": {
+          "executive_summary": {
+            "type": "string",
+            "description": "2-3 sentence overview"
+          },
+          "recommendation": {
+            "type": "string",
+            "enum": ["approve", "negotiate", "reject", "escalate_to_legal"]
+          },
+          "notion_page_url": {
+            "type": "string",
+            "format": "uri"
+          }
+        }
+      },
+      "comparison_notes": {
+        "type": "array",
+        "description": "Deviations from EEVL standard terms",
+        "items": {
+          "type": "object",
+          "properties": {
+            "term": { "type": "string" },
+            "eevl_standard": { "type": "string" },
+            "document_value": { "type": "string" },
+            "deviation_severity": {
+              "type": "string",
+              "enum": ["acceptable", "negotiate", "dealbreaker"]
+            }
+          }
+        }
+      }
+    }
+  }
+}

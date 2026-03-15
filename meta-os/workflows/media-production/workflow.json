@@ -1,0 +1,112 @@
+{
+  "id": "media-production",
+  "name": "EEVL Media Production Workflow",
+  "description": "End-to-end media production pipeline for Eagle Eye Vision Labz. Covers the 3-pillar model: Video + Drone + Photo — from client brief intake through final delivery and invoicing.",
+  "version": "1.0.0",
+  "owner": "eagle-eye-vision-labz",
+  "tasks": [
+    {
+      "id": "pre-production",
+      "name": "Pre-Production",
+      "description": "Client brief analysis, shot list generation, equipment planning, scheduling, and project channel creation.",
+      "order": 1,
+      "path": "pre-production/",
+      "depends_on": []
+    },
+    {
+      "id": "shoot-day",
+      "name": "Shoot Day",
+      "description": "On-location shoot execution, real-time status updates, file capture and naming, drone flight logging.",
+      "order": 2,
+      "path": "shoot-day/",
+      "depends_on": ["pre-production"]
+    },
+    {
+      "id": "post-production",
+      "name": "Post-Production",
+      "description": "Raw file organization, Sparrow handoff for editing, revision tracking, and final export.",
+      "order": 3,
+      "path": "post-production/",
+      "depends_on": ["shoot-day"]
+    },
+    {
+      "id": "client-delivery",
+      "name": "Client Delivery",
+      "description": "Final deliverable packaging, invoicing, client notification, and project archival.",
+      "order": 4,
+      "path": "client-delivery/",
+      "depends_on": ["post-production"]
+    }
+  ],
+  "triggers": [
+    {
+      "type": "clickup_task",
+      "description": "Triggered when a new task is created in the EEVL Production ClickUp space with the 'new-project' tag.",
+      "config": {
+        "space": "EEVL Production",
+        "tag": "new-project",
+        "status": "open"
+      }
+    },
+    {
+      "type": "lark_message",
+      "description": "Triggered when a message is posted to the #new-projects Lark channel with the @eevl-bot mention.",
+      "config": {
+        "channel": "#new-projects",
+        "mention": "@eevl-bot",
+        "message_pattern": "^new project:"
+      }
+    },
+    {
+      "type": "manual",
+      "description": "Manually triggered by a team member through the EEVL dashboard or CLI.",
+      "config": {}
+    }
+  ],
+  "mcp_connections": [
+    {
+      "id": "google-drive",
+      "provider": "google-drive",
+      "description": "File storage for briefs, raw footage, edited deliverables, and client-shared folders.",
+      "scopes": ["drive.file", "drive.readonly"],
+      "base_folder": "EEVL Productions"
+    },
+    {
+      "id": "lark",
+      "provider": "lark",
+      "description": "Team communication, project channels, shoot-day status updates, and Sparrow handoff via #edited-by-sparrow.",
+      "scopes": ["im:message", "im:chat", "im:chat:create"],
+      "workspace": "eevl-workspace"
+    },
+    {
+      "id": "stripe",
+      "provider": "stripe",
+      "description": "Invoice generation and payment tracking for completed projects.",
+      "scopes": ["invoices.create", "invoices.read", "customers.read"],
+      "mode": "live"
+    },
+    {
+      "id": "gmail",
+      "provider": "gmail",
+      "description": "Client communication — delivery emails with download links and invoice attachments.",
+      "scopes": ["gmail.send", "gmail.compose"],
+      "from_address": "delivery@eagleeyevisionlabz.com"
+    }
+  ],
+  "sub_agents": [
+    {
+      "id": "sparrow-handoff",
+      "name": "Sparrow Handoff Agent",
+      "description": "Packages raw files from a completed shoot, organizes them by pillar (Video/Drone/Photo), and posts a structured handoff message to the #edited-by-sparrow Lark channel for Sparrow to pick up and edit.",
+      "trigger_task": "post-production",
+      "lark_channel": "#edited-by-sparrow",
+      "inputs": ["raw_file_manifest", "shot_list", "client_brief"],
+      "outputs": ["handoff_confirmation", "sparrow_task_id"]
+    }
+  ],
+  "metadata": {
+    "pillars": ["video", "drone", "photo"],
+    "created_at": "2026-03-15",
+    "updated_at": "2026-03-15"
+  }
+}

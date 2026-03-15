@@ -1,0 +1,86 @@
+{
+  "tools": [
+    {
+      "name": "google_drive",
+      "type": "api",
+      "description": "Access documents for analysis from Google Drive",
+      "endpoints": {
+        "get_file": {
+          "method": "GET",
+          "path": "/drive/v3/files/{file_id}",
+          "description": "Retrieve file metadata"
+        },
+        "download_file": {
+          "method": "GET",
+          "path": "/drive/v3/files/{file_id}?alt=media",
+          "description": "Download document content for analysis"
+        },
+        "export_file": {
+          "method": "GET",
+          "path": "/drive/v3/files/{file_id}/export",
+          "description": "Export Google Docs to PDF/text for processing"
+        }
+      },
+      "auth": {
+        "type": "oauth2",
+        "credentials_ref": "vault://google/drive-documind"
+      }
+    },
+    {
+      "name": "notion",
+      "type": "api",
+      "description": "Create analysis output pages in Notion",
+      "endpoints": {
+        "create_page": {
+          "method": "POST",
+          "path": "/v1/pages",
+          "description": "Create a new document analysis page"
+        },
+        "append_blocks": {
+          "method": "PATCH",
+          "path": "/v1/blocks/{block_id}/children",
+          "description": "Append analysis content blocks"
+        },
+        "query_database": {
+          "method": "POST",
+          "path": "/v1/databases/{database_id}/query",
+          "description": "Query EEVL standard terms database for comparison"
+        }
+      },
+      "auth": {
+        "type": "bearer_token",
+        "credentials_ref": "vault://notion/documind"
+      },
+      "config": {
+        "analysis_database_id": "{{NOTION_DOC_ANALYSIS_DB_ID}}",
+        "standards_database_id": "{{NOTION_EEVL_STANDARDS_DB_ID}}"
+      }
+    },
+    {
+      "name": "pandadoc",
+      "type": "api",
+      "description": "Access PandaDoc contracts for reference and comparison",
+      "endpoints": {
+        "get_document": {
+          "method": "GET",
+          "path": "/public/v1/documents/{id}",
+          "description": "Retrieve contract document from PandaDoc"
+        },
+        "get_document_details": {
+          "method": "GET",
+          "path": "/public/v1/documents/{id}/details",
+          "description": "Get detailed contract fields and metadata"
+        },
+        "list_templates": {
+          "method": "GET",
+          "path": "/public/v1/templates",
+          "description": "List standard EEVL contract templates for comparison"
+        }
+      },
+      "auth": {
+        "type": "api_key",
+        "credentials_ref": "vault://pandadoc/documind"
+      }
+    }
+  ]
+}

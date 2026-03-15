@@ -1,0 +1,91 @@
+{
+  "workflow": {
+    "id": "gold-star-flag-football",
+    "name": "Gold Star Flag Football Operations",
+    "description": "End-to-end operational workflow for Gold Star Flag Football, managed by Eagle Eye Vision Labz (EEVL). Covers tryout campaigns, player registrations, game day event coverage, and end-of-season reporting.",
+    "version": "1.0.0",
+    "sub_agents": ["sparrow-handoff"],
+    "tasks": [
+      {
+        "order": 1,
+        "id": "tryout-campaign",
+        "name": "Tryout Campaign",
+        "description": "Generate tryout flyers, schedule social media campaigns, blast SMS/email to past registrants, set up targeted ads, and create registration pages for upcoming seasons.",
+        "path": "tryout-campaign/"
+      },
+      {
+        "order": 2,
+        "id": "registrations",
+        "name": "Registrations",
+        "description": "Process GHL form submissions, auto-tag leads, create ClickUp tasks, populate Airtable rosters, send welcome messages, handle Stripe payments, and assign players to teams.",
+        "path": "registrations/"
+      },
+      {
+        "order": 3,
+        "id": "event-coverage",
+        "name": "Event Coverage",
+        "description": "Generate game day shoot checklists, hand off media to Sparrow via the #gold-star Lark channel, produce highlight reels, manage photo packages, and set up parent galleries.",
+        "path": "event-coverage/"
+      },
+      {
+        "order": 4,
+        "id": "season-report",
+        "name": "Season Report",
+        "description": "Aggregate player stats and standings from Airtable, generate PDF reports for parents, compile season highlights, nominate awards, and promote next season early registration.",
+        "path": "season-report/"
+      }
+    ],
+    "triggers": {
+      "seasonal": [
+        {
+          "type": "seasonal",
+          "cron": "0 9 1 1,4,7,10 *",
+          "description": "Quarterly trigger on the 1st of January, April, July, and October at 9:00 AM UTC to kick off tryout campaigns for upcoming seasons."
+        }
+      ],
+      "ghl_form": {
+        "type": "webhook",
+        "source": "ghl",
+        "event": "form_submission",
+        "form_id": "gold-star-registration",
+        "description": "Triggered in real-time when a new player registration form is submitted through GoHighLevel."
+      },
+      "manual": {
+        "enabled": true,
+        "description": "Trigger any task on-demand for ad-hoc operations such as mid-season roster changes, makeup game coverage, or emergency communications."
+      }
+    },
+    "mcp_connections": {
+      "ghl": {
+        "id": "ghl-mcp",
+        "name": "GoHighLevel MCP",
+        "description": "CRM operations including form processing, SMS/email blasts, lead auto-tagging, pipeline management, and registration page creation for Gold Star Flag Football."
+      },
+      "airtable": {
+        "id": "airtable-mcp",
+        "name": "Airtable MCP",
+        "description": "Roster management, player stats tracking, team standings, attendance records, and season data aggregation."
+      },
+      "clickup": {
+        "id": "clickup-mcp",
+        "name": "ClickUp MCP",
+        "description": "Task creation for registrant processing, game day shoot checklists, and operational task tracking."
+      },
+      "lark": {
+        "id": "lark-mcp",
+        "name": "Lark MCP",
+        "description": "Team notifications via the #gold-star channel, Sparrow media handoff coordination, and internal communications."
+      },
+      "google_drive": {
+        "id": "google-drive-mcp",
+        "name": "Google Drive MCP",
+        "description": "Media asset storage, photo gallery hosting, flyer archiving, and report distribution for Gold Star Flag Football."
+      },
+      "stripe": {
+        "id": "stripe-mcp",
+        "name": "Stripe MCP",
+        "description": "Registration payment processing, fee collection, refund handling, and payment status tracking."
+      }
+    }
+  }
+}

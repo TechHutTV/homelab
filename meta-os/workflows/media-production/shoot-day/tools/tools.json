@@ -1,0 +1,95 @@
+{
+  "task_id": "shoot-day",
+  "tools": [
+    {
+      "id": "lark",
+      "provider": "lark",
+      "description": "Post real-time shoot status updates, weather alerts, equipment issues, and end-of-day summaries to the project Lark channel.",
+      "actions": [
+        {
+          "action": "send_message",
+          "description": "Post a status update to the project channel at each checkpoint (arrival, per-shot, transitions, wrap).",
+          "parameters": {
+            "channel_id": "string — project channel ID from pre-production output",
+            "content": "string — markdown-formatted status update",
+            "mention_users": "array — Lark user IDs to tag (e.g., project manager on issue alerts)",
+            "thread_id": "string | null — reply to an existing thread if continuing a discussion"
+          }
+        },
+        {
+          "action": "send_file",
+          "description": "Share the raw file inventory or drone flight log as an attachment in the project channel.",
+          "parameters": {
+            "channel_id": "string",
+            "file_path": "string — path to the file on Google Drive or local storage",
+            "file_name": "string — display name for the attachment",
+            "comment": "string — message to accompany the file"
+          }
+        }
+      ]
+    },
+    {
+      "id": "google-drive",
+      "provider": "google-drive",
+      "description": "Upload raw files from the shoot to the project folder structure on Google Drive.",
+      "actions": [
+        {
+          "action": "upload_file",
+          "description": "Upload a raw video, drone, or photo file to the appropriate project subfolder.",
+          "parameters": {
+            "folder_id": "string — target subfolder ID (03_Raw_Video, 04_Raw_Drone, or 05_Raw_Photo)",
+            "file_name": "string — file name following EEVL naming convention",
+            "file_path": "string — local path to the raw file",
+            "content_type": "string — video/mp4, video/quicktime, image/x-sony-arw, image/x-canon-cr3, image/dng"
+          }
+        },
+        {
+          "action": "upload_batch",
+          "description": "Upload multiple raw files in batch to the appropriate subfolder.",
+          "parameters": {
+            "folder_id": "string — target subfolder ID",
+            "files": "array — list of objects with file_name, file_path, and content_type",
+            "on_conflict": "string — skip | overwrite | rename"
+          }
+        },
+        {
+          "action": "list_files",
+          "description": "Verify uploaded files by listing contents of a project subfolder.",
+          "parameters": {
+            "folder_id": "string — subfolder ID to list",
+            "fields": "array — ['name', 'size', 'mimeType', 'createdTime']"
+          }
+        }
+      ]
+    },
+    {
+      "id": "clickup",
+      "provider": "clickup",
+      "description": "Update the shoot-day ClickUp task with real-time status, equipment issues, and completion state.",
+      "actions": [
+        {
+          "action": "update_task",
+          "description": "Update the shoot-day task status and add comments for shoot progress tracking.",
+          "parameters": {
+            "task_id": "string — shoot-day ClickUp task ID from pre-production schedule",
+            "status": "string — in-progress | blocked | complete",
+            "custom_fields": {
+              "shots_completed": "integer — number of shots captured",
+              "shots_planned": "integer — total shots on the list",
+              "equipment_issues": "string — summary of any equipment problems",
+              "weather_status": "string — clear | overcast | rain | wind-delay"
+            }
+          }
+        },
+        {
+          "action": "add_comment",
+          "description": "Add a progress comment to the shoot-day task for timeline documentation.",
+          "parameters": {
+            "task_id": "string",
+            "comment": "string — progress note with timestamp"
+          }
+        }
+      ]
+    }
+  ]
+}

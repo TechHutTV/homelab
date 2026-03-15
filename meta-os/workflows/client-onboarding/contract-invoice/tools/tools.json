@@ -1,0 +1,290 @@
+{
+  "tools": [
+    {
+      "id": "pandadoc_contracts",
+      "name": "PandaDoc Contracts",
+      "mcp_connection": "pandadoc",
+      "capability": "contract_generation",
+      "description": "Generate, send, and track contracts and agreements via PandaDoc using EEVL templates.",
+      "operations": [
+        {
+          "name": "create_document",
+          "description": "Create a new contract document from an EEVL template with auto-populated fields.",
+          "input": {
+            "template_id": "string",
+            "name": "string",
+            "recipients": [
+              {
+                "email": "string",
+                "first_name": "string",
+                "last_name": "string",
+                "role": "signer | cc",
+                "signing_order": "number"
+              }
+            ],
+            "fields": {
+              "client_legal_name": "string",
+              "client_address": "string",
+              "scope_of_work": "string",
+              "deliverables": "string",
+              "timeline": "string",
+              "pricing": "string",
+              "payment_schedule": "string"
+            },
+            "metadata": {
+              "ghl_contact_id": "string",
+              "proposal_url": "string"
+            }
+          },
+          "output": {
+            "document_id": "string",
+            "document_url": "string",
+            "status": "draft"
+          }
+        },
+        {
+          "name": "send_document",
+          "description": "Send a draft document for e-signature.",
+          "input": {
+            "document_id": "string",
+            "subject": "string",
+            "message": "string"
+          },
+          "output": {
+            "document_id": "string",
+            "status": "sent",
+            "sent_at": "ISO8601 timestamp"
+          }
+        },
+        {
+          "name": "get_document_status",
+          "description": "Check the current status and signature events of a document.",
+          "input": {
+            "document_id": "string"
+          },
+          "output": {
+            "document_id": "string",
+            "status": "draft | sent | viewed | commented | completed | expired | declined",
+            "events": [
+              {
+                "type": "string",
+                "timestamp": "ISO8601 timestamp",
+                "actor": "string"
+              }
+            ],
+            "signed_by": ["string"],
+            "completed_at": "ISO8601 timestamp | null"
+          }
+        },
+        {
+          "name": "send_reminder",
+          "description": "Send a signature reminder for an unsigned document.",
+          "input": {
+            "document_id": "string",
+            "message": "string"
+          },
+          "output": {
+            "success": "boolean",
+            "reminded_at": "ISO8601 timestamp"
+          }
+        }
+      ]
+    },
+    {
+      "id": "stripe_invoicing",
+      "name": "Stripe Invoicing",
+      "mcp_connection": "stripe",
+      "capability": "invoicing",
+      "description": "Create and manage invoices, process payments, and handle billing via Stripe.",
+      "operations": [
+        {
+          "name": "find_or_create_customer",
+          "description": "Look up a Stripe customer by email or create a new one.",
+          "input": {
+            "email": "string",
+            "name": "string",
+            "company": "string",
+            "metadata": {
+              "ghl_contact_id": "string",
+              "pandadoc_document_id": "string"
+            }
+          },
+          "output": {
+            "customer_id": "string",
+            "is_new": "boolean"
+          }
+        },
+        {
+          "name": "create_invoice",
+          "description": "Create and optionally send a Stripe invoice.",
+          "input": {
+            "customer_id": "string",
+            "line_items": [
+              {
+                "description": "string",
+                "amount_cents": "number",
+                "quantity": "number"
+              }
+            ],
+            "payment_terms_days": "number",
+            "memo": "string",
+            "auto_send": "boolean",
+            "metadata": {
+              "project_name": "string",
+              "pandadoc_contract_id": "string",
+              "milestone": "string | null"
+            }
+          },
+          "output": {
+            "invoice_id": "string",
+            "invoice_url": "string",
+            "amount_due_cents": "number",
+            "due_date": "ISO8601 date",
+            "status": "draft | open | sent"
+          }
+        },
+        {
+          "name": "create_recurring_invoice",
+          "description": "Set up a recurring invoice for retainer engagements.",
+          "input": {
+            "customer_id": "string",
+            "amount_cents": "number",
+            "interval": "month | quarter | year",
+            "description": "string",
+            "metadata": {
+              "project_name": "string",
+              "pandadoc_contract_id": "string"
+            }
+          },
+          "output": {
+            "subscription_id": "string",
+            "first_invoice_id": "string",
+            "next_billing_date": "ISO8601 date"
+          }
+        },
+        {
+          "name": "get_payment_status",
+          "description": "Check the payment status of an invoice.",
+          "input": {
+            "invoice_id": "string"
+          },
+          "output": {
+            "invoice_id": "string",
+            "status": "open | paid | overdue | void | uncollectible",
+            "amount_paid_cents": "number",
+            "paid_at": "ISO8601 timestamp | null",
+            "payment_method": "string | null",
+            "failure_reason": "string | null"
+          }
+        }
+      ]
+    },
+    {
+      "id": "quickbooks_accounting",
+      "name": "QuickBooks Accounting",
+      "mcp_connection": "quickbooks",
+      "capability": "accounting",
+      "description": "Sync invoices and payments to QuickBooks for EEVL accounting and financial reporting.",
+      "operations": [
+        {
+          "name": "find_or_create_customer",
+          "description": "Look up or create a QuickBooks customer record.",
+          "input": {
+            "display_name": "string",
+            "email": "string",
+            "company": "string",
+            "billing_address": "string | null"
+          },
+          "output": {
+            "qb_customer_id": "string",
+            "is_new": "boolean"
+          }
+        },
+        {
+          "name": "create_invoice",
+          "description": "Create a QuickBooks invoice mirroring the Stripe invoice.",
+          "input": {
+            "qb_customer_id": "string",
+            "line_items": [
+              {
+                "description": "string",
+                "amount": "number",
+                "quantity": "number",
+                "income_category": "Consulting | Development | Automation | Retainer"
+              }
+            ],
+            "invoice_number": "string",
+            "due_date": "ISO8601 date",
+            "project_tag": "string",
+            "tax_rate": "number | null",
+            "memo": "string"
+          },
+          "output": {
+            "qb_invoice_id": "string",
+            "total_amount": "number"
+          }
+        },
+        {
+          "name": "record_payment",
+          "description": "Record a payment against a QuickBooks invoice when Stripe confirms payment.",
+          "input": {
+            "qb_invoice_id": "string",
+            "amount": "number",
+            "payment_date": "ISO8601 date",
+            "payment_method": "credit_card | ach | wire | check",
+            "reference_number": "string"
+          },
+          "output": {
+            "qb_payment_id": "string",
+            "success": "boolean"
+          }
+        }
+      ]
+    },
+    {
+      "id": "gmail_receipts",
+      "name": "Gmail Receipts & Notifications",
+      "mcp_connection": "gmail",
+      "capability": "email_send",
+      "description": "Send payment receipts and billing notifications via Gmail.",
+      "operations": [
+        {
+          "name": "send_receipt",
+          "description": "Send a payment receipt email to the client.",
+          "input": {
+            "to": "string",
+            "cc": "string | null",
+            "subject": "string",
+            "body_html": "string",
+            "attachments": [
+              {
+                "filename": "string",
+                "content_type": "string",
+                "data": "base64 string"
+              }
+            ],
+            "from_alias": "string"
+          },
+          "output": {
+            "message_id": "string",
+            "sent_at": "ISO8601 timestamp",
+            "status": "sent | failed"
+          }
+        },
+        {
+          "name": "send_billing_notification",
+          "description": "Send internal billing notifications (payment received, payment failed, etc.) to EEVL team.",
+          "input": {
+            "to": "string",
+            "subject": "string",
+            "body_html": "string"
+          },
+          "output": {
+            "message_id": "string",
+            "status": "sent | failed"
+          }
+        }
+      ]
+    }
+  ]
+}

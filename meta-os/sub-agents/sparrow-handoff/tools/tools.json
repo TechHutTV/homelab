@@ -1,0 +1,97 @@
+{
+  "tools": [
+    {
+      "name": "google_drive",
+      "type": "api",
+      "description": "Organize and upload raw media files to Google Drive",
+      "endpoints": {
+        "upload_file": {
+          "method": "POST",
+          "path": "/upload/drive/v3/files",
+          "description": "Upload raw media file to the handoff folder"
+        },
+        "create_folder": {
+          "method": "POST",
+          "path": "/drive/v3/files",
+          "description": "Create project folder and subfolders"
+        },
+        "list_files": {
+          "method": "GET",
+          "path": "/drive/v3/files",
+          "description": "List files in a folder to verify uploads"
+        },
+        "get_file": {
+          "method": "GET",
+          "path": "/drive/v3/files/{file_id}",
+          "description": "Get file metadata to verify integrity"
+        },
+        "create_permission": {
+          "method": "POST",
+          "path": "/drive/v3/files/{file_id}/permissions",
+          "description": "Share folder with Sparrow team"
+        }
+      },
+      "auth": {
+        "type": "oauth2",
+        "credentials_ref": "vault://google/drive-sparrow-handoff"
+      },
+      "config": {
+        "sparrow_root_folder_id": "{{GDRIVE_SPARROW_INCOMING_FOLDER}}",
+        "sparrow_team_email": "{{SPARROW_TEAM_EMAIL}}"
+      }
+    },
+    {
+      "name": "lark",
+      "type": "api",
+      "description": "Send handoff notifications to Sparrow channels",
+      "endpoints": {
+        "send_message": {
+          "method": "POST",
+          "path": "/open-apis/im/v1/messages",
+          "description": "Send handoff notification to channel"
+        },
+        "get_message_replies": {
+          "method": "GET",
+          "path": "/open-apis/im/v1/messages/{message_id}/replies",
+          "description": "Check for acknowledgment replies"
+        },
+        "send_reply": {
+          "method": "POST",
+          "path": "/open-apis/im/v1/messages/{message_id}/reply",
+          "description": "Send follow-up ping if no acknowledgment"
+        }
+      },
+      "auth": {
+        "type": "oauth2",
+        "credentials_ref": "vault://lark/sparrow-handoff"
+      },
+      "config": {
+        "general_channel_id": "{{LARK_EDITED_BY_SPARROW_CHANNEL}}",
+        "gold_star_channel_id": "{{LARK_GOLD_STAR_CHANNEL}}",
+        "acknowledgment_timeout_hours": 4,
+        "escalation_timeout_hours": 24
+      }
+    },
+    {
+      "name": "clickup",
+      "type": "api",
+      "description": "Update project task status after handoff",
+      "endpoints": {
+        "update_task": {
+          "method": "PUT",
+          "path": "/api/v2/task/{task_id}",
+          "description": "Update task status to 'With Editor'"
+        },
+        "add_comment": {
+          "method": "POST",
+          "path": "/api/v2/task/{task_id}/comment",
+          "description": "Add handoff details as task comment"
+        }
+      },
+      "auth": {
+        "type": "api_key",
+        "credentials_ref": "vault://clickup/sparrow-handoff"
+      }
+    }
+  ]
+}

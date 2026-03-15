@@ -1,0 +1,20 @@
+{
+  "name": "Make.com",
+  "type": "workflow_automation",
+  "description": "Secondary automation for complex multi-step scenarios",
+  "version": "1.0.0",
+  "base_url": "https://us1.make.com/api/v2",
+  "auth_config": {
+    "api_key": "${MAKE_API_KEY}",
+    "team_id": "${MAKE_TEAM_ID}"
+  },
+  "capabilities": [
+    "multi_step_scenarios",
+    "data_transformation",
+    "api_aggregation",
+    "scheduled_execution",
+    "error_routing",
+    "iterators",
+    "data_store"
+  ]
+}
