@@ -50,7 +50,8 @@
 - **Contracts:** PandaDoc
 - **Design:** Canva API (brand kit integration)
 - **Email:** Gmail (automation + delivery)
-- **AI Models:** Claude (Opus/Sonnet via Anthropic), GPT-4o (via OpenRouter), Gemini
+- **AI Models:** Claude (Opus/Sonnet via Anthropic), GPT-4o (via OpenRouter), Gemini, NVIDIA Nematron 3 Super (120B MoE, 12B active, 1M context, agentic workloads), Nematron 3 Nano (lightweight/edge)
+- **Agent Platforms:** NemoClaw (NVIDIA enterprise agent platform, hardware-agnostic, security-first), OpenClaw ecosystem awareness (NanoClaw, ZeroClaw, PicoClaw, IronClaw, MultiClaw variants)
 - **Web Scraping:** Apify (TikTok, Reddit)
 - **Post-Production:** Edited By Sparrow (external editor, Lark handoff)
 
@@ -82,7 +83,8 @@
 - **60-second SLA:** All GHL lead captures must trigger SMS response within 60 seconds
 - **Sparrow Handoff:** Raw media → #edited-by-sparrow Lark channel (or #gold-star for Gold Star projects)
 - **Brand Voice:** Club Trapeze = upscale Tamarac FL nightlife tone; EEVL = professional media production
-- **Model Preference:** Claude Opus for deep analysis, Claude Sonnet for general tasks, GPT-4o for vision/creative, Gemini Flash for speed
+- **Model Preference:** Claude Opus for deep analysis, Claude Sonnet for general tasks, NVIDIA Nematron 3 Super for persistent agentic workloads (MoE: 12B active / 120B total, 1M context, 5x speed), GPT-4o for vision/creative, Gemini Flash for speed/bulk, Nematron 3 Nano for edge/routing
+- **Agent Platform:** NemoClaw for enterprise agent deployment (hardware-agnostic, open-source, security controls). Do NOT use raw OpenClaw in production (security vulnerabilities). Claw variants (NanoClaw, ZeroClaw, IronClaw) for specialized deployments
 - **Future-Proof:** When new AI capabilities launch, update the leaf node (prompt.md or tools.json) — never rebuild the structure
 
 ## Development

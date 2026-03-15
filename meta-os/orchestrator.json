@@ -4,7 +4,13 @@
   "organization": "Eagle Eye Vision Labz, LLC",
   "framework": "Agents as Folders (Jake Van Clief)",
   "description": "Master orchestrator governing all EEVL workflows, sub-agents, MCP servers, and automation engines as a unified file-tree agent architecture.",
-  "model_preference": ["claude-opus-4-6", "claude-sonnet-4-6", "gpt-4o", "gemini-2.0-flash"],
+  "model_preference": ["claude-opus-4-6", "claude-sonnet-4-6", "nvidia/nematron-3-super-120b", "gpt-4o", "gemini-2.0-flash", "nvidia/nematron-3-nano"],
+  "agent_platform": {
+    "primary": "nemoclaw",
+    "description": "NVIDIA NemoClaw — enterprise-grade, hardware-agnostic, open-source agent platform",
+    "agentic_model": "nvidia/nematron-3-super-120b",
+    "note": "Nematron 3 Super (120B MoE, 12B active, 1M context) is the recommended brain for persistent 24/7 agent loops. NemoClaw provides enterprise security controls that OpenClaw lacks."
+  },
   "workflows": [
     {
       "id": "media-production",

@@ -1,7 +1,7 @@
 {
   "name": "llm-router",
-  "description": "AI model routing - Claude, GPT-4o, Gemini via OpenRouter",
-  "version": "1.0.0",
+  "description": "AI model routing — Claude, GPT-4o, Gemini, NVIDIA Nematron via OpenRouter",
+  "version": "2.0.0",
   "provider": "openrouter",
   "auth_config": {
     "api_key": "${OPENROUTER_API_KEY}"
@@ -9,44 +9,95 @@
   "base_url": "https://openrouter.ai/api/v1",
   "models": [
     {
-      "id": "anthropic/claude-opus",
+      "id": "anthropic/claude-opus-4-6",
       "use_case": "deep_analysis",
-      "description": "Deep analysis, complex reasoning, strategic planning",
+      "description": "Deep analysis, complex reasoning, strategic planning, contract review",
       "priority": 1,
-      "max_tokens": 4096
+      "max_tokens": 32768
     },
     {
-      "id": "anthropic/claude-sonnet",
+      "id": "anthropic/claude-sonnet-4-6",
       "use_case": "general",
-      "description": "General tasks, content writing, summaries",
+      "description": "General tasks, content writing, summaries, code generation",
       "priority": 2,
-      "max_tokens": 4096
+      "max_tokens": 16384
+    },
+    {
+      "id": "nvidia/nematron-3-super-120b",
+      "use_case": "agentic_workloads",
+      "description": "Multi-agent orchestration, persistent agent brain, high-throughput agentic tasks. 120B params / 12B active (MoE). 1M context window. 85.6% PunchBench. 5x faster than previous gen. Ideal for 24/7 agent loops and multi-step workflows",
+      "priority": 3,
+      "max_tokens": 32768,
+      "context_window": 1000000,
+      "architecture": "hybrid_mixture_of_experts",
+      "active_params": "12B",
+      "total_params": "120B",
+      "features": ["latent_mode", "multi_token_prediction", "nvfp4_precision"],
+      "cost_tier": "low",
+      "speed_multiplier": "5x"
     },
     {
       "id": "openai/gpt-4o",
       "use_case": "vision_creative",
-      "description": "Vision tasks, creative content, image analysis",
-      "priority": 3,
-      "max_tokens": 4096
+      "description": "Vision tasks, creative content, image analysis, design review",
+      "priority": 4,
+      "max_tokens": 16384
     },
     {
-      "id": "google/gemini-flash",
-      "use_case": "speed",
-      "description": "Fast responses, simple queries, high-throughput tasks",
-      "priority": 4,
-      "max_tokens": 2048
+      "id": "google/gemini-2.0-flash",
+      "use_case": "speed_bulk",
+      "description": "Fast responses, bulk processing, document extraction. 1M context for large PDFs",
+      "priority": 5,
+      "max_tokens": 8192,
+      "context_window": 1000000
+    },
+    {
+      "id": "nvidia/nematron-3-nano",
+      "use_case": "lightweight_routing",
+      "description": "Quick lightweight tasks, intent classification, routing decisions, edge deployment",
+      "priority": 6,
+      "max_tokens": 4096,
+      "cost_tier": "minimal"
     }
   ],
   "capabilities": [
     "chat",
     "vision",
     "code",
-    "analysis"
+    "analysis",
+    "agentic",
+    "multi_agent",
+    "long_context"
   ],
   "routing_rules": {
-    "default_model": "anthropic/claude-sonnet",
-    "fallback_model": "google/gemini-flash",
+    "default_model": "anthropic/claude-sonnet-4-6",
+    "agentic_model": "nvidia/nematron-3-super-120b",
+    "fallback_model": "google/gemini-2.0-flash",
+    "bulk_processing_model": "google/gemini-2.0-flash",
+    "edge_model": "nvidia/nematron-3-nano",
     "max_retries": 3,
-    "timeout_ms": 30000
+    "timeout_ms": 60000,
+    "agentic_routing_note": "Use Nematron 3 Super for persistent agent loops, multi-agent workflows, and 24/7 automation. Its MoE architecture (12B active / 120B total) provides enterprise-grade intelligence at lightweight cost. Use Claude Opus for deep analysis requiring nuance. Use Claude Sonnet as default for general tasks."
+  },
+  "agent_platforms": {
+    "nemoclaw": {
+      "description": "NVIDIA enterprise-grade AI agent platform — open source, hardware agnostic, security-first",
+      "status": "available",
+      "features": ["enterprise_security", "privacy_controls", "hardware_agnostic", "nim_integration"],
+      "recommended_model": "nvidia/nematron-3-super-120b",
+      "note": "NemoClaw is the enterprise alternative to OpenClaw — designed for production deployments with security controls. Hardware agnostic (runs on AMD, Intel, NVIDIA)."
+    },
+    "openclaw": {
+      "description": "Open-source AI agent framework — personal automation, 250K+ GitHub stars",
+      "status": "available_with_caution",
+      "security_note": "Not recommended for enterprise use — known security vulnerabilities (CVE-2026-25253). Use NemoClaw for production.",
+      "variants": [
+        {"name": "NanoClaw", "by": "Qbit", "use_case": "Isolated container agents, 700 lines of code"},
+        {"name": "ZeroClaw", "by": "Community", "lang": "Rust", "use_case": "Ultra-lightweight, 3.4MB, 10ms boot, edge/retail deployment"},
+        {"name": "PicoClaw", "by": "SCE", "lang": "Go", "use_case": "$10 devices, <10MB RAM, IoT/embedded agents"},
+        {"name": "IronClaw", "by": "Near AI (Ilya Polosukhin)", "lang": "Rust+WASM", "use_case": "Security-critical, hardware encryption, crypto/financial"},
+        {"name": "MultiClaw", "by": "Community", "lang": "Rust", "use_case": "Enterprise regulated environments, 150K lines, 2300 tests, zero unsafe blocks"}
+      ]
+    }
   }
 }

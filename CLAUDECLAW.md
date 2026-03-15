@@ -29,9 +29,16 @@ CLAUDECLAW Bridge
 │
 ├── AI Model Layer (inference)
 │   ├── Anthropic Claude (Opus 4.6 / Sonnet 4.6)
+│   ├── NVIDIA Nematron 3 Super (120B MoE, agentic brain)
+│   ├── NVIDIA Nematron 3 Nano (edge/routing)
 │   ├── OpenAI GPT-4o (via OpenRouter)
-│   ├── Google Gemini Flash
+│   ├── Google Gemini Flash (speed/bulk)
 │   └── OpenRouter (routing hub)
+│
+├── Agent Platform Layer
+│   ├── NemoClaw (NVIDIA enterprise agent platform)
+│   ├── OpenClaw ecosystem awareness
+│   └── Claw Variants (NanoClaw, ZeroClaw, IronClaw)
 │
 └── M3TA OS Agent Layer (orchestration)
     ├── Orchestrator (meta-os/orchestrator.json)
@@ -188,6 +195,51 @@ Capture (thought, URL, PDF, image, screenshot)
 | TLDDR | `/tlddr` | Conversation summary → auto-categorized vault note |
 | Canvas Gen | `/canvas-gen` | Visual process maps and knowledge diagrams |
 | PDF Synthesizer | `/pdf-synthesize` | Large docs → markdown cheat sheets → vault |
+
+## NVIDIA NemoClaw + Nematron 3 — Agent Platform Layer
+
+M3TA OS is designed to leverage NVIDIA's agent infrastructure stack:
+
+### Model Routing Strategy
+
+| Use Case | Model | Why |
+|----------|-------|-----|
+| Deep analysis, contracts, strategy | Claude Opus 4.6 | Highest reasoning quality |
+| General tasks, content, code | Claude Sonnet 4.6 | Best balance of speed + quality |
+| Persistent 24/7 agent loops | **Nematron 3 Super** | MoE (12B active / 120B total), 1M context, 5x faster, fraction of cost |
+| Vision, creative, design review | GPT-4o | Best multimodal |
+| Bulk processing, large PDFs | Gemini Flash | 1M context, cheapest |
+| Edge routing, intent classification | Nematron 3 Nano | Minimal compute, sub-second |
+
+### Why Nematron 3 Super for Agentic Workloads
+
+- **Context explosion solved**: 1M context window = 750K words. Multi-agent workflows generate 15x more text than chat — Nematron holds the entire history without gold drift
+- **Thinking tax solved**: MoE activates only 12B of 120B params per task. Intelligence of a massive model at the cost of a small one
+- **Latent mode**: 4 expert specialists for the price of 1
+- **Multi-token prediction**: 3x faster generation (predicts multiple tokens at once)
+- **Result**: 5x faster than previous Nematron, 7.5x faster than Qwen 3.5
+
+### NemoClaw vs OpenClaw
+
+| | NemoClaw | OpenClaw |
+|--|---------|---------|
+| Target | Enterprise | Personal |
+| Security | Enterprise-grade, privacy controls | Known vulnerabilities (CVE-2026-25253) |
+| Hardware | Agnostic (AMD, Intel, NVIDIA) | NVIDIA preferred |
+| Status | Production-ready | Use with caution |
+| Codebase | Hardened | 430K lines, 70+ dependencies |
+
+### Claw Variant Awareness
+
+For specialized M3TA OS deployments beyond NemoClaw:
+
+| Variant | Language | Use Case | Fit for EEVL |
+|---------|----------|----------|-------------|
+| NanoClaw | ~700 lines | Isolated container agents | Per-client agent isolation |
+| ZeroClaw | Rust, 3.4MB | Edge/retail, 10ms boot | Kiosk/event deployments |
+| PicoClaw | Go | $10 IoT devices | Smart home/security integration |
+| IronClaw | Rust+WASM | Security-critical, encrypted | Financial/contract agents |
+| MultiClaw | Rust, 150K lines | Regulated enterprise | Full EEVL production |
 
 ## Migration Path
 
