@@ -1,0 +1,69 @@
+{
+  "name": "MyMind AI",
+  "type": "second_brain",
+  "description": "AI-powered second brain and note-taking system for Eagle Eye Vision Labz — the central knowledge nexus where all thoughts, ideas, tasks, documents, and reference materials converge into a searchable, AI-assisted knowledge graph",
+  "url": "https://mymind.com",
+  "role_in_meta_os": "Primary personal knowledge management layer — supplements Notion (team KB) and Kortex.ai (content KB) with a private cognitive workspace for Coach Metatron",
+  "capabilities": [
+    "ai_auto_categorization",
+    "visual_bookmarking",
+    "document_ingestion",
+    "smart_search",
+    "tag_generation",
+    "image_recognition",
+    "pdf_extraction",
+    "web_clipping",
+    "thought_capture",
+    "cross_reference"
+  ],
+  "integrations": {
+    "claude_code": {
+      "method": "skills + CLAUDE.md context injection",
+      "skills_path": "meta-os/skills/mymind-ai/",
+      "context_injection": "Reference MyMind exports in ~/.claude/CLAUDE.md for persistent context"
+    },
+    "meta_os_workflows": {
+      "content_pipeline": "Idea Harvest feeds trending content into MyMind for categorization",
+      "client_onboarding": "Client briefs and meeting notes saved to MyMind",
+      "media_production": "Shot lists, location notes, creative references stored in MyMind",
+      "club_trapeze": "Competitor research, event ideas, strategy notes",
+      "gold_star": "Season planning, parent feedback, registration insights"
+    },
+    "obsidian_bridge": {
+      "enabled": true,
+      "sync_method": "markdown_export",
+      "description": "MyMind exports can be synced to a local Obsidian vault for offline access and Claude Code CLI integration"
+    }
+  },
+  "vault_structure": {
+    "inbox": "Uncategorized thoughts — AI auto-sorts after capture",
+    "business": {
+      "eevl_operations": "Eagle Eye Vision Labz internal ops",
+      "client_notes": "Per-client knowledge and meeting summaries",
+      "content_ideas": "Blog, social, video content brainstorms",
+      "competitive_intel": "Market research and competitor analysis"
+    },
+    "projects": {
+      "active": "Currently executing projects",
+      "pipeline": "Upcoming projects in planning",
+      "archive": "Completed project retrospectives"
+    },
+    "reference": {
+      "sops": "Standard operating procedures",
+      "contracts": "Contract templates and terms cheat sheets",
+      "brand_guidelines": "EEVL and client brand references",
+      "tech_stack": "Tool documentation and how-tos"
+    },
+    "personal": {
+      "goals": "Quarterly and annual goals",
+      "learning": "Courses, tutorials, skill development",
+      "ideas": "Raw creative ideas and shower thoughts"
+    },
+    "media_library": {
+      "shot_references": "Visual references for shoots",
+      "inspiration": "Design, photo, video inspiration boards",
+      "mood_boards": "Client-specific mood boards"
+    }
+  },
+  "auto_research_eval": "auto-research/evals/mymind-knowledge-capture.json"
+}

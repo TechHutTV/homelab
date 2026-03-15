@@ -42,7 +42,8 @@
 - **CRM:** GoHighLevel (GHL), Vtiger CRM (Club Trapeze)
 - **Project Management:** ClickUp
 - **Team Communication:** Lark (channels: #edited-by-sparrow, #gold-star, client channels)
-- **Knowledge Base:** Notion, Kortex.ai, NotebookLM
+- **Knowledge Base:** Notion, Kortex.ai, NotebookLM, MyMind AI (second brain)
+- **Second Brain:** MyMind AI (personal knowledge capture, AI auto-categorization, document synthesis)
 - **Database:** Airtable (rosters, inventories, CRM supplements)
 - **Automation:** n8n (primary), Make.com (secondary)
 - **Payments:** Stripe + QuickBooks
@@ -62,7 +63,8 @@
   - MeetingScribe, DocuMind, CodeReview AI, TaskMaster AI, EEVL Creative, SocialBot, Sparrow Handoff, Onboarding Agent
 - **MCP Servers:** 9 configs in `meta-os/mcp-servers/`
 - **Engines:** 6 configs in `meta-os/engines/`
-- **Knowledge Base:** 7 configs in `meta-os/knowledge-base/`
+- **Knowledge Base:** 8 configs in `meta-os/knowledge-base/` (includes MyMind AI second brain)
+- **Skills:** 5 MyMind AI skills in `meta-os/skills/mymind-ai/` (vault-setup, daily-brief, tlddr, canvas-gen, pdf-synthesize)
 - **Auto Research:** Self-improving skill system in `meta-os/auto-research/`
 
 ## Code Conventions
@@ -89,6 +91,28 @@
 - **Feature branches:** `claude/<feature>-<session-id>`
 - **Docker:** All services run as Docker containers with compose files
 - **Network:** Services accessible via `*.hopki.net` subdomains through NGINX Proxy Manager
+
+## MyMind AI — Second Brain Integration
+
+MyMind AI is the personal cognitive layer of M3TA OS. Skills in `meta-os/skills/mymind-ai/`:
+
+| Command | Purpose |
+|---------|---------|
+| `/vault-setup` | Interactive vault builder with multiple-choice guided setup |
+| `/daily-brief` | Morning priority digest across all vault sections |
+| `/tlddr` | End-of-conversation summary → auto-categorized into vault |
+| `/canvas-gen` | Visual knowledge maps, process diagrams, architecture views |
+| `/pdf-synthesize` | Large PDF → clean markdown cheat sheet → vault |
+
+### Context Injection
+Always reference MyMind vault when:
+- Brainstorming content ideas → check `content-ideas/`
+- Preparing for client work → check `client-notes/<client>/`
+- Starting a new project → check `projects/` for related past work
+- Looking for creative references → check `media-library/`
+
+### Document Synthesis Pipeline
+Raw PDF → Claude/Gemini extraction → salient points only → markdown cheat sheet → auto-categorized in vault → cross-referenced with existing notes
 
 ## Claude Code Guide Integration
 

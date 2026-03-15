@@ -24,6 +24,7 @@ CLAUDECLAW Bridge
 │   ├── PandaDoc (Contracts)
 │   ├── Canva (Design)
 │   ├── Notion + Kortex.ai (Knowledge)
+│   ├── MyMind AI (Second Brain)
 │   └── Airtable (Structured Data)
 │
 ├── AI Model Layer (inference)
@@ -37,6 +38,7 @@ CLAUDECLAW Bridge
     ├── 5 Workflow Pillars
     ├── 8 Sub-Agents
     ├── 9 MCP Servers
+    ├── 5 MyMind AI Skills (second brain)
     └── Auto Research (self-improvement)
 ```
 
@@ -76,6 +78,7 @@ This table maps every active service in the homelab and SaaS stack to its corres
 | Airtable + GHL | `mcp-servers/airtable-ghl.json` | Gold Star, Client Onboarding, Club Trapeze |
 | Lark | `mcp-servers/lark.json` | All workflows (channels), MeetingScribe, Sparrow Handoff |
 | Apify / Web Scrape | `mcp-servers/web-scrape.json` | Content Pipeline (Idea Harvest) |
+| MyMind AI | `knowledge-base/mymind/config.json` | All workflows (personal KB, document synthesis, idea capture) |
 
 ### Automation Engines → M3TA OS
 
@@ -162,6 +165,29 @@ The Auto Research system (`meta-os/auto-research/`) can target any `prompt.md` i
 | `content-pipeline` | Content creation prompt | 85% | 6 binary criteria |
 | `social-bot` | SocialBot prompt | 90% | 5 binary criteria |
 | `club-trapeze-social` | Club Trapeze social prompt | 90% | 5 binary criteria |
+| `mymind-knowledge-capture` | PDF Synthesizer skill | 90% | 6 binary criteria |
+
+## MyMind AI — Second Brain Layer
+
+MyMind AI is the personal cognitive workspace that feeds into and draws from M3TA OS:
+
+```
+Capture (thought, URL, PDF, image, screenshot)
+  → MyMind AI auto-categorizes
+  → Claude Code skills search/retrieve (/daily-brief, /tlddr)
+  → Surfaces in M3TA OS workflows as context
+  → Becomes ClickUp task, Notion page, or content piece
+```
+
+### Skills
+
+| Skill | Command | What It Does |
+|-------|---------|-------------|
+| Vault Setup | `/vault-setup` | Builds personalized vault via multiple-choice questions |
+| Daily Brief | `/daily-brief` | Morning digest from all vault sections |
+| TLDDR | `/tlddr` | Conversation summary → auto-categorized vault note |
+| Canvas Gen | `/canvas-gen` | Visual process maps and knowledge diagrams |
+| PDF Synthesizer | `/pdf-synthesize` | Large docs → markdown cheat sheets → vault |
 
 ## Migration Path
 
@@ -191,7 +217,14 @@ meta-os/
 ├── sub-agents/                # 8 specialized agents
 ├── mcp-servers/               # 9 external service configs
 ├── engines/                   # 6 automation runtimes
-├── knowledge-base/            # 7 data layer configs
+├── knowledge-base/            # 8 data layer configs (includes MyMind AI)
+├── skills/                    # Claude Code skills
+│   └── mymind-ai/             # 5 second brain skills
+│       ├── vault-setup/       # Interactive vault builder
+│       ├── daily-brief/       # Morning priority digest
+│       ├── tlddr/             # Conversation summary capture
+│       ├── canvas-gen/        # Visual knowledge maps
+│       └── pdf-synthesizer/   # Document → cheat sheet pipeline
 └── auto-research/             # Self-improving skill system
     ├── program.md             # Optimization agent instructions
     ├── evals/                 # Binary eval suites

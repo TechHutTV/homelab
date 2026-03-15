@@ -20,7 +20,8 @@
     "client-onboarding",
     "content-pipeline",
     "social-bot",
-    "club-trapeze-social"
+    "club-trapeze-social",
+    "mymind-knowledge-capture"
   ],
   "notifications": {
     "on_improvement": true,

@@ -1,0 +1,16 @@
+{
+  "skill_name": "mymind-knowledge-capture",
+  "target_prompt": "skills/mymind-ai/pdf-synthesizer/skill.md",
+  "target_score": 90,
+  "batch_size": 10,
+  "max_iterations": 20,
+  "eval_model": "claude-sonnet-4-6",
+  "criteria": [
+    {"id": "C1", "question": "Does the cheat sheet include a YAML frontmatter with source, date, and tags?", "category": "structure"},
+    {"id": "C2", "question": "Is the executive summary 5 sentences or fewer?", "category": "conciseness"},
+    {"id": "C3", "question": "Are action items formatted as checkboxes with due dates where applicable?", "category": "actionability"},
+    {"id": "C4", "question": "Is the output categorized into the correct vault folder?", "category": "organization"},
+    {"id": "C5", "question": "Are risk flags or important clauses highlighted separately?", "category": "risk_awareness"},
+    {"id": "C6", "question": "Does the output contain backlinks or related note references?", "category": "connectivity"}
+  ]
+}

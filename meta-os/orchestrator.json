@@ -83,6 +83,39 @@
     "knowledge-base/google-drive-assets.json",
     "knowledge-base/notebook-lm.json",
     "knowledge-base/openrouter.json",
-    "knowledge-base/github-repos.json"
+    "knowledge-base/github-repos.json",
+    "knowledge-base/mymind/config.json"
+  ],
+  "skills": [
+    {
+      "id": "vault-setup",
+      "path": "skills/mymind-ai/vault-setup/skill.md",
+      "command": "/vault-setup",
+      "description": "Interactive MyMind AI vault builder"
+    },
+    {
+      "id": "daily-brief",
+      "path": "skills/mymind-ai/daily-brief/skill.md",
+      "command": "/daily-brief",
+      "description": "Morning priority digest across vault sections"
+    },
+    {
+      "id": "tlddr",
+      "path": "skills/mymind-ai/tlddr/skill.md",
+      "command": "/tlddr",
+      "description": "Conversation summary → auto-categorized vault note"
+    },
+    {
+      "id": "canvas-gen",
+      "path": "skills/mymind-ai/canvas-gen/skill.md",
+      "command": "/canvas-gen",
+      "description": "Visual knowledge maps and process diagrams"
+    },
+    {
+      "id": "pdf-synthesize",
+      "path": "skills/mymind-ai/pdf-synthesizer/skill.md",
+      "command": "/pdf-synthesize",
+      "description": "Large document → cheat sheet → vault"
+    }
   ]
 }
