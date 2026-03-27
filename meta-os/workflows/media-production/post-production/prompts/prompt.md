@@ -116,6 +116,44 @@ Place all final exports in `07_Delivery/` organized by format and pillar.
 
 ---
 
+## 6. Tier-Aware Execution
+
+This task runs at **Tier 1** by default for file organization, Sparrow handoff, revision tracking, and all API/MCP operations.
+
+### Escalate to Tier 2 (Cowork) when:
+
+- **Batch transcription** — large volume of interview/voiceover clips need transcription and timecoding. Send raw audio files to the `content-production` Cowork workspace for bulk processing with Nematron 3 Super (1M context handles entire project audio).
+- **Multi-file quality analysis** — analyzing dozens of raw files across pillars for technical quality (exposure, focus, color consistency). Cowork can process in its persistent VM and generate a structured quality report.
+- **Edit brief synthesis** — combining the client brief, shot list, quality report, and creative references into a comprehensive edit brief for Sparrow. Cowork excels at multi-document synthesis.
+- **Color science research** — client requests a specific look/grade. Cowork can research reference material, generate LUT descriptions, and compile a color direction document.
+
+**Dispatch pattern:** If you're on location or mobile when Sparrow delivers edits, use Dispatch from your phone:
+- "Check if Sparrow delivered the ACME project edits"
+- "Run quality check on the delivered edits and flag any issues"
+- "Post revision notes to #edited-by-sparrow for the ACME project R2"
+
+### Escalate to Tier 3 (Computer Use) when:
+
+These are the 10-20% "weird UI" jobs that resist AppleScript/CLI automation:
+
+- **Final Cut batch retiming** — when XML export/import doesn't preserve speed ramps correctly and you need to manually adjust 50+ clips. Computer Use can navigate the timeline and apply retiming. Hard limit: 10 min, single Final Cut window.
+- **Logic Pro plugin configuration** — third-party audio plugins (e.g., iZotope RX, FabFilter) that have no CLI/script interface. Computer Use can open the plugin UI, apply presets, and adjust parameters.
+- **Complex export presets** — when Compressor or Media Encoder has a custom preset workflow that doesn't export cleanly via CLI.
+
+**Always try Tier 1 first:**
+1. Try AppleScript/JXA for the operation
+2. Try FCPXML export/import for timeline operations
+3. Try CLI tools (ffmpeg, HandBrakeCLI) for transcoding
+4. Only if all fail → escalate to Computer Use with strict scope
+
+**Computer Use guardrails for post-production:**
+- Single app window only (Final Cut OR Logic, never both)
+- Project folder access only — no browsing outside the project
+- 10-minute hard timeout with auto-kill
+- User approval required before session starts
+
+---
+
 ## Output
 
 After completing post-production, produce a structured output containing:
@@ -123,3 +161,4 @@ After completing post-production, produce a structured output containing:
 - Revision log (all rounds with status)
 - Sparrow handoff confirmation (task ID, timestamp, channel message ID)
 - Final export manifest (all export variants with specs)
+- **Tier escalation log** — any tasks routed to Tier 2 or 3, with justification, time spent, and results

@@ -123,6 +123,81 @@
           }
         }
       ]
+    },
+    {
+      "id": "cowork",
+      "provider": "anthropic",
+      "type": "tier_2",
+      "description": "Tier 2 escalation — persistent Cowork workspace for complex location research, competitor analysis, and multi-location logistics planning.",
+      "actions": [
+        {
+          "action": "submit_task",
+          "description": "Send a research or synthesis task to the content-production Cowork workspace.",
+          "parameters": {
+            "workspace": "content-production",
+            "task_description": "string — what to research or synthesize",
+            "attachments": "array — Google Drive file IDs or URLs to include",
+            "priority": "string — normal | urgent"
+          },
+          "returns": {
+            "task_id": "string — Cowork task ID for status tracking",
+            "status": "string — queued | running | complete"
+          }
+        }
+      ],
+      "escalation_criteria": "Only use when Tier 1 tools cannot complete the task — e.g., multi-location research, competitor analysis, complex logistics planning."
+    },
+    {
+      "id": "computer-use",
+      "provider": "anthropic",
+      "type": "tier_3",
+      "description": "Tier 3 escalation — Computer Use for vendor portal permit applications that have no API. Requires user approval.",
+      "actions": [
+        {
+          "action": "start_session",
+          "description": "Start a Computer Use session targeting a specific vendor portal for permit filing.",
+          "parameters": {
+            "target_app": "string — browser (Safari/Chrome)",
+            "target_url": "string — vendor portal URL",
+            "task_description": "string — what to do (e.g., 'Fill out city film permit application')",
+            "max_minutes": "integer — hard timeout (max 10)",
+            "attachments": "array — files to upload during the session (insurance docs, project details)"
+          },
+          "requires_user_approval": true,
+          "returns": {
+            "session_id": "string",
+            "status": "string — completed | timed_out | user_cancelled",
+            "result_summary": "string — what was accomplished",
+            "screenshots": "array — key screenshots from the session"
+          }
+        }
+      ],
+      "escalation_criteria": "Only use when the vendor portal has NO API and no other path exists. Always try Tier 1 first (email, phone, API). This is the last resort."
+    },
+    {
+      "id": "omniplan",
+      "provider": "applescript",
+      "type": "tier_1",
+      "description": "Write project timeline from ClickUp milestones to OmniPlan for Gantt chart export.",
+      "actions": [
+        {
+          "action": "create_project",
+          "description": "Create an OmniPlan project from ClickUp task schedule via AppleScript.",
+          "parameters": {
+            "project_name": "string",
+            "tasks": "array — [{name, start_date, end_date, dependencies, assignees}]"
+          }
+        },
+        {
+          "action": "export_gantt",
+          "description": "Export the OmniPlan Gantt chart as PDF for client presentation.",
+          "parameters": {
+            "project_id": "string",
+            "format": "string — pdf | png",
+            "destination_folder": "string — Google Drive folder ID"
+          }
+        }
+      ]
     }
   ]
 }

@@ -123,6 +123,35 @@ Archive the project for long-term storage:
 
 ---
 
+## 7. Tier-Aware Execution
+
+This task runs at **Tier 1** by default for Stripe invoicing, Gmail delivery, Google Drive sharing, ClickUp completion, Lark archival, and Notion updates — all via direct API/MCP calls.
+
+### Escalate to Tier 2 (Cowork) when:
+
+- **Delivery manifest generation** — complex projects with 50+ deliverables across all three pillars. Cowork can compile the manifest document with proper formatting, file size calculations, and usage guidelines. Send to `content-production` workspace.
+- **Project retrospective synthesis** — after delivery, Cowork can analyze the full project history (brief → shoot → revisions → delivery) and produce a retrospective document: what went well, what to improve, time-per-phase metrics, and recommendations for future similar projects.
+
+### Escalate to Tier 3 (Computer Use) when:
+
+- **QuickBooks reconciliation portal** — if the project requires manual reconciliation in QuickBooks Web (no API for certain journal entries or custom reports). Computer Use navigates the portal, matches the Stripe payment to the invoice, and downloads the reconciliation report. Hard limit: 5 minutes, single browser tab, no financial data modification without explicit approval.
+
+### Dispatch-Enabled Actions (mobile):
+
+Client delivery is the most Dispatch-friendly task in the pipeline. You're often mobile when final approvals come through.
+
+- **"Approve delivery for ACME project"** → Dispatch triggers: finalize Stripe invoice, send Gmail delivery email, share Google Drive folder. All Tier 1 operations executed remotely.
+- **"Check delivery status for ACME"** → Returns: invoice status (paid/pending), email delivery confirmation, Drive folder sharing status, ClickUp task status.
+- **"Send revision reminder to ACME"** → Dispatch triggers a follow-up email to the client about pending revision feedback.
+
+### Siri / Apple Native hooks:
+
+- **"Hey Siri, approve EEVL delivery"** → Shortcut captures project name → triggers Dispatch → executes Tier 1 delivery chain (invoice finalize → email → share).
+- **"Hey Siri, check EEVL project status"** → Queries ClickUp + Stripe → reads back: "ACME project is delivered. Invoice paid. All tasks complete."
+- **AppleScript → OmniPlan** → Update project timeline with actual delivery date for historical tracking.
+
+---
+
 ## Output
 
 After completing client delivery, produce a structured output containing:
@@ -131,3 +160,5 @@ After completing client delivery, produce a structured output containing:
 - Archive location (Google Drive folder ID in archive)
 - ClickUp completion status for all project tasks
 - Final project metrics summary
+- **Tier escalation log** — any tasks routed to Tier 2 or 3, with justification and results
+- **Dispatch actions taken** — any mobile-triggered actions with timestamps

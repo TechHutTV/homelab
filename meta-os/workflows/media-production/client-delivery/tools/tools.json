@@ -170,6 +170,99 @@
           }
         }
       ]
+    },
+    {
+      "id": "cowork",
+      "provider": "anthropic",
+      "type": "tier_2",
+      "description": "Tier 2 escalation — Cowork workspace for delivery manifest generation and project retrospective synthesis.",
+      "actions": [
+        {
+          "action": "submit_task",
+          "description": "Send a synthesis task to the content-production Cowork workspace.",
+          "parameters": {
+            "workspace": "content-production",
+            "task_description": "string — what to generate (delivery manifest or retrospective)",
+            "attachments": "array — project files, revision logs, brief, metrics",
+            "priority": "string — normal | urgent"
+          },
+          "returns": {
+            "task_id": "string",
+            "status": "string — queued | running | complete",
+            "result": "object — generated document (manifest PDF or retrospective)"
+          }
+        }
+      ],
+      "escalation_criteria": "Use for complex 50+ deliverable manifests or multi-phase project retrospectives."
+    },
+    {
+      "id": "computer-use",
+      "provider": "anthropic",
+      "type": "tier_3",
+      "description": "Tier 3 escalation — Computer Use for QuickBooks reconciliation portal when no API path exists.",
+      "actions": [
+        {
+          "action": "start_session",
+          "description": "Navigate QuickBooks Web for manual reconciliation of Stripe payments.",
+          "parameters": {
+            "target_app": "browser",
+            "target_url": "string — QuickBooks Web URL",
+            "task_description": "string — specific reconciliation task",
+            "max_minutes": 5,
+            "read_only": "boolean — true unless explicit approval for modifications"
+          },
+          "requires_user_approval": true,
+          "returns": {
+            "session_id": "string",
+            "status": "string — completed | timed_out | user_cancelled",
+            "result_summary": "string",
+            "reconciliation_report": "string — download link if generated"
+          }
+        }
+      ],
+      "escalation_criteria": "LAST RESORT. Only when QuickBooks API cannot handle the specific journal entry or custom report. Read-only by default."
+    },
+    {
+      "id": "dispatch",
+      "provider": "anthropic",
+      "type": "mobile_control",
+      "description": "Claude Dispatch — mobile actions for delivery approval, status checks, and follow-ups from phone.",
+      "actions": [
+        {
+          "action": "approve_delivery",
+          "description": "Trigger the full delivery chain from phone: finalize Stripe invoice → send Gmail → share Drive folder.",
+          "parameters": {
+            "project_code": "string",
+            "confirm_invoice_amount": "boolean — true to proceed with invoicing"
+          },
+          "returns": {
+            "invoice_id": "string",
+            "email_status": "string — sent | failed",
+            "drive_share_url": "string"
+          }
+        },
+        {
+          "action": "check_status",
+          "description": "Quick status check on delivery progress — invoice, email, Drive sharing, ClickUp tasks.",
+          "parameters": {
+            "project_code": "string"
+          },
+          "returns": {
+            "invoice_status": "string — draft | open | paid",
+            "email_status": "string — sent | pending | failed",
+            "drive_shared": "boolean",
+            "clickup_complete": "boolean"
+          }
+        },
+        {
+          "action": "send_followup",
+          "description": "Send a follow-up email to the client about pending revision feedback or payment.",
+          "parameters": {
+            "project_code": "string",
+            "followup_type": "string — revision_reminder | payment_reminder | feedback_request"
+          }
+        }
+      ]
     }
   ]
 }

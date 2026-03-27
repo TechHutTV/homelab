@@ -1,9 +1,10 @@
 {
   "id": "media-production",
   "name": "EEVL Media Production Workflow",
-  "description": "End-to-end media production pipeline for Eagle Eye Vision Labz. Covers the 3-pillar model: Video + Drone + Photo — from client brief intake through final delivery and invoicing.",
-  "version": "1.0.0",
+  "description": "End-to-end media production pipeline for Eagle Eye Vision Labz. Covers the 3-pillar model: Video + Drone + Photo — from client brief intake through final delivery and invoicing. Upgraded with 3-tier agent escalation routing.",
+  "version": "2.0.0",
   "owner": "eagle-eye-vision-labz",
+  "escalation_engine": "engines/agent-escalation.json",
   "tasks": [
     {
       "id": "pre-production",
@@ -11,7 +12,13 @@
       "description": "Client brief analysis, shot list generation, equipment planning, scheduling, and project channel creation.",
       "order": 1,
       "path": "pre-production/",
-      "depends_on": []
+      "depends_on": [],
+      "default_tier": 1,
+      "tier_routing": {
+        "tier_1": ["brief_analysis", "shot_list_generation", "clickup_scheduling", "lark_channel_creation", "equipment_checklist", "google_drive_setup"],
+        "tier_2": ["complex_location_research", "competitor_shoot_analysis", "multi_location_logistics"],
+        "tier_3": ["vendor_portal_permit_applications"]
+      }
     },
     {
       "id": "shoot-day",
@@ -19,23 +26,44 @@
       "description": "On-location shoot execution, real-time status updates, file capture and naming, drone flight logging.",
       "order": 2,
       "path": "shoot-day/",
-      "depends_on": ["pre-production"]
+      "depends_on": ["pre-production"],
+      "default_tier": 1,
+      "tier_routing": {
+        "tier_1": ["status_updates", "file_naming", "equipment_tracking", "lark_notifications"],
+        "tier_2": [],
+        "tier_3": []
+      },
+      "note": "Shoot day is almost entirely physical + Tier 1 automation. Agents provide real-time support via Lark and ClickUp."
     },
     {
       "id": "post-production",
       "name": "Post-Production",
-      "description": "Raw file organization, Sparrow handoff for editing, revision tracking, and final export.",
+      "description": "Raw file organization, Sparrow handoff for editing, revision tracking, and final export. Includes Cowork for heavy file analysis and Computer Use fallback for creator app deep UI.",
       "order": 3,
       "path": "post-production/",
-      "depends_on": ["shoot-day"]
+      "depends_on": ["shoot-day"],
+      "default_tier": 1,
+      "tier_routing": {
+        "tier_1": ["raw_file_organization", "sparrow_handoff", "revision_tracking", "lark_notifications", "clickup_updates", "google_drive_ops"],
+        "tier_2": ["batch_transcription", "multi_file_quality_analysis", "edit_brief_synthesis", "color_science_research"],
+        "tier_3": ["final_cut_batch_retiming", "logic_plugin_configuration", "complex_export_presets"]
+      }
     },
     {
       "id": "client-delivery",
       "name": "Client Delivery",
-      "description": "Final deliverable packaging, invoicing, client notification, and project archival.",
+      "description": "Final deliverable packaging, invoicing, client notification, and project archival. Dispatch-enabled for mobile delivery approval.",
       "order": 4,
       "path": "client-delivery/",
-      "depends_on": ["post-production"]
+      "depends_on": ["post-production"],
+      "default_tier": 1,
+      "tier_routing": {
+        "tier_1": ["stripe_invoicing", "gmail_delivery", "google_drive_sharing", "clickup_completion", "lark_archival", "notion_update"],
+        "tier_2": ["delivery_manifest_generation", "project_retrospective_synthesis"],
+        "tier_3": ["quickbooks_reconciliation_portal"]
+      },
+      "dispatch_enabled": true,
+      "dispatch_actions": ["approve_delivery", "trigger_invoice_finalization", "check_delivery_status"]
     }
   ],
   "triggers": [
@@ -55,6 +83,23 @@
         "channel": "#new-projects",
         "mention": "@eevl-bot",
         "message_pattern": "^new project:"
+      }
+    },
+    {
+      "type": "siri_shortcut",
+      "description": "Triggered via 'Hey Siri, new EEVL project' — captures client name, project type, and date, routes to orchestrator.",
+      "config": {
+        "shortcut_name": "New EEVL Project",
+        "captures": ["client_name", "project_type", "shoot_date"],
+        "route_to": "pre-production"
+      }
+    },
+    {
+      "type": "dispatch",
+      "description": "Mobile trigger via Claude Dispatch — submit project brief from phone for async processing.",
+      "config": {
+        "workspace": "content-production",
+        "route_to": "pre-production"
       }
     },
     {
@@ -91,6 +136,20 @@
       "description": "Client communication — delivery emails with download links and invoice attachments.",
       "scopes": ["gmail.send", "gmail.compose"],
       "from_address": "delivery@eagleeyevisionlabz.com"
+    },
+    {
+      "id": "claude-cowork",
+      "provider": "anthropic",
+      "description": "Tier 2 — persistent workspace for heavy file analysis, transcription, edit brief synthesis, and color science research.",
+      "config": "mcp-servers/claude-cowork-dispatch.json",
+      "workspace": "content-production"
+    },
+    {
+      "id": "claude-computer-use",
+      "provider": "anthropic",
+      "description": "Tier 3 — GUI automation fallback for creator apps (Final Cut, Logic) when AppleScript/CLI paths are exhausted.",
+      "config": "mcp-servers/claude-computer-use.json",
+      "guardrails": "10 min max, single app scope, user approval required"
     }
   ],
   "sub_agents": [
@@ -101,12 +160,61 @@
       "trigger_task": "post-production",
       "lark_channel": "#edited-by-sparrow",
       "inputs": ["raw_file_manifest", "shot_list", "client_brief"],
-      "outputs": ["handoff_confirmation", "sparrow_task_id"]
+      "outputs": ["handoff_confirmation", "sparrow_task_id"],
+      "tier": 1
+    },
+    {
+      "id": "eevl-creative",
+      "name": "EEVL Creative Agent",
+      "description": "Brand-kit design generation for thumbnails, social assets, and presentation materials. Triggered during client delivery for delivery manifest design.",
+      "trigger_task": "client-delivery",
+      "inputs": ["project_name", "client_brand", "deliverable_list"],
+      "outputs": ["thumbnail_set", "social_assets"],
+      "tier": 1
     }
   ],
+  "apple_native_hooks": {
+    "shortcuts": [
+      {
+        "name": "New EEVL Project",
+        "trigger": "siri_voice",
+        "action": "Capture client name + project type → POST to orchestrator → start pre-production"
+      },
+      {
+        "name": "Check Project Status",
+        "trigger": "siri_voice | shortcut_button",
+        "action": "Query ClickUp for project status → read back via Siri or write to OmniFocus"
+      },
+      {
+        "name": "Approve Delivery",
+        "trigger": "dispatch | shortcut_button",
+        "action": "Finalize Stripe invoice + trigger Gmail delivery email from phone"
+      }
+    ],
+    "applescript": [
+      {
+        "target": "Final Cut Pro",
+        "use_case": "Export timeline XML, import cut lists, batch rename clips",
+        "tier": 1,
+        "computer_use_fallback": "Complex retiming, third-party plugin configuration"
+      },
+      {
+        "target": "OmniPlan",
+        "use_case": "Write project timeline from ClickUp milestones, export Gantt PDF for client",
+        "tier": 1
+      }
+    ],
+    "launchd": [
+      {
+        "name": "com.eevl.shoot-reminder",
+        "schedule": "6:00 AM on shoot day",
+        "action": "Push notification with weather, equipment status, and drive time to location"
+      }
+    ]
+  },
   "metadata": {
     "pillars": ["video", "drone", "photo"],
     "created_at": "2026-03-15",
-    "updated_at": "2026-03-15"
+    "updated_at": "2026-03-27"
   }
 }

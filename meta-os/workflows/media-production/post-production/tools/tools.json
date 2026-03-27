@@ -72,6 +72,7 @@
     {
       "id": "sparrow-handoff",
       "type": "sub_agent",
+      "tier": 1,
       "description": "The sparrow-handoff sub-agent packages raw select files and posts a structured handoff to #edited-by-sparrow for Sparrow to pick up and edit. This is the bridge between EEVL's shoot output and Sparrow's editing pipeline.",
       "actions": [
         {
@@ -95,6 +96,150 @@
               "type": "string",
               "description": "Sparrow's internal task ID for tracking the edit."
             }
+          }
+        }
+      ]
+    },
+    {
+      "id": "cowork",
+      "provider": "anthropic",
+      "type": "tier_2",
+      "description": "Tier 2 escalation — persistent Cowork workspace for batch transcription, multi-file quality analysis, edit brief synthesis, and color science research.",
+      "actions": [
+        {
+          "action": "submit_task",
+          "description": "Send a heavy analysis or synthesis task to the content-production Cowork workspace.",
+          "parameters": {
+            "workspace": "content-production",
+            "task_description": "string — what to analyze or synthesize",
+            "attachments": "array — Google Drive file IDs (raw files, brief, shot list)",
+            "model_preference": "nvidia/nematron-3-super-120b",
+            "priority": "string — normal | urgent"
+          },
+          "returns": {
+            "task_id": "string",
+            "status": "string — queued | running | complete",
+            "result": "object — structured output (quality report, transcription, edit brief)"
+          }
+        },
+        {
+          "action": "check_status",
+          "description": "Check status of a running Cowork task (also available via Dispatch from phone).",
+          "parameters": {
+            "task_id": "string"
+          }
+        }
+      ],
+      "escalation_criteria": "Use for tasks that involve analyzing 10+ files, generating multi-page synthesis documents, or require extended processing time (>5 min)."
+    },
+    {
+      "id": "computer-use",
+      "provider": "anthropic",
+      "type": "tier_3",
+      "description": "Tier 3 escalation — Computer Use for creator app GUI automation when AppleScript, FCPXML, and CLI tools all fail.",
+      "actions": [
+        {
+          "action": "start_session",
+          "description": "Start a Computer Use session targeting a creator app for operations that resist scripting.",
+          "parameters": {
+            "target_app": "string — 'Final Cut Pro' | 'Logic Pro' | 'Compressor'",
+            "task_description": "string — specific operation (e.g., 'Batch retime 50 clips to 80% speed with optical flow')",
+            "project_file": "string — path to the FCPX/Logic project file",
+            "max_minutes": "integer — hard timeout (max 10)",
+            "scope_constraint": "string — what folder/project the session can access"
+          },
+          "requires_user_approval": true,
+          "pre_check": [
+            "Verify AppleScript cannot accomplish this task",
+            "Verify FCPXML import/export cannot accomplish this task",
+            "Verify CLI tools (ffmpeg, compressor-cli) cannot accomplish this task"
+          ],
+          "returns": {
+            "session_id": "string",
+            "status": "string — completed | timed_out | user_cancelled",
+            "result_summary": "string",
+            "clips_processed": "integer",
+            "screenshots": "array"
+          }
+        }
+      ],
+      "escalation_criteria": "LAST RESORT. Only when: (1) AppleScript fails, (2) FCPXML fails, (3) CLI tools fail, (4) task is high-value enough to justify cost. Never for routine operations."
+    },
+    {
+      "id": "applescript-creator",
+      "provider": "applescript",
+      "type": "tier_1",
+      "description": "Tier 1 — AppleScript/JXA automation for creator apps. Always try this before Computer Use.",
+      "actions": [
+        {
+          "action": "fcpx_export_xml",
+          "description": "Export Final Cut Pro timeline as FCPXML for programmatic editing.",
+          "parameters": {
+            "project_name": "string",
+            "output_path": "string"
+          }
+        },
+        {
+          "action": "fcpx_import_xml",
+          "description": "Import modified FCPXML back into Final Cut Pro.",
+          "parameters": {
+            "xml_path": "string",
+            "library_name": "string"
+          }
+        },
+        {
+          "action": "fcpx_batch_rename",
+          "description": "Batch rename clips in Final Cut Pro library via AppleScript.",
+          "parameters": {
+            "library_name": "string",
+            "naming_pattern": "string — e.g., '{client}_{pillar}_{shot_id}_{take}'"
+          }
+        },
+        {
+          "action": "logic_export_stems",
+          "description": "Export audio stems from Logic Pro via AppleScript bounce.",
+          "parameters": {
+            "project_path": "string",
+            "stem_groups": "array — ['dialogue', 'music', 'sfx', 'ambient']",
+            "format": "string — wav | aiff | mp3",
+            "output_folder": "string"
+          }
+        }
+      ]
+    },
+    {
+      "id": "cli-tools",
+      "provider": "shell",
+      "type": "tier_1",
+      "description": "Tier 1 — CLI transcoding and processing tools. Try before Computer Use.",
+      "actions": [
+        {
+          "action": "ffmpeg_transcode",
+          "description": "Transcode video/audio files using ffmpeg.",
+          "parameters": {
+            "input_path": "string",
+            "output_path": "string",
+            "codec": "string — libx264 | libx265 | prores_ks | aac",
+            "resolution": "string — 1920x1080 | 3840x2160",
+            "bitrate": "string — e.g., '20M'",
+            "additional_flags": "string — optional ffmpeg flags"
+          }
+        },
+        {
+          "action": "ffprobe_analyze",
+          "description": "Analyze media file metadata (codec, resolution, duration, bitrate).",
+          "parameters": {
+            "input_path": "string",
+            "output_format": "string — json | csv"
+          }
+        },
+        {
+          "action": "imagemagick_batch",
+          "description": "Batch process photos (resize, convert, strip metadata).",
+          "parameters": {
+            "input_glob": "string — e.g., '/path/to/photos/*.CR3'",
+            "operations": "array — ['resize:2048x', 'convert:jpeg', 'quality:85', 'colorspace:sRGB']",
+            "output_folder": "string"
           }
         }
       ]

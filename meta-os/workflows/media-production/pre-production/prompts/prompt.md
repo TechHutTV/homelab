@@ -41,7 +41,7 @@ Build a detailed shot list from the brief. Organize it by pillar:
 
 Number every shot sequentially across all pillars (e.g., V-001, D-001, P-001) so the shoot-day and post-production agents can reference them.
 
-> **Future improvement:** When OpenAI releases auto shot-list generation, just update this file to integrate that capability. The input/output schema will remain the same — swap the generation logic here and the rest of the pipeline stays untouched.
+> **Future improvement:** When new AI capabilities launch, update this leaf node. The input/output schema stays the same — swap the generation logic here and the rest of the pipeline stays untouched.
 
 ---
 
@@ -118,6 +118,24 @@ Create a dedicated Lark channel for the project:
 
 ---
 
+## 7. Tier-Aware Execution
+
+This task runs at **Tier 1** by default. All steps above use APIs, scripts, and MCP connections directly.
+
+### Escalate to Tier 2 (Cowork) when:
+- **Complex location research** — multi-location shoots requiring geographic analysis, travel logistics, weather pattern research, or permit requirement compilation across jurisdictions. Send to the `content-production` Cowork workspace.
+- **Competitor shoot analysis** — client wants to see examples of similar productions. Cowork can research, compile reference reels, and synthesize a creative brief.
+- **Multi-location logistics** — coordinating 3+ locations with overlapping crew schedules and equipment transfers.
+
+### Escalate to Tier 3 (Computer Use) when:
+- **Vendor portal permit applications** — some city/county permit portals have no API and require filling out web forms. Use Computer Use to navigate the portal, fill in project details, upload insurance docs, and submit. Hard limit: 10 minutes, single browser tab.
+
+### Siri / Apple Native hooks:
+- **"Hey Siri, new EEVL project"** → Captures client name, project type, shoot date → POSTs to orchestrator → starts this pre-production task.
+- **AppleScript → OmniPlan** → After ClickUp scheduling, write the project timeline to OmniPlan for Gantt chart export if client requests it.
+
+---
+
 ## Output
 
 After completing all steps, produce a structured output containing:
@@ -126,3 +144,4 @@ After completing all steps, produce a structured output containing:
 - The ClickUp schedule (with task IDs)
 - The Lark channel ID
 - Any open flags or blocklist items that need resolution before shoot day
+- **Tier escalation log** — any tasks routed to Tier 2 or 3, with justification and results
