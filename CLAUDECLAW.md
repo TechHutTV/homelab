@@ -40,11 +40,35 @@ CLAUDECLAW Bridge
 │   ├── OpenClaw ecosystem awareness
 │   └── Claw Variants (NanoClaw, ZeroClaw, IronClaw)
 │
+├── Tiered Agent Escalation (engines/agent-escalation.json)
+│   ├── Tier 1 — Local Agents & Shortcuts (90% of work)
+│   │   ├── NemoClaw + Nematron 3 Super (persistent agents)
+│   │   ├── n8n / Make.com (workflow automation)
+│   │   ├── Apple Shortcuts + Siri (voice triggers)
+│   │   ├── AppleScript/JXA (Omni suite, Finder, creator apps)
+│   │   ├── Shell scripts + launchd (cron, Docker, git)
+│   │   └── MCP Servers (direct API calls)
+│   ├── Tier 2 — Cowork + Dispatch (knowledge work)
+│   │   ├── Claude Cowork (persistent VM, file access, MCP connectors)
+│   │   ├── Claude Dispatch (mobile control from phone)
+│   │   └── Workspaces: eevl-research, content-production, code-ops
+│   └── Tier 3 — Computer Use (emergency / high-leverage GUI)
+│       ├── Screen control (mouse, keyboard, clicks)
+│       ├── 5-10 min hard timeout, user approval required
+│       └── Use cases: no-API portals, broken automation rescue, creator app deep UI
+│
+├── Apple-Native Integration (engines/apple-native.json)
+│   ├── Shortcuts: "Send to Meta OS", "Ask Eagle Eye", "Quick Capture", "Send to Cowork"
+│   ├── Omni Suite: OmniOutliner (knowledge), OmniFocus (tasks), OmniPlan (timelines)
+│   ├── Creator Apps: Final Cut, Logic (AppleScript first, Computer Use fallback)
+│   └── launchd: health checks, daily briefs, backup verification
+│
 └── M3TA OS Agent Layer (orchestration)
     ├── Orchestrator (meta-os/orchestrator.json)
     ├── 5 Workflow Pillars
     ├── 8 Sub-Agents
-    ├── 9 MCP Servers
+    ├── 11 MCP Servers (+computer-use, +cowork-dispatch)
+    ├── 8 Engines (+agent-escalation, +apple-native)
     ├── 5 MyMind AI Skills (second brain)
     └── Auto Research (self-improvement)
 ```
@@ -196,6 +220,86 @@ Capture (thought, URL, PDF, image, screenshot)
 | Canvas Gen | `/canvas-gen` | Visual process maps and knowledge diagrams |
 | PDF Synthesizer | `/pdf-synthesize` | Large docs → markdown cheat sheets → vault |
 
+## 3-Tier Agent Escalation Architecture
+
+Every task enters at Tier 1. Escalation requires explicit justification. Push as much as possible into Tier 1 and only escalate when absolutely necessary.
+
+### Tier 1 — Local Agents & Shortcuts (default — 90% of work)
+
+Cheap, fast, deterministic. Handles most EEVL workflows.
+
+| Runtime | Config | What It Does |
+|---------|--------|-------------|
+| NemoClaw + Nematron 3 Super | `mcp-servers/llm-router.json` | Persistent 24/7 agent loops, multi-agent orchestration |
+| n8n | `engines/n8n.json` | Webhooks, HTTP requests, conditional logic, scheduled jobs |
+| Apple Shortcuts + Siri | `engines/apple-native.json` | Voice triggers, quick captures, share sheet actions |
+| AppleScript/JXA | `engines/apple-native.json` | Omni suite, Finder, creator app automation |
+| MCP Servers | `mcp-servers/*.json` | Direct API calls to GHL, ClickUp, Stripe, Gmail, etc. |
+| Shell + launchd | System | Git ops, Docker, file processing, cron jobs |
+
+**Decision rule:** Can this be done via API, shell, AppleScript, or Shortcut? → Execute here. Never escalate what Tier 1 can handle.
+
+### Tier 2 — Cowork + Dispatch (knowledge work)
+
+Long-running tasks in a persistent VM. Claude Cowork has file access and MCP connectors. Dispatch enables mobile control.
+
+| Component | Config | What It Does |
+|-----------|--------|-------------|
+| Claude Cowork | `mcp-servers/claude-cowork-dispatch.json` | Persistent VM workspace — research, coding, doc synthesis, multi-file refactoring |
+| Claude Dispatch | `mcp-servers/claude-cowork-dispatch.json` | Mobile control — submit tasks from phone, check status, continue work async |
+
+**Workspaces:** `eevl-research`, `content-production`, `code-ops`, `client-work`
+
+**Escalate to Tier 2 when:**
+- Task requires extended code execution (>5 min)
+- Persistent file workspace needed across sessions
+- Multi-file analysis or refactoring
+- User is mobile → Dispatch
+- Research requiring iterative web search + synthesis
+
+### Tier 3 — Computer Use (emergency / high-leverage GUI)
+
+Claude literally looks at a screen, moves the mouse, clicks, types. **Expensive.** Use only when nothing else can touch it.
+
+| Config | Model | Max Time |
+|--------|-------|----------|
+| `mcp-servers/claude-computer-use.json` | claude-sonnet-4-6 | 10 min hard limit |
+
+**Valid use cases:**
+- **No-API GUI:** Vendor portals, government forms, niche app settings
+- **Broken automation rescue:** Critical n8n failure → Computer Use completes the urgent run manually
+- **Creator app deep UI:** Complex plug-in configuration in Final Cut/Logic when scripting fails
+
+**Guardrails (treat the machine like a temple):**
+- Outer ring (Cloud/VMs): Sandboxed execution only, no host access
+- Middle ring (Controlled): Separate macOS user, separate browser profile, project folders only
+- Inner ring (Sacred): NEVER automated — personal/financial/esoteric data, Vaultwarden, banking
+
+**Anti-patterns:**
+- Never use Computer Use for tasks with an API
+- Never let it become the daily path
+- Never skip Tier 1 because Tier 3 "seems easier"
+- Never allow sessions without time limits
+
+### Apple-Native Integration
+
+Config: `engines/apple-native.json`
+
+| Shortcut | Trigger | What It Does |
+|----------|---------|-------------|
+| "Send to Meta OS" | Siri voice | Captures intent + context → orchestrator routes to correct tier |
+| "Ask Eagle Eye" | Siri / button | Question → ClaudeClaw → results written to OmniFocus/OmniOutliner |
+| "Quick Capture" | Share sheet / Siri | Content → MyMind AI vault auto-categorization |
+| "Send to Cowork" | Siri voice | Mobile task → Dispatch → Cowork workspace |
+
+**Omni apps as Akashic buffers:**
+- OmniOutliner → knowledge (structured outlines by domain)
+- OmniFocus → tasks (agents read/write sub-tasks)
+- OmniPlan → timelines (agents write task sequences + dependencies)
+- OmniGraffle → diagrams (agents generate via /canvas-gen, render here)
+
+**Creator app pattern:** AppleScript/Shortcuts handle 80-90% → Computer Use only for the 10-20% "weird UI" jobs (complex plug-ins, deep UI trees).
+
 ## NVIDIA NemoClaw + Nematron 3 — Agent Platform Layer
 
 M3TA OS is designed to leverage NVIDIA's agent infrastructure stack:
@@ -267,8 +371,12 @@ meta-os/
 │   ├── club-trapeze/          # Weekly ops for Fred
 │   └── client-onboarding/     # Lead → Client
 ├── sub-agents/                # 8 specialized agents
-├── mcp-servers/               # 9 external service configs
-├── engines/                   # 6 automation runtimes
+├── mcp-servers/               # 11 external service configs
+│   ├── claude-computer-use.json   # Tier 3 GUI automation
+│   └── claude-cowork-dispatch.json # Tier 2 persistent workspace
+├── engines/                   # 8 automation runtimes
+│   ├── agent-escalation.json  # 3-tier routing engine
+│   └── apple-native.json      # Shortcuts, Siri, Omni, AppleScript
 ├── knowledge-base/            # 8 data layer configs (includes MyMind AI)
 ├── skills/                    # Claude Code skills
 │   └── mymind-ai/             # 5 second brain skills

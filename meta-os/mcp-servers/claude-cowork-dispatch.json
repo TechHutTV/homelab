@@ -1,0 +1,113 @@
+{
+  "name": "claude-cowork-dispatch",
+  "description": "Claude Cowork (persistent VM workspace) + Dispatch (mobile control) — Tier 2 for long-running knowledge work",
+  "version": "1.0.0",
+  "provider": "anthropic",
+  "type": "persistent_workspace",
+  "auth_config": {
+    "api_key": "${ANTHROPIC_API_KEY}"
+  },
+  "cowork": {
+    "description": "Persistent VM workspace with file access, code execution, and MCP connectors. Ideal for research, coding, document synthesis, and multi-file operations.",
+    "capabilities": [
+      "file_access",
+      "code_execution",
+      "web_browsing",
+      "mcp_connectors",
+      "vm_isolation",
+      "persistent_state",
+      "long_running_tasks"
+    ],
+    "workspaces": [
+      {
+        "id": "eevl-research",
+        "name": "Eagle Eye R&D",
+        "description": "Competitive analysis, tech scouting, architecture design, vendor evaluation",
+        "persistent": true,
+        "connected_services": ["web-scrape", "notion", "google-drive"]
+      },
+      {
+        "id": "content-production",
+        "name": "Content Production",
+        "description": "Content writing, PDF synthesis, blog drafts, social copy, brand voice work",
+        "persistent": true,
+        "connected_services": ["google-drive", "notion", "web-scrape"]
+      },
+      {
+        "id": "code-ops",
+        "name": "Code Operations",
+        "description": "Homelab code, Docker configs, M3TA OS development, agent refactoring, PR workflows",
+        "persistent": true,
+        "connected_services": ["github-repos"]
+      },
+      {
+        "id": "client-work",
+        "name": "Client Workspace",
+        "description": "Per-client document preparation, proposal writing, deliverable assembly",
+        "persistent": false,
+        "connected_services": ["google-drive", "clickup", "notion"]
+      }
+    ],
+    "use_cases": [
+      "Synthesize 20+ PDFs into a strategic brief",
+      "Refactor agent code across multiple files and open a PR",
+      "Research and compile competitive analysis with citations",
+      "Build Docker compose files with testing",
+      "Write and iterate on long-form content with revision history"
+    ]
+  },
+  "dispatch": {
+    "description": "Mobile control surface for Cowork. Submit tasks, check status, and continue work from your phone. Designed for fragmented-attention reality.",
+    "capabilities": [
+      "remote_task_submission",
+      "workspace_status_check",
+      "task_continuation",
+      "result_retrieval",
+      "mobile_notifications"
+    ],
+    "patterns": [
+      {
+        "id": "mobile-research",
+        "name": "On-the-go Research",
+        "example": "Continue synthesizing these 20 PDFs into a strategic brief",
+        "workspace": "content-production"
+      },
+      {
+        "id": "mobile-code",
+        "name": "Remote Code Work",
+        "example": "Refactor the QB agent code to support multi-org configs; open a PR when done",
+        "workspace": "code-ops"
+      },
+      {
+        "id": "mobile-check",
+        "name": "Status Check",
+        "example": "What's the status of the content brief I submitted this morning?",
+        "workspace": "any"
+      },
+      {
+        "id": "mobile-urgent",
+        "name": "Urgent Task Submission",
+        "example": "Client needs updated proposal by 3pm — use the template in Drive and update pricing",
+        "workspace": "client-work"
+      }
+    ],
+    "integration_with_apple": {
+      "siri_shortcut": "Hey Siri, send to Cowork",
+      "share_sheet": true,
+      "notification_on_completion": true,
+      "note": "Create an Apple Shortcut that captures spoken intent + context and POSTs to Dispatch for async execution"
+    }
+  },
+  "escalation_to_computer_use": {
+    "description": "Cowork can escalate to Computer Use when a task explicitly needs GUI interaction that cannot be handled via APIs or code.",
+    "pattern": [
+      "1. Cowork attempts task via available tools (code, APIs, MCP connectors)",
+      "2. If blocked by GUI-only requirement, Cowork flags for Computer Use escalation",
+      "3. User approves Computer Use session with scope constraints",
+      "4. Computer Use completes the GUI step",
+      "5. Control returns to Cowork for remaining work"
+    ],
+    "auto_escalate": false,
+    "requires_user_approval": true
+  }
+}

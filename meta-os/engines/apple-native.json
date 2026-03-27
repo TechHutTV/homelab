@@ -1,0 +1,173 @@
+{
+  "name": "apple-native",
+  "type": "native_automation",
+  "description": "Apple-native integration layer — Shortcuts, Siri, AppleScript/JXA, Omni apps, launchd. Tier 1 execution for macOS/iOS workflows.",
+  "version": "1.0.0",
+  "platform": {
+    "primary": "macOS (MacBook Pro M5 Max)",
+    "secondary": "iOS (iPhone/iPad)",
+    "runtime": ["Shortcuts", "AppleScript", "JXA", "launchd", "cron", "Automator"]
+  },
+  "shortcuts": [
+    {
+      "id": "send-to-meta-os",
+      "name": "Hey Siri, send to Meta OS",
+      "trigger": "siri_voice",
+      "description": "Captures spoken intent, URL, selected text, and current app context. Routes to orchestrator for tier-based execution.",
+      "flow": [
+        "1. Capture: spoken intent via Siri dictation",
+        "2. Capture: clipboard/selected text (if available)",
+        "3. Capture: current app context (frontmost app name)",
+        "4. POST to orchestrator endpoint (local Mac or n8n webhook)",
+        "5. Orchestrator picks route: Tier 1 (local) → Tier 2 (Cowork) → Tier 3 (Computer Use)",
+        "6. Return confirmation to Siri"
+      ],
+      "endpoint": "${META_OS_WEBHOOK_URL}/task-intake"
+    },
+    {
+      "id": "ask-eagle-eye",
+      "name": "Ask Eagle Eye",
+      "trigger": "siri_voice | shortcut_button",
+      "description": "Routes question or planning request through ClaudeClaw/Qu3bii for natural language processing, then writes results back to OmniPlan/OmniFocus.",
+      "flow": [
+        "1. Capture: question or planning prompt",
+        "2. Send to ClaudeClaw for processing",
+        "3. Receive structured response (sub-tasks, timeline, recommendations)",
+        "4. Write back to OmniFocus (tasks) or OmniOutliner (plans) via AppleScript",
+        "5. Notify user of completion"
+      ]
+    },
+    {
+      "id": "quick-capture",
+      "name": "Quick Capture to Vault",
+      "trigger": "share_sheet | siri_voice",
+      "description": "Captures any content (URL, text, image, PDF) and routes to MyMind AI vault for auto-categorization.",
+      "flow": [
+        "1. Receive shared content via share sheet or dictation",
+        "2. Classify content type (URL, text, image, PDF)",
+        "3. Send to MyMind AI for auto-categorization",
+        "4. Confirm capture with category shown"
+      ]
+    },
+    {
+      "id": "dispatch-to-cowork",
+      "name": "Hey Siri, send to Cowork",
+      "trigger": "siri_voice",
+      "description": "Mobile shortcut to submit tasks to Claude Cowork via Dispatch. For async work continuation while mobile.",
+      "flow": [
+        "1. Capture: spoken task description",
+        "2. Select workspace (research/content/code/client)",
+        "3. POST to Claude Dispatch endpoint",
+        "4. Receive task ID for status checking",
+        "5. Notify when task completes"
+      ]
+    }
+  ],
+  "applescript_integrations": {
+    "omni_suite": {
+      "description": "Omni apps serve as structured Akashic-style buffers that agents read from and write to.",
+      "apps": [
+        {
+          "name": "OmniOutliner",
+          "role": "knowledge_buffer",
+          "description": "Structured outlines tagged by domain (Nonprofit, Eagle Eye, M3TA, Spiritual tech). Agents read for context and write distilled insights back — never raw dumps.",
+          "operations": [
+            "read_outline_by_tag",
+            "append_insight_to_section",
+            "create_new_section",
+            "export_to_markdown"
+          ]
+        },
+        {
+          "name": "OmniFocus",
+          "role": "task_manager",
+          "description": "Task front-end that agents can read projects/tasks from and write sub-tasks or status updates to.",
+          "operations": [
+            "read_project_tasks",
+            "create_subtask",
+            "update_task_status",
+            "set_due_date",
+            "add_note_to_task"
+          ]
+        },
+        {
+          "name": "OmniPlan",
+          "role": "project_planner",
+          "description": "Gantt charts and project timelines. Agents write task sequences and dependency graphs.",
+          "operations": [
+            "read_project_timeline",
+            "add_task_with_dependencies",
+            "update_progress",
+            "export_gantt_pdf"
+          ]
+        },
+        {
+          "name": "OmniGraffle",
+          "role": "diagram_generator",
+          "description": "Architecture diagrams and process flows. Agents generate via /canvas-gen skill, render in OmniGraffle.",
+          "operations": [
+            "import_diagram_data",
+            "export_svg_png",
+            "apply_template"
+          ]
+        }
+      ]
+    },
+    "creator_apps": {
+      "description": "Semi-scriptable creator suite. Use AppleScript/Shortcuts for 80-90% of automation, Computer Use only for deep UI tree operations.",
+      "pattern": [
+        "1. Claude Code / local agents generate: timelines, cut lists, transcripts, effect recipes",
+        "2. AppleScript / Shortcuts / native APIs apply them (Tier 1)",
+        "3. For 10-20% 'weird UI' jobs (complex plug-ins, deep UI tree): one-off Computer Use session with strict guardrails (Tier 3)"
+      ],
+      "apps": [
+        {
+          "name": "Final Cut Pro",
+          "scriptable": "partial",
+          "applescript": true,
+          "computer_use_fallback": "Complex plug-in configuration, batch retiming when XML export fails"
+        },
+        {
+          "name": "Logic Pro",
+          "scriptable": "partial",
+          "applescript": true,
+          "computer_use_fallback": "Deep effect chains, third-party plug-in UIs"
+        },
+        {
+          "name": "Motion",
+          "scriptable": "minimal",
+          "applescript": false,
+          "computer_use_fallback": "Most operations require GUI automation"
+        }
+      ]
+    },
+    "system_automation": {
+      "launchd_agents": [
+        {
+          "name": "com.eevl.meta-os.health-check",
+          "schedule": "every 5 minutes",
+          "description": "Ping all homelab services and report to Glance/Grafana"
+        },
+        {
+          "name": "com.eevl.meta-os.daily-brief",
+          "schedule": "7:00 AM daily",
+          "description": "Trigger /daily-brief skill and push notification to phone"
+        },
+        {
+          "name": "com.eevl.meta-os.backup-verify",
+          "schedule": "11:00 PM daily",
+          "description": "Verify Proxmox Backup Server completed successfully"
+        }
+      ]
+    }
+  },
+  "security": {
+    "macos_user_separation": {
+      "description": "Dedicated macOS user account for Claude ops / Computer Use sessions",
+      "user": "claude-ops",
+      "permissions": "Standard user (no admin)",
+      "file_access": "Designated project folders only",
+      "browser_profile": "Separate Chrome/Safari profile with minimal credentials"
+    }
+  }
+}

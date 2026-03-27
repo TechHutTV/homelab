@@ -1,0 +1,114 @@
+{
+  "name": "claude-computer-use",
+  "description": "Anthropic Computer Use — Tier 3 GUI automation for tasks with no API path",
+  "version": "1.0.0",
+  "provider": "anthropic",
+  "type": "gui_automation",
+  "auth_config": {
+    "api_key": "${ANTHROPIC_API_KEY}"
+  },
+  "api_endpoint": "https://api.anthropic.com/v1/messages",
+  "model": "claude-sonnet-4-6",
+  "tools": [
+    {
+      "type": "computer_20250124",
+      "name": "computer",
+      "display_width_px": 1920,
+      "display_height_px": 1080,
+      "display_number": 1
+    },
+    {
+      "type": "text_editor_20250124",
+      "name": "str_replace_editor"
+    },
+    {
+      "type": "bash_20250124",
+      "name": "bash"
+    }
+  ],
+  "capabilities": [
+    "screen_reading",
+    "mouse_control",
+    "keyboard_input",
+    "screenshot_analysis",
+    "text_editing",
+    "bash_execution"
+  ],
+  "execution_config": {
+    "vm_isolation": true,
+    "vm_provider": "docker",
+    "container_image": "anthropic/computer-use-demo",
+    "resource_limits": {
+      "cpu": "4",
+      "memory": "8G",
+      "timeout_minutes": 10
+    },
+    "network": {
+      "internet_access": true,
+      "restricted_domains": [],
+      "note": "Restrict domains as needed per task"
+    }
+  },
+  "guardrails": {
+    "max_session_minutes": 10,
+    "auto_kill_on_timeout": true,
+    "require_user_approval": true,
+    "forbidden_actions": [
+      "Accessing financial/banking websites",
+      "Modifying password manager entries",
+      "Sending emails without explicit approval",
+      "Deleting files outside designated folders",
+      "Accessing admin panels for production infrastructure",
+      "Installing software without approval"
+    ],
+    "allowed_scopes": [
+      "Single application per session",
+      "Designated project folder only",
+      "Read-only for sensitive data",
+      "Separate browser profile with minimal credentials"
+    ],
+    "escalation_approval": {
+      "from_tier_1": "automatic (no approval needed)",
+      "from_tier_2_to_3": "requires user confirmation",
+      "extension_beyond_timeout": "requires user confirmation"
+    }
+  },
+  "use_case_templates": [
+    {
+      "id": "vendor-portal-scrape",
+      "name": "Vendor Portal PDF Download",
+      "description": "Navigate vendor portal with no API, download monthly statements",
+      "estimated_minutes": 3,
+      "scope": "Single browser tab, single website"
+    },
+    {
+      "id": "app-settings-config",
+      "name": "Niche App Configuration",
+      "description": "Walk through complex settings UI for rarely-touched applications",
+      "estimated_minutes": 5,
+      "scope": "Single application window"
+    },
+    {
+      "id": "broken-workflow-rescue",
+      "name": "Emergency Automation Rescue",
+      "description": "Complete a critical workflow step manually when automation breaks",
+      "estimated_minutes": 5,
+      "scope": "Single app/site needed to unblock the workflow"
+    },
+    {
+      "id": "creator-app-batch",
+      "name": "Creator App Batch Operation",
+      "description": "Batch retiming, effects, or export in Final Cut/Logic when scripting fails",
+      "estimated_minutes": 10,
+      "scope": "Single creator application"
+    }
+  ],
+  "cost_awareness": {
+    "note": "Computer Use is the most expensive tier. Each screenshot + action cycle costs API tokens. Minimize usage by exhausting Tier 1 (API/script) and Tier 2 (Cowork) first.",
+    "budget_controls": {
+      "per_session_token_limit": 50000,
+      "daily_session_limit": 5,
+      "monthly_budget_alert": true
+    }
+  }
+}

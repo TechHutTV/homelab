@@ -62,8 +62,8 @@
   - Media Production, Content Pipeline, Gold Star Flag Football, Club Trapeze, Client Onboarding
 - **Sub-Agents:** 8 agents in `meta-os/sub-agents/`
   - MeetingScribe, DocuMind, CodeReview AI, TaskMaster AI, EEVL Creative, SocialBot, Sparrow Handoff, Onboarding Agent
-- **MCP Servers:** 9 configs in `meta-os/mcp-servers/`
-- **Engines:** 6 configs in `meta-os/engines/`
+- **MCP Servers:** 11 configs in `meta-os/mcp-servers/` (includes Claude Computer Use, Cowork/Dispatch)
+- **Engines:** 8 configs in `meta-os/engines/` (includes Agent Escalation, Apple Native)
 - **Knowledge Base:** 8 configs in `meta-os/knowledge-base/` (includes MyMind AI second brain)
 - **Skills:** 5 MyMind AI skills in `meta-os/skills/mymind-ai/` (vault-setup, daily-brief, tlddr, canvas-gen, pdf-synthesize)
 - **Auto Research:** Self-improving skill system in `meta-os/auto-research/`
@@ -85,6 +85,9 @@
 - **Brand Voice:** Club Trapeze = upscale Tamarac FL nightlife tone; EEVL = professional media production
 - **Model Preference:** Claude Opus for deep analysis, Claude Sonnet for general tasks, NVIDIA Nematron 3 Super for persistent agentic workloads (MoE: 12B active / 120B total, 1M context, 5x speed), GPT-4o for vision/creative, Gemini Flash for speed/bulk, Nematron 3 Nano for edge/routing
 - **Agent Platform:** NemoClaw for enterprise agent deployment (hardware-agnostic, open-source, security controls). Do NOT use raw OpenClaw in production (security vulnerabilities). Claw variants (NanoClaw, ZeroClaw, IronClaw) for specialized deployments
+- **Agent Escalation:** 3-tier model — Tier 1 (local agents, Shortcuts, APIs, scripts = 90% of work) → Tier 2 (Cowork + Dispatch for knowledge work) → Tier 3 (Computer Use for GUI-only emergencies). Never skip tiers.
+- **Computer Use:** Tier 3 only — expensive, 10 min hard limit, user approval required. Valid: no-API portals, broken automation rescue, creator app deep UI. Forbidden: financial apps, Vaultwarden, email sending, admin panels.
+- **Apple Native:** Shortcuts + Siri for voice triggers, AppleScript/JXA for Omni suite and creator apps, launchd for scheduled jobs. Computer Use is the fallback for the 10-20% of "weird UI" jobs.
 - **Future-Proof:** When new AI capabilities launch, update the leaf node (prompt.md or tools.json) — never rebuild the structure
 
 ## Development

@@ -72,7 +72,9 @@
     "mcp-servers/llm-router.json",
     "mcp-servers/airtable-ghl.json",
     "mcp-servers/lark.json",
-    "mcp-servers/web-scrape.json"
+    "mcp-servers/web-scrape.json",
+    "mcp-servers/claude-computer-use.json",
+    "mcp-servers/claude-cowork-dispatch.json"
   ],
   "engines": [
     "engines/n8n.json",
@@ -80,7 +82,9 @@
     "engines/ghl.json",
     "engines/clickup-ai.json",
     "engines/lark-bot.json",
-    "engines/airtable-automations.json"
+    "engines/airtable-automations.json",
+    "engines/agent-escalation.json",
+    "engines/apple-native.json"
   ],
   "knowledge_base": [
     "knowledge-base/kortex-ai.json",

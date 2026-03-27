@@ -1,0 +1,210 @@
+{
+  "name": "agent-escalation",
+  "type": "routing_engine",
+  "description": "3-tier agent escalation engine — routes tasks to the cheapest effective execution tier before escalating to expensive GUI automation",
+  "version": "1.0.0",
+  "tiers": [
+    {
+      "id": "tier-1",
+      "name": "Local Agents & Shortcuts",
+      "description": "Default execution layer — handles 90% of workflows via APIs, scripts, and local automation. Cheap, fast, deterministic.",
+      "priority": 1,
+      "cost": "minimal",
+      "latency": "sub-second to seconds",
+      "runtimes": [
+        {
+          "name": "NemoClaw",
+          "type": "agent_platform",
+          "model": "nvidia/nematron-3-super-120b",
+          "use_case": "Persistent 24/7 agent loops, multi-agent orchestration"
+        },
+        {
+          "name": "n8n",
+          "type": "workflow_automation",
+          "config": "engines/n8n.json",
+          "use_case": "Webhook triggers, HTTP requests, conditional logic, scheduled jobs"
+        },
+        {
+          "name": "Apple Shortcuts",
+          "type": "native_automation",
+          "platform": "macOS/iOS",
+          "use_case": "Siri triggers, quick captures, share sheet actions, system automation"
+        },
+        {
+          "name": "AppleScript/JXA",
+          "type": "native_scripting",
+          "platform": "macOS",
+          "use_case": "App automation, Omni suite integration, Finder operations"
+        },
+        {
+          "name": "Shell Scripts",
+          "type": "cli_automation",
+          "use_case": "Git ops, Docker management, file processing, cron jobs"
+        },
+        {
+          "name": "MCP Servers",
+          "type": "api_integration",
+          "use_case": "Direct API calls to GHL, ClickUp, Stripe, Gmail, etc."
+        }
+      ],
+      "decision_rule": "Can this be done via API, shell, AppleScript, or Shortcut? If yes, execute here. Never escalate what Tier 1 can handle."
+    },
+    {
+      "id": "tier-2",
+      "name": "Cowork + Dispatch",
+      "description": "Long-running knowledge work in a persistent VM. Claude Cowork provides file access, connectors, and extended execution. Dispatch enables mobile control.",
+      "priority": 2,
+      "cost": "moderate",
+      "latency": "seconds to minutes",
+      "runtimes": [
+        {
+          "name": "Claude Cowork",
+          "type": "persistent_workspace",
+          "capabilities": ["file_access", "code_execution", "mcp_connectors", "vm_isolation"],
+          "use_case": "Research, coding, document synthesis, multi-file refactoring, PR workflows"
+        },
+        {
+          "name": "Claude Dispatch",
+          "type": "mobile_control",
+          "capabilities": ["remote_task_submission", "status_checking", "workspace_continuation"],
+          "use_case": "Mobile-initiated tasks, async work continuation, on-the-go commands"
+        }
+      ],
+      "persistent_workspaces": [
+        {
+          "name": "eevl-research",
+          "description": "Eagle Eye R&D — competitive analysis, tech scouting, architecture design"
+        },
+        {
+          "name": "content-production",
+          "description": "Content writing, PDF synthesis, blog drafts, social copy"
+        },
+        {
+          "name": "code-ops",
+          "description": "Homelab code, Docker configs, M3TA OS development, agent refactoring"
+        }
+      ],
+      "escalation_criteria": [
+        "Task requires extended code execution (>5 min)",
+        "Task needs persistent file workspace across sessions",
+        "Task involves multi-file analysis or refactoring",
+        "User is mobile and needs async work continuation via Dispatch",
+        "Research tasks requiring iterative web search + synthesis"
+      ],
+      "decision_rule": "Is this research, coding, or doc work that needs a persistent VM? If yes, send to Cowork. If user is mobile, use Dispatch to submit/check."
+    },
+    {
+      "id": "tier-3",
+      "name": "Computer Use",
+      "description": "Emergency / high-leverage GUI automation. Claude controls a screen — mouse, keyboard, clicks. Expensive, slow, use only when nothing else can touch it.",
+      "priority": 3,
+      "cost": "high",
+      "latency": "seconds to minutes per action",
+      "runtime": {
+        "name": "Claude Computer Use",
+        "type": "gui_automation",
+        "api": "anthropic/computer-use",
+        "capabilities": ["screen_reading", "mouse_control", "keyboard_input", "screenshot_analysis"],
+        "model": "claude-sonnet-4-6"
+      },
+      "valid_use_cases": [
+        {
+          "id": "no-api-gui",
+          "name": "No API, high value GUI automation",
+          "examples": [
+            "Batch retiming clips in Final Cut when scripting fails",
+            "Navigating vendor portal that only works in Safari to pull monthly PDFs",
+            "Complex settings UI for niche apps (one-off configuration)",
+            "Filling out government/vendor forms with no API"
+          ]
+        },
+        {
+          "id": "broken-automation-rescue",
+          "name": "Fix broken automation emergency",
+          "examples": [
+            "Vendor changes DOM, n8n workflow fails X times — Computer Use completes the urgent run manually",
+            "OAuth token expired on a weekend, need immediate workaround",
+            "Critical client delivery blocked by a flaky web UI"
+          ],
+          "pattern": "Orchestrator detects critical n8n failure → Cowork analyzes logs → if direct fix fails → Computer Use completes urgent run → schedule proper patch"
+        },
+        {
+          "id": "complex-plugin-ui",
+          "name": "Creator app deep UI interactions",
+          "examples": [
+            "Complex plug-in configuration in Logic/Final Cut",
+            "Deep UI tree navigation in specialized production software",
+            "Multi-step import/export flows that resist AppleScript"
+          ]
+        }
+      ],
+      "guardrails": {
+        "scope_constraints": [
+          "Single app or browser profile per session",
+          "Dedicated project folder access only",
+          "Separate macOS user account for Claude ops"
+        ],
+        "time_limits": {
+          "default_max_minutes": 5,
+          "hard_max_minutes": 10,
+          "auto_kill_on_timeout": true,
+          "extension_requires_user_approval": true
+        },
+        "browser_constraints": {
+          "separate_profile": true,
+          "minimal_saved_credentials": true,
+          "no_financial_access": true
+        },
+        "forbidden_zones": [
+          "Personal financial apps (banking, crypto wallets)",
+          "Password managers (Vaultwarden UI)",
+          "Email deletion or sending (read-only at most)",
+          "Sacred/personal data folders",
+          "Admin panels for production infrastructure"
+        ]
+      },
+      "escalation_criteria": [
+        "No API exists for the target application",
+        "AppleScript/JXA automation is impossible or unreliable for this UI",
+        "Critical workflow is blocked and manual intervention is the only path",
+        "One-time high-value task that would take human 30+ min manually"
+      ],
+      "decision_rule": "Is this a GUI-only task with no API/script path? Is it high-value enough to justify the cost? If both yes, escalate with strict guardrails. Always try Tier 1 and Tier 2 first."
+    }
+  ],
+  "escalation_flow": {
+    "description": "Every task enters at Tier 1. Escalation requires explicit justification.",
+    "steps": [
+      "1. Receive task from orchestrator or user",
+      "2. Check: Can Tier 1 handle this? (API, script, Shortcut, n8n) → Execute",
+      "3. If not: Check: Is this knowledge work needing persistent workspace? → Tier 2 (Cowork/Dispatch)",
+      "4. If not: Check: Is this GUI-only with no script path + high value? → Tier 3 (Computer Use) with guardrails",
+      "5. If none apply: Ask user for clarification"
+    ],
+    "anti_patterns": [
+      "Never use Computer Use for tasks that have an API",
+      "Never let Computer Use become the daily path — it is the emergency path",
+      "Never skip Tier 1 because Tier 3 'seems easier'",
+      "Never allow Computer Use sessions without time limits",
+      "Never give Computer Use access to sacred/financial data"
+    ]
+  },
+  "security_rings": {
+    "description": "Concentric security boundaries — treat the machine like a temple",
+    "outer_ring": {
+      "name": "Cloud & VMs",
+      "scope": "Cowork VMs, Computer Use sandboxes, Docker containers",
+      "rule": "No direct access to host system. Sandboxed execution only."
+    },
+    "middle_ring": {
+      "name": "Controlled folders & apps",
+      "scope": "Dedicated macOS user, separate browser profile, project folders only",
+      "rule": "Limited file access. Minimal saved credentials. Audit trail on all actions."
+    },
+    "inner_ring": {
+      "name": "Sacred data",
+      "scope": "Personal/financial/esoteric records, Vaultwarden, banking",
+      "rule": "NEVER allow automated access. Manual, conscious action only."
+    }
+  }
+}
