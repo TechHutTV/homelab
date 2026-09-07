@@ -233,6 +233,24 @@ Now to expand the functionality of Jellyfin I recommend these 3rd party tools th
 ### Jellystat
 Find it [here](https://github.com/CyferShepard/Jellystat)
 
+#### PostgreSQL 18 persistent storage
+
+For a fresh installation, both Compose examples mount `./jellystat/postgres-data` at `/var/lib/postgresql`. PostgreSQL 18 stores its default cluster in `/var/lib/postgresql/18/docker`, so the cluster lives under `./jellystat/postgres-data/18/docker` on the Docker host. See the [official PostgreSQL image documentation](https://hub.docker.com/_/postgres).
+
+> [!CAUTION]
+> **Existing installations:** Inspect the current container before recreating or removing it. Changing the mount destination does not move existing data or upgrade an older PostgreSQL cluster. Do not delete the old container's volumes or data directories until you have identified the active cluster and verified a backup by restoring it separately.
+
+Run these commands on the Docker host while the existing database is running (adjust the database username if you changed it):
+
+```bash
+docker inspect jellystat-db --format '{{json .Mounts}}'
+docker exec jellystat-db psql -U postgres -d postgres -c 'SHOW data_directory;'
+```
+
+Match the reported data directory to the container's mounts and record the actual host directory or Docker volume holding the cluster. Back up that database with a supported database-aware procedure; copying a running PostgreSQL directory is not a consistent backup. If the database cannot start, preserve its storage and inspect its logs and previous image/mount configuration before attempting recovery. For PostgreSQL 15, retain the original `/var/lib/postgresql/data` mount while preparing the major-version migration below.
+
+After deploying the corrected PostgreSQL 18 layout, confirm `SHOW data_directory` reports `/var/lib/postgresql/18/docker` and the host directory contains `18/docker/PG_VERSION`. Verify that representative Jellystat data survives container recreation without deleting persistent storage, and that a backup from the corrected deployment restores to a separate instance.
+
 #### Upgrading the Jellystat Database (Postgres 15 → 18)
 The `compose.yaml` was updated from `postgres:15.2` to `postgres:18.1`. Postgres can not start on a data directory created by an older major version, so existing installs will see an error similar to `database files are incompatible with server` and the container will crash loop.
 
