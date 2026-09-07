@@ -252,37 +252,12 @@ Match the reported data directory to the container's mounts and record the actua
 After deploying the corrected PostgreSQL 18 layout, confirm `SHOW data_directory` reports `/var/lib/postgresql/18/docker` and the host directory contains `18/docker/PG_VERSION`. Verify that representative Jellystat data survives container recreation without deleting persistent storage, and that a backup from the corrected deployment restores to a separate instance.
 
 #### Upgrading the Jellystat Database (Postgres 15 → 18)
-The `compose.yaml` was updated from `postgres:15.2` to `postgres:18.1`. Postgres can not start on a data directory created by an older major version, so existing installs will see an error similar to `database files are incompatible with server` and the container will crash loop.
 
-> [!CAUTION]
-> Back up your `./jellystat/postgres-data` (formerly `./jellystat/postgres`) directory before doing anything else. The steps below modify it in place.
+The Compose example uses PostgreSQL 18. Existing PostgreSQL 15 databases need a major-version migration; changing the image tag or mount path does not upgrade the data. Follow the [official PostgreSQL upgrade guide](https://www.postgresql.org/docs/18/upgrading.html) and the [Docker image storage instructions](https://hub.docker.com/_/postgres). Fresh installations can skip this migration.
 
-The simplest path is `pg_dump` on 15, then restore on 18:
+Before the final database dump, stop Jellystat and any other database writers. Keep an off-host copy of the dump, the original data directory, and the original image/configuration until you have verified the restore and checked Jellystat's users and playback history. Restore into a separate PostgreSQL 18 directory so the original cluster remains available for recovery.
 
-1. Bring the new stack down: `docker compose down`
-2. Temporarily pin the DB back to the old image and volume name so it starts. Edit `compose.yaml`:
-   ```yaml
-   jellystat-db:
-     image: postgres:15.2
-     volumes:
-       - ./jellystat/postgres:/var/lib/postgresql/data
-   ```
-3. Start just the DB and dump it:
-   ```bash
-   docker compose up -d jellystat-db
-   docker exec -t jellystat-db pg_dumpall -U postgres > jellystat-backup.sql
-   docker compose down
-   ```
-4. Move the old data directory aside and restore the original `compose.yaml` (postgres:18.1 with the `postgres-data` volume):
-   ```bash
-   mv ./jellystat/postgres ./jellystat/postgres-old
-   docker compose up -d jellystat-db
-   cat jellystat-backup.sql | docker exec -i jellystat-db psql -U postgres
-   docker compose up -d jellystat
-   ```
-5. Once Jellystat reports its data is intact, delete `./jellystat/postgres-old` and `jellystat-backup.sql`.
-
-If you'd rather skip the dump/restore dance, [`pgautoupgrade/pgautoupgrade`](https://github.com/pgautoupgrade/docker-pgautoupgrade) is a drop-in image that runs `pg_upgrade` on first boot and then behaves like a normal Postgres container. Point it at the existing `postgres` volume, let it convert in place, then switch back to `postgres:18.1`.
+If you need to revert, use the original PostgreSQL 15 image and data directory with the original Jellystat version. Any changes collected after switching to PostgreSQL 18 will not be present in that older database.
 
 ## DVR and Live TV
 
