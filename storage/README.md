@@ -105,7 +105,7 @@ Now in the top right click on Create CT. The "Create: LXC Container" prompt shou
 Under network we will leave most everything, but I like to give it a static IP here. If you want to manage this with your router select DHCP. Under IPv4 I set the IPv4/CIDR to `10.0.0.100/24` and the gateway to `10.0.0.1` your local IP may be different. Keep DNS as is and confirm the installation.
 
 ### Adding Mount Points
-Now that our container is created I want to add some storage and mount the data and docker directories on my system. Click on your newly created LXC and then click on Resources. From there click the Add button and select mount point. The first one I'll add is going to be for the bulk file storage or I will change the option under storage to tank. For path I will set this to /data and uncheck backup. We will set up backups later. I want to dedicate a ton of room to this so I set it to 26078 GiB (28 TB). Set this to what works best for how much media you'd like to store there. I keep everything else as is and click create. For the docker mount I repeated all these steps, but set the storage to flash, mount point to /docker, and gave it about 128gb of space.
+Now that our container is created I want to add some storage and mount the data and docker directories on my system. Click on your newly created LXC and then click on Resources. From there click the Add button and select mount point. The first one I'll add is going to be for the bulk file storage or I will change the option under storage to tank. For path I will set this to /data. Only uncheck **Backup** if this data is covered by a separate, tested file backup; excluded contents will not be included in the LXC backup. See [Backups](#backups) below. I want to dedicate a ton of room to this so I set it to 26078 GiB (28 TB). Set this to what works best for how much media you'd like to store there. I keep everything else as is and click create. For the docker mount I repeated all these steps, but set the storage to flash, mount point to /docker, and gave it about 128gb of space.
 
 ### Creating SMB Shares
 In our new LXC we first need to run some general updates and user creation.
@@ -404,4 +404,39 @@ sudo systemctl enable --now wsdd
 ```
 
 # Backups
-Work in Progress
+
+RAID, parity, and snapshots help with some failures, but they do not replace an off-host backup. Any `/data` mount excluded from an LXC backup needs its own file backup. Proxmox also excludes the contents of LXC bind/device mounts, so check what each job actually includes. [Proxmox backup documentation](https://github.com/proxmox/pve-docs/blob/master/vzdump.adoc).
+
+## A practical starting point
+
+This is an example policy to adapt to your lab, not a description of backups already configured by these guides:
+
+- **Schedule:** Run daily backups and make an additional backup before upgrades or identity/storage changes. Create the database backup before copying application files; pause writers while capturing a matching database/file set. Use the application's supported backup flow, or stop the database service cleanly before copying its database files. Do not copy a running PostgreSQL data directory as an ordinary file backup.
+- **Destination and encryption:** Keep a copy on a separate backup machine or disk, plus an encrypted offsite copy. For file backups, [restic](https://restic.readthedocs.io/en/stable/030_preparing_a_new_repo.html) to an object-storage bucket such as Backblaze B2 is one option. For PBS, use a [remote sync job](https://pbs.proxmox.com/docs/managing-remotes.html) to an offsite PBS and enable backup encryption. Record the actual repository/bucket and paths in your private recovery notes. A backup on the same NAS is still vulnerable to losing that NAS.
+- **Retention:** Start with 14 daily, 8 weekly, and 6 monthly recovery points, adjusted for your capacity. Configure retention in the backup tool; a plain mirror can propagate deletions. Keep a known-good pre-upgrade backup until the new version and its restore have been checked.
+- **Failure alerts:** Configure the scheduler's email or webhook notifications for failed backup, copy, verification, and pruning jobs. Also alert if no successful off-host recovery point has completed within 24 hours. Trigger a test failure and confirm the notification reaches you through something that does not depend on the server being backed up.
+
+## What needs backing up
+
+The last column gives example targets for **maximum data loss / time to restore service**. All rows assume daily off-host backups, plus backups before configuration changes. Shorten the schedule if losing a day's changes is unacceptable. Time an actual restore—including downloading files and replacing hardware—to confirm your target is achievable.
+
+| Service | Backup contents and method | Example loss / restore target |
+|---|---|---|
+| Immich | Consistent database dump, original photos/videos, external libraries, and local configuration. Follow the [Immich backup notes](../cloud/immich/README.md#backup-strategy). | 24 hours / 24 hours |
+| Nextcloud AIO | Use AIO's [built-in Borg backup and restore](https://github.com/nextcloud/all-in-one#backup) for its database, files, and configuration. Enable daily backups after the first successful run; save the Borg encryption password. External storage is not included by default. Use a supported remote Borg destination or copy the completed repository off-host while no backup/prune job is writing to it. Restore through AIO's backup interface using the repository and its password. | 24 hours / 24 hours |
+| Unraid | Back up appdata with its containers stopped, VM disks with guests stopped or a supported consistent backup, and user shares separately. Keep a flash/configuration backup too. [Unraid Connect flash backup](https://docs.unraid.net/unraid-connect/automated-flash-backup/) covers OS configuration, not appdata or shares, keeps only the latest copy, and excludes some secrets. | 24 hours / 24 hours |
+| Proxmox / PBS | Schedule VM/LXC backups to PBS, include required storage-backed mount points, and back up excluded shares separately. Preserve host/PBS configuration and encryption keys. Configure [verification jobs](https://pbs.proxmox.com/docs/maintenance.html#verification) and offsite sync; a guest backup alone cannot rebuild all host configuration. | 24 hours / 24 hours |
+| Home Assistant | Use [automatic backups and an external backup location](https://www.home-assistant.io/common-tasks/general/#backups). Save the [backup emergency kit](https://www.home-assistant.io/more-info/backup-emergency-kit). Separate MQTT/Zigbee services and coordinator state need their own backups. | 24 hours / 4 hours |
+| Pocket ID | With Pocket ID stopped, copy its complete data directory, original encryption key, and Compose/environment configuration. Restore the matching data and key together; see [identity backup notes](../netbird/README.md#backup-and-recovery). | 24 hours / 4 hours |
+| NetBird | Follow its [backup procedure](https://docs.netbird.io/selfhosted/maintenance/backup) for stopped management state and generated configuration. Include encryption keys, proxy/TLS state, and routing-peer state. | 24 hours / 4 hours |
+| NGINX Proxy Manager | Stop NPM before copying the mounts at `/data` and `/etc/letsencrypt` together, plus Compose/environment files. These hold the example's SQLite database, proxy configuration, and certificates/private keys. A custom external database needs its own consistent backup. [Mount reference](https://nginxproxymanager.com/setup/). | 24 hours / 4 hours |
+
+Keep backup passwords, encryption keys, recovery codes, domain/DNS access, and VPS console credentials in a protected location you can reach when the lab is down. Do not keep the only copy inside the service you are trying to restore. Record application/database image versions, mount paths, ownership, and exclusions alongside each recovery point.
+
+## Prove a restore works
+
+Before relying on a backup, restore it to a separate test directory, VM, or host using the application's supported restore flow and compatible versions. Repeat quarterly and after major backup or application changes. Keep test systems isolated so cloned peers, identity providers, or automations do not interfere with the live lab.
+
+For stopped-service file backups, stop the replacement service, restore the matching data/configuration/key set to its recorded paths with the original ownership and permissions, then start it. For database dumps, use the application's documented import procedure.
+
+Open restored files, check Immich photos/albums and Nextcloud uploads, boot restored guests, test a Home Assistant automation, and verify Pocket ID login, NetBird routing/policies, and NPM HTTPS access. Verify appdata and flash recovery separately on Unraid. Record the backup used, date, duration, and results; an archive-integrity check alone does not prove the application can recover. For identity/network services, exercise recovery through the VPS console or another path independent of NetBird.

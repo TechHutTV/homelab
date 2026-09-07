@@ -265,6 +265,14 @@ Networks in NetBird allow you to expose resources to your peers without installi
 
 This is incredibly useful for accessing your entire home network through a single peer running NetBird.
 
+## Backup and Recovery
+
+For the Pocket ID stack above, stop `pocket-id` before copying `./pocket-id/data`, `./pocket-id/key/encryption_key`, and the Compose/environment files, preserving ownership and permissions. Restart it after the copy completes. Restore the data and **the same encryption key** together; generating a replacement key cannot decrypt the old data. If you switched to an external database or file store, back that up too. [Pocket ID database and key settings](https://pocket-id.org/docs/configuration/environment-variables).
+
+For NetBird, follow the [official backup procedure](https://docs.netbird.io/selfhosted/maintenance/backup): stop the management/server service while copying its database state, and preserve the installer-generated configuration, environment files, encryption keys, and proxy/TLS state. Record the deployed image versions and actual Docker volume locations. Back up the routing peer's `./netbird` state with that client stopped. Use VPS console access or SSH independent of NetBird for this work, since stopping services can interrupt remote access.
+
+Use the shared [backup schedule and offsite recovery plan](../storage/README.md#backups). Keep recovery credentials accessible independently of Pocket ID and NetBird. Rehearse restoring both services with their original keys and configuration in an isolated environment, checking passkey login, OIDC, peer enrollment, routes, and access policies before removing fallback administration access.
+
 ## Conclusion
 
 You now have a fully self-hosted NetBird setup with Traefik handling TLS, PocketID providing passwordless authentication, and the new built-in reverse proxy exposing it all without needing a separate proxy stack like Nginx Proxy Manager. The whole thing runs through encrypted WireGuard tunnels and you have full control over your infrastructure. No third-party dependencies for your traffic, no MITM, no wondering what someone else is doing with your data. It's just nice.

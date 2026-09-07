@@ -135,9 +135,12 @@ Generates: `2024/July-15/IMG_1234.jpg`
 Go to _Settings > Storage Template_ in the web UI to set this up. You can also re-run it on existing libraries, which is great if you change your mind on the structure later.
 
 ## Backup Strategy
-- Back up your `DB_DATA_LOCATION` directory regularly. Without the database, your photos lose all metadata, faces, and albums.
-- Keep a copy of your `UPLOAD_LOCATION` somewhere offsite. I use [restic](https://restic.net/) to a Backblaze B2 bucket, but rsync to another machine works fine for smaller libraries.
-- The whole thing is just files on disk and a Postgres dump, so you don't need any Immich-specific backup tool.
+
+Immich needs **both its database and original files**. Its automatic database dumps are stored in `UPLOAD_LOCATION/backups`; configure their schedule and retention under _Administration > Settings > Backup_. These dumps contain no photos or videos and still need copying off the server. [Official backup and restore guide](https://docs.immich.app/administration/backup-and-restore/).
+
+For a matching database/file backup, stop `immich-server`, leave PostgreSQL running, create a successful `pg_dump` using your configured database name/user, then back up that dump and all of `UPLOAD_LOCATION` before restarting the server. Include external-library source folders, `compose.yaml`, and your protected `.env`. Use the [upstream backup script](https://docs.immich.app/guides/template-backup-script/) as a starting point for automation. **Do not copy a running `DB_DATA_LOCATION` as a file backup.**
+
+Follow the shared [schedule, encryption, retention, and alerting plan](../../storage/README.md#backups). Rehearse the official restore flow on a separate instance with compatible versions, matching file paths, and the database backup. Open several photos/videos and check users/albums before relying on it.
 
 ## Troubleshooting
 
