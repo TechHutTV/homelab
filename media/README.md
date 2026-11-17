@@ -188,13 +188,19 @@ WIREGUARD_ADDRESSES=ip
 HEALTH_VPN_DURATION_INITIAL=120s
 
 # Static IPs for services on servarrnetwork
-SET_IP_GLUETUN=172.39.0.2
-SET_IP_SONARR=172.39.0.3
-SET_IP_RADARR=172.39.0.4
-SET_IP_LIDARR=172.39.0.5
-SET_IP_BAZARR=172.39.0.6
-SET_IP_SEERR=172.39.0.7
+SET_IP_GLUETUN=172.30.39.2
+SET_IP_SONARR=172.30.39.3
+SET_IP_RADARR=172.30.39.4
+SET_IP_LIDARR=172.30.39.5
+SET_IP_BAZARR=172.30.39.6
+SET_IP_JELLYSTAT_DB=172.30.39.7
+SET_IP_JELLYSTAT=172.30.39.8
+# .9 and .10 are reserved for Youtarr's database and app in my deployment.
+# Seerr runs separately on my Unraid host; .11 is its address in this example.
+SET_IP_SEERR=172.30.39.11
 ```
+
+The Compose network uses the private subnet `172.30.39.0/24` with gateway `172.30.39.1`. Check that it doesn't overlap your LAN, VPN routes, or another Docker network. If you choose a different subnet, change both `compose.yaml` and the addresses in your local `.env` together. Jellystat is optional in this stack, and Youtarr isn't included in the example.
 
 ### Testing Gluetun Connectivity
 Once your containers are up and running, you can test your connection is correct and secured. This assumes you keep the `gluetun` container name. Learn more at the [gluetun wiki](https://github.com/qdm12/gluetun-wiki/blob/main/setup/test-your-setup.md).

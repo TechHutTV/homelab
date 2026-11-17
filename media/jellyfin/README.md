@@ -1,13 +1,41 @@
 # Jellyfin Setup Guide
-Welcome to the ultimate Jellyfin setup guide. 
+I run Jellyfin in Docker directly on Unraid alongside Plex. The current setup uses the shared Intel Arc Pro B60 for hardware acceleration and has writable media storage for DVR recordings. Below are my Unraid settings, followed by portable Docker and Proxmox examples.
+
+## Current Unraid Setup
+
+| Setting | My Unraid configuration |
+|---|---|
+| Host | `HopkiMedia`, `10.173.10.10` |
+| Container | `Jellyfin` |
+| Web interface | `http://10.173.10.10:8096` |
+| Reverse proxy | Your domain, for example `https://jellyfin.example.com` |
+| Application user / group | UID `1000`, GID `100` (`brandon:users`) |
+| Supplemental GPU group | GID `18` |
+| Media / DVR mapping | Read/write |
+| GPU | Intel Arc Pro B60, `/dev/dri/renderD128` |
+
+In the Unraid Docker template, I saved the following under **Extra Parameters** so recreating the container keeps the user and GPU group settings:
+
+```text
+--user=1000:100 --group-add=18
+```
+
+Keep the existing appdata and media path mappings, set the media/DVR mapping to **Read/Write**, and retain the `/dev/dri` device mapping. The recording directory you select in Jellyfin must be inside that writable media mapping. Check the configured user, group, and device access from the Unraid terminal:
+
+```bash
+docker inspect Jellyfin --format '{{.Config.User}} {{json .HostConfig.GroupAdd}}'
+docker exec Jellyfin id
+docker exec Jellyfin ls -l /dev/dri
+```
+
+My IDs are specific to this host. If you're adapting the setup, match your media ownership and GPU device's group. The [LinuxServer.io Compose example](compose.yaml) below uses that image's `PUID` and `PGID` settings, as described in its [image documentation](https://docs.linuxserver.io/images/docker-jellyfin/#user-group-identifiers).
 
 > [!NOTE]
-> For simplicity and compatibility it is recommended to install Jellyfin with Docker in a __virtual machine__ if you're running Proxmox. See more information [here](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#chapter_pct).
->
+> If you're using Proxmox for Jellyfin, the VM and LXC examples below cover that alternative. My current container runs directly on Unraid.
 
 ## Data Directory
 ### Folder Mapping
-It's good practice to give all containers the same access to the same root directory or share. This is why all containers in the compose file have the bind volume mount `/data:/data`. It makes everything easier, plus passing in two volumes such as the commonly suggested `/tv`, `/movies`, and `/downloads` makes them look like two different file systems, even if they are a single file system outside the container. See my current setup below.
+It's good practice to give all media containers access to the same root directory or share. The portable Compose example uses `/data:/data:rw`, keeping the same container paths as the Servarr stack and allowing DVR writes. Here's an example folder layout for a separate Docker host:
 ```
 data
 ├── movies
@@ -19,8 +47,8 @@ docker
     └── jellystat
 ```
 
-### Network Share (VM)
-I generally install Docker on the same LXC that I have my media server on as well as all my data. This, however, is [not recommended by Proxmox](https://www.reddit.com/r/Proxmox/comments/1afslhs/should_i_use_lxc_or_vm_for_running_docker/). Going forward you should create a separate VM for all your docker containers and mount the data directory we created in the storage guide with the share.
+### Network Share (VM, Optional)
+If Jellyfin runs in a separate VM, mount your media share into that VM before starting the container. On my Unraid host, the container uses the local media share directly, so these SMB steps aren't needed.
 
 > [!IMPORTANT]
 > This assumes you already have a working Samba share on your server. If you haven't set that up yet, follow the [SMB share guide](https://github.com/TechHutTV/homelab/tree/main/storage#creating-smb-shares) first. If you get `mount error(113): No route to host`, verify the Samba server is running and reachable from your VM.
@@ -61,29 +89,22 @@ sudo mount -a
 ```
 
 ## User Permissions
-Using bind mounts (`path/to/config:/config`) may lead to permission conflicts between the host operating system and the container. To avoid this problem, you can specify the user ID (`PUID`) and group ID (`PGID`) to use within some of the containers. This will give your user permissions to read and write configuration files, etc.
+For the LinuxServer.io image in the Compose example, set `PUID` and `PGID` to the user and group that can read and write your bind-mounted directories. The example defaults to `1000:1000`; my current Unraid template settings are listed [above](#current-unraid-setup).
 
-In the compose file I use `PUID=1000` and `PGID=1000`, as those are generally the default IDs in most Linux systems, but depending on your setup you may need to change this.
+On a separate Linux host, check your IDs and the mounted directory's ownership:
 
 ```bash
 id your_user
+ls -ld /data
 ```
-This command will return something like the following:
-```
-uid=1000(brandon),gid=1003(brandon),groups=1000(data-share),988(docker)
-```
-In the example output above, if using a network share I would need to edit the `compose.yaml` with `PGID=1003`. If you are using a network share mounted though `/etc/fstab` match the permissions there. I use Cockpit with a custom group for shares so my permissions are `uid=1000(brandon),gid=1000(data-share)`.
-If you run into errors after creating all the folders you can assign the permissions using `chown`. For example:
-```bash
-sudo chown -R 1000:1000 /data
-sudo chown -R 1000:1000 /docker
-```
+
+If you're using the SMB mount above, set its `uid` and `gid` options to the intended application user and group too. Reading movies successfully doesn't establish write access, so check that Jellyfin can create a file in the chosen recording directory before relying on DVR.
 
 ## Installation
-There are two options for installing Jellyfin. Both work great and it's all a matter of preference. I generally install Jellyfin directly on the LXC within Proxmox that contains all my data.
+I use the Unraid Docker template for my current deployment. The examples below cover LinuxServer.io Docker on another host and a package installation for an existing Ubuntu or Proxmox guest.
 
 ### Docker Setup (Recommended)
-Docker is another option to install and run Jellyfin. Check out the `compose.yaml` file or the full stack.
+The [Compose file](compose.yaml) uses the LinuxServer.io image with a separate `jellystat` database and application. Match the media and configuration paths to your Docker host.
 
 ```yaml
 services:
@@ -94,10 +115,11 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=America/Los_Angeles
-      - JELLYFIN_PublishedServerUrl=http://10.0.0.101 #optional
+      # Uncomment and set the address clients use to reach this host.
+      # - JELLYFIN_PublishedServerUrl=http://YOUR_SERVER_IP:8096
     volumes:
       - ./config:/config
-      - /data:/data
+      - /data:/data:rw
     devices:
       - /dev/dri:/dev/dri #Use for Intel QuickSync
     ports:
@@ -179,7 +201,13 @@ sudo apt update && sudo apt install -y jellyfin-ffmpeg7
 Continue with the steps below...
 
 ## Hardware Transcoding
-This focuses on transcoding with Intel QuickSync. In my experience it is simply the best option. If you're running a AMD CPU you can pickup a Intel Arc GPU fairly cheap. If you have any issues or don't have access to a Intel CPU or an Arc GPU be sure to checkout the official docs [here](https://jellyfin.org/docs/general/administration/hardware-acceleration/). If you're not doing this on Proxmox you can skip to the Ubuntu setup.
+This focuses on Intel Quick Sync and VA-API. For the supported configuration steps, see Jellyfin's [Intel GPU guide](https://jellyfin.org/docs/general/post-install/transcoding/hardware-acceleration/intel/).
+
+### Unraid (Current Setup)
+
+My Arc Pro B60 is `/dev/dri/renderD128`; the host's UHD770 is `/dev/dri/renderD129`. In Jellyfin's transcoding settings, select the Arc device for Intel QSV or VA-API. The container keeps its `/dev/dri` access and supplemental group `18` through the Unraid template settings above. Verify device identities on your own host before choosing a render node.
+
+Plex, Jellyfin, and the Immich ML worker share the Arc. It stays available to all three containers without PCI passthrough to a VM. Their workloads can still compete for GPU time. A VA-API query succeeded as Jellyfin's application user during maintenance; a full live-transcoding or simultaneous-load test wasn't performed.
 
 ### Proxmox Passthrough
 
@@ -268,9 +296,9 @@ Next you want to setup guide data. _Guide Providers → Add Guide Provider_. Sch
 
 ### DVR
 
-> [!NOTE]
-> This is a work in progress. Don't quite have it working yet.
->
+Choose a recording directory inside the container's writable media mapping. For example, if your media is mounted at `/data`, you could use `/data/recordings` after creating that directory with ownership that allows the application user to write to it. Use the container path in Jellyfin's DVR settings.
+
+On my Unraid host, the media/DVR mapping is writable and an actual write check passed as UID `1000`, GID `100`. This confirms the storage permission fix; a complete scheduled recording still needs to be checked separately.
 
 ## Remote Connections
 

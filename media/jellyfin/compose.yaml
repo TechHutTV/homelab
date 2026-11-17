@@ -1,3 +1,5 @@
+# LinuxServer.io example for a separate Docker host.
+# My current Unraid template settings are documented in README.md.
 services:
   jellyfin:
     image: lscr.io/linuxserver/jellyfin:latest
@@ -6,10 +8,11 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=America/Los_Angeles
-      - JELLYFIN_PublishedServerUrl=http://10.0.0.101 #optional
+      # Uncomment and set the address clients use to reach this host.
+      # - JELLYFIN_PublishedServerUrl=http://YOUR_SERVER_IP:8096
     volumes:
       - ./config:/config
-      - /data:/data
+      - /data:/data:rw
     devices:
       - /dev/dri:/dev/dri #Use for Intel QuickSync
     ports:
