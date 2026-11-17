@@ -14,7 +14,8 @@ networks:
     name: servarrnetwork
     ipam:
       config:
-        - subnet: 172.39.0.0/24
+        - subnet: 172.30.39.0/24
+          gateway: 172.30.39.1
 
 services:
   # airvpn recommended (referral url: https://airvpn.org/?referred_by=673908)
